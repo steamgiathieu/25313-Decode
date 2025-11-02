@@ -53,9 +53,6 @@ public class Drivetrain {
         );
     }
 
-    // ============================================================
-    // ==  CÁC CHẾ ĐỘ ĐIỀU KHIỂN THỦ CÔNG
-    // ============================================================
     public void driveFieldCentric(double x, double y, double turn) {
         drive.driveFieldCentric(x, y, turn);
     }
