@@ -1,0 +1,15 @@
+package org.firstinspires.ftc.team25313.opmodes.auto;
+
+import static org.firstinspires.ftc.team25313.Constants.AllianceColor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.team25313.Constants;
+//import org.firstinspires.ftc.team25313.commands;
+
+@Autonomous(name = "Small Triangle Auto for Blue", group = "Auto")
+public class SmallTriangleAutoforBlue extends MainAuto {
+    @Override
+    protected void initStartingCondition() {
+        allianceColor = Constants.AllianceColor.BLUE;
+        /startingPos = StartingPos.SMALL_TRIANGLE_BLUE;
+    }
+}
