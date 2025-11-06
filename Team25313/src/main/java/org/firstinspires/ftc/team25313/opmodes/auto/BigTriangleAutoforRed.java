@@ -1,3 +1,4 @@
+//use to enable robot run autonomously in 30s at the big triangle for red alliance
 package org.firstinspires.ftc.team25313.opmodes.auto;
 
 import static org.firstinspires.ftc.team25313.Constants.AllianceColor;

@@ -8,7 +8,6 @@ import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 import org.firstinspires.ftc.team25313.subsystems.lift.Lift;
 import org.firstinspires.ftc.team25313.subsystems.vision.AutoAimAssist;
 import org.firstinspires.ftc.team25313.subsystems.vision.Camera;
-import org.firstinspires.ftc.team25313.subsystems.vision.DetectArtifactProcessor;
 
 @TeleOp(name = "Main TeleOp", group = "Manual")
 public class MainTeleOp extends LinearOpMode {
