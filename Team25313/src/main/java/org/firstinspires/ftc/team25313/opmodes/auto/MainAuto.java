@@ -1,3 +1,4 @@
+//main auto file to run all starting positions are called from specific builded auto mode
 package org.firstinspires.ftc.team25313.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,6 +23,7 @@ public abstract class MainAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //initialing
         initStartingCondition();
 
         drivetrain = new Drivetrain(this);
@@ -38,7 +40,7 @@ public abstract class MainAuto extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        // --- Chạy auto chính ---
+        //run things we should do
         executeAutoRoutine();
     }
 
@@ -53,12 +55,10 @@ public abstract class MainAuto extends LinearOpMode {
     }
 
     private void executeAutoRoutine() {
-        // Ví dụ logic auto chính
-        // 1. Phát hiện tag
-        // 2. Di chuyển đến scoring zone
-        // 3. Bắn hoặc thả vật thể
-        // 4. Park
-        // Tùy chỉnh theo PedroPathing
+        // what we gonna complete:
+        // - tag detection
+        // - running to launching zone
+        // - launcing
     }
 
     public enum StartingPos {
