@@ -19,11 +19,11 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
-    namespace "org.firstinspires.ftc.teamcode"
+    namespace "org.firstinspires.ftc.team25313"
     compileSdk 34// hoặc namespace thực tế của bạn
 
     defaultConfig {
-        applicationId "org.firstinspires.ftc.teamcode"
+        applicationId "org.firstinspires.ftc.team25313"
         minSdk 24
         targetSdk 34
         versionCode 1
