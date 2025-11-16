@@ -16,4 +16,5 @@
 ## For more informations, contact to contributor(s) of this project:
 - Captain: Quang Minh Dinh [@minhhdinh192](https://github.com/minhhdinh192)
 - Programmer, Electrician: Khoi Nguyen Pham [@thisIsAnVariableOfACoder](https://github.com/thisIsAnVariableOfACoder)
+- Programmer, Electrician: Minh Hoang Vu [@GetInHod](https://github.com/GetInHod)
 - Mentor: Xuan Tung Le [@lexuantung9999](https://github.com/lexuantung9999)
