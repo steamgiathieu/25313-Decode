@@ -4,18 +4,20 @@ package org.firstinspires.ftc.team25313.opmodes.auto;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import com.pedropathing.geometry.Pose;
+
 import org.firstinspires.ftc.team25313.Constants;
-import org.firstinspires.ftc.team25313.subsystems.drivetrain.Drivetrain;
+import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.vision.Camera;
 import org.firstinspires.ftc.team25313.subsystems.vision.DetectArtifactProcessor;
 
-import pedroPathing.localization.Pose2d;
-
 @Autonomous(name = "Main Auto", group = "Auto")
 public abstract class MainAuto extends LinearOpMode {
+
     protected Constants.AllianceColor allianceColor;
     protected StartingPos startingPos;
-    protected Drivetrain drivetrain;
+
+    protected DriveSubsystem driveSubsystem;
     protected Camera camera;
     protected DetectArtifactProcessor vision;
 
@@ -23,15 +25,16 @@ public abstract class MainAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        //initialing
         initStartingCondition();
 
-        drivetrain = new Drivetrain(this);
+        // Khởi tạo đúng HardwareMap
+        driveSubsystem = new DriveSubsystem(hardwareMap);
         camera = new Camera(this);
         vision = new DetectArtifactProcessor(this);
 
-        Pose2d startPose = getStartPose(startingPos);
-        drivetrain.setPose(startPose);
+        // Lấy pose xuất phát
+        Pose startPose = getStartPose(startingPos);
+        driveSubsystem.getDrive().setPoseEstimate(startPose);
 
         telemetry.addData("Alliance", allianceColor);
         telemetry.addData("Starting Pos", startingPos);
@@ -40,28 +43,30 @@ public abstract class MainAuto extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        //run things we should do
         executeAutoRoutine();
     }
 
-    private Pose2d getStartPose(StartingPos pos) {
+    private Pose getStartPose(StartingPos pos) {
         switch (pos) {
-            case BIG_TRIANGLE_BLUE:  return new Pose2d(10, 60, Math.toRadians(270));
-            case SMALL_TRIANGLE_BLUE:return new Pose2d(12, 36, Math.toRadians(270));
-            case BIG_TRIANGLE_RED:   return new Pose2d(-10, 60, Math.toRadians(90));
-            case SMALL_TRIANGLE_RED: return new Pose2d(-12, 36, Math.toRadians(90));
-            default: return new Pose2d(0, 0, 0);
+            case BIG_TRIANGLE_BLUE:  return new Pose(10, 60, Math.toRadians(270));
+            case SMALL_TRIANGLE_BLUE:return new Pose(12, 36, Math.toRadians(270));
+            case BIG_TRIANGLE_RED:   return new Pose(-10, 60, Math.toRadians(90));
+            case SMALL_TRIANGLE_RED: return new Pose(-12, 36, Math.toRadians(90));
+            default: return new Pose(0, 0, 0);
         }
     }
 
     private void executeAutoRoutine() {
-        // what we gonna complete:
-        // - tag detection
-        // - running to launching zone
-        // - launcing
+        // TODO: viết các bước auto thật
+        // · Detect artifact
+        // · Move to position
+        // · Launch balls
     }
 
     public enum StartingPos {
-        BIG_TRIANGLE_BLUE, SMALL_TRIANGLE_BLUE, BIG_TRIANGLE_RED, SMALL_TRIANGLE_RED
+        BIG_TRIANGLE_BLUE,
+        SMALL_TRIANGLE_BLUE,
+        BIG_TRIANGLE_RED,
+        SMALL_TRIANGLE_RED
     }
 }

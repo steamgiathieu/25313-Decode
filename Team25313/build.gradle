@@ -19,6 +19,11 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
+    packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+        }
+    }
     namespace "org.firstinspires.ftc.team25313"
     compileSdk 34// hoặc namespace thực tế của bạn
 

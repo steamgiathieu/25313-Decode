@@ -10,7 +10,7 @@ import com.acmerobotics.dashboard.config.Config;
 public final class Constants {
 
     /*** --- General Robot Info --- ***/
-    public static final String ROBOT_NAME = "ConChoCaoBangBoPC";
+    public static final String ROBOT_NAME = "STEAM GIA THIEU";
     public static final boolean USE_DASHBOARD = true;
 
     /*** --- Alliance (for auto & teleop logic) --- ***/
