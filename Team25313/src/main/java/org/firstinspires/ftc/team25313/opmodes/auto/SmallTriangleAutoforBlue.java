@@ -11,6 +11,6 @@ public class SmallTriangleAutoforBlue extends MainAuto {
     @Override
     protected void initStartingCondition() {
         allianceColor = Constants.AllianceColor.BLUE;
-        /startingPos = StartingPos.SMALL_TRIANGLE_BLUE;
+        startingPos = StartingPos.SMALL_TRIANGLE_BLUE;
     }
 }

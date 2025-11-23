@@ -15,7 +15,7 @@ public class MainTeleOp extends OpMode {
     private ArtifactCollector intake;
     private ArtifactLauncher launcher;
 
-    // for button edge detection
+    // button edge detection
     private boolean dpadUpPrev = false;
     private boolean feedPrev = false;
 
@@ -32,54 +32,42 @@ public class MainTeleOp extends OpMode {
     public void loop() {
 
         // =============================================
-        // DRIVETRAIN CONTROL (ROBOT-CENTRIC)
+        // DRIVETRAIN CONTROL (Robot-Centric)
         // =============================================
-        double x = -gamepad1.left_stick_y;    // forward/back
-        double y = gamepad1.left_stick_x;     // strafe
-        double turn = gamepad1.right_stick_x; // rotate
+        double forward = -gamepad1.left_stick_y;
+        double strafe  = gamepad1.left_stick_x;
+        double turn    = gamepad1.right_stick_x;
 
-        driveSubsystem.setPower(x, y, turn);
-        driveSubsystem.update();
+        // dùng hàm mới của drivetrain đơn giản
+        driveSubsystem.drive(forward, strafe, turn);
 
         // =============================================
         // INTAKE CONTROL
         // =============================================
-        // intake on: right bumper
         if (gamepad1.right_bumper) {
             intake.collect();
         }
-        // reverse intake: left bumper
         else if (gamepad1.left_bumper) {
             intake.reverse();
         }
-        // stop intake
         else {
             intake.stop();
         }
 
         // =============================================
-        // OUTTAKE CONTROL (Shooter)
+        // LAUNCHER CONTROL
         // =============================================
 
-        // A = start shooter
-        if (gamepad1.a) {
-            launcher.startShooter();
-        }
+        if (gamepad2.a) launcher.startShooter();
+        if (gamepad2.b) launcher.stopShooter();
 
-        // B = stop shooter
-        if (gamepad1.b) {
-            launcher.stopShooter();
-        }
-
-        // X = shoot 1 ball (servo feed)
-        boolean feedPressed = gamepad1.x;
+        boolean feedPressed = gamepad2.x;
         if (feedPressed && !feedPrev) {
             launcher.shootSingle();
         }
         feedPrev = feedPressed;
 
-        // Dpad Up = increase power level (with edge detection)
-        boolean dpadUp = gamepad1.dpad_up;
+        boolean dpadUp = gamepad2.dpad_up;
         if (dpadUp && !dpadUpPrev) {
             launcher.increasePowerLevel();
         }
@@ -89,12 +77,11 @@ public class MainTeleOp extends OpMode {
         // TELEMETRY
         // =============================================
         telemetry.addLine("=== Robot Status ===");
-        telemetry.addData("Pose", driveSubsystem.getPose());
         telemetry.addData("Shooter Level", launcher.getCurrentLevelIndex());
         telemetry.addData("Shooter Power", launcher.getCurrentPowerLevel());
-        telemetry.addData("Intake", gamepad1.right_bumper ? "COLLECT" :
-                gamepad1.left_bumper ? "REVERSE" : "STOP");
-
+        telemetry.addData("Intake Mode",
+                gamepad2.right_bumper ? "COLLECT" :
+                        gamepad2.left_bumper ? "REVERSE" : "STOP");
         telemetry.update();
     }
 }

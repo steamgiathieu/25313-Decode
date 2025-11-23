@@ -33,8 +33,8 @@ public abstract class MainAuto extends LinearOpMode {
         vision = new DetectArtifactProcessor(this);
 
         // Lấy pose xuất phát
-        Pose startPose = getStartPose(startingPos);
-        driveSubsystem.getDrive().setPoseEstimate(startPose);
+//        Pose startPose = getStartPose(startingPos);
+//        driveSubsystem.getDrive().setPoseEstimate(startPose);
 
         telemetry.addData("Alliance", allianceColor);
         telemetry.addData("Starting Pos", startingPos);

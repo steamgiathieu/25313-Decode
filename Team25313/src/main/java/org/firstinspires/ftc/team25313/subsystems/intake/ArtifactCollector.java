@@ -18,14 +18,11 @@ public class ArtifactCollector {
     }
 
     /** Hút bóng vào robot */
-    public void intake() {
+    public void collect() {
         intakeMotor.setPower(INTAKE_POWER);
     }
 
     /** Alias dùng cho TeleOp — tương đương intake() */
-    public void collect() {
-        intake();
-    }
 
     /** Đẩy bóng ra ngoài (đảo chiều) */
     public void reverse() {
