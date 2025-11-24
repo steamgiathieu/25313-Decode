@@ -13,17 +13,18 @@ public class MainTeleOp extends LinearOpMode {
     // Subsystems
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
-    private ArtifactLauncher launcher;
+    private ArtifactLauncher outtake;
 
     // button edge detection
-    private boolean dpadUpPrev = false;
     private boolean feedPrev = false;
+    private boolean UpPrev = false;
+    private boolean DownPrev = false;
 
     @Override
     public void runOpMode() {
         driveSubsystem = new DriveSubsystem(hardwareMap);
         intake = new ArtifactCollector(hardwareMap);
-        launcher = new ArtifactLauncher(hardwareMap);
+        outtake = new ArtifactLauncher(hardwareMap);
 
         telemetry.addLine("Initialized MainTeleOp!");
         waitForStart();
@@ -54,27 +55,33 @@ public class MainTeleOp extends LinearOpMode {
             // LAUNCHER CONTROL
             // =============================================
 
-            if (gamepad2.a) launcher.startShooter();
-            if (gamepad2.b) launcher.stopShooter();
+            if (gamepad2.a) outtake.startShooter();
+            if (gamepad2.b) outtake.stopShooter();
 
             boolean feedPressed = gamepad2.x;
             if (feedPressed && !feedPrev) {
-                launcher.shootSingle();
+                outtake.shootSingle();
             }
             feedPrev = feedPressed;
 
-            boolean dpadUp = gamepad2.dpad_up;
-            if (dpadUp && !dpadUpPrev) {
-                launcher.increasePowerLevel();
+            boolean Up = gamepad2.dpad_up;
+            boolean Down = gamepad2.dpad_down;
+            if (Up && !UpPrev) {
+                outtake.increasePowerLevel();
             }
-            dpadUpPrev = dpadUp;
+            else if (Down && !DownPrev) {
+                outtake.decreasePowerLevel();
+            }
+
+            UpPrev = Up;
+            DownPrev = Down;
 
             // =============================================
             // TELEMETRY
             // =============================================
             telemetry.addLine("=== Robot Status ===");
-            telemetry.addData("Shooter Level", launcher.getCurrentLevelIndex());
-            telemetry.addData("Shooter Power", launcher.getCurrentPowerLevel());
+            telemetry.addData("Shooter Level", outtake.getCurrentLevelIndex());
+            telemetry.addData("Shooter Power", outtake.getCurrentPowerLevel());
             telemetry.addData("Intake Mode",
                     gamepad2.right_bumper ? "COLLECT" :
                             gamepad2.left_bumper ? "REVERSE" : "STOP");

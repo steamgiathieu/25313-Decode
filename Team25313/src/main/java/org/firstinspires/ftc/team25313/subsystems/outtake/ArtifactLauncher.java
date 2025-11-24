@@ -67,11 +67,14 @@ public class ArtifactLauncher {
     /** Tăng mức lực bắn → nếu vượt mức 3 thì quay về mức 0 */
     public void increasePowerLevel() {
         currentLevelIndex++;
-        if (currentLevelIndex >= SHOOTER_LEVELS.length) {
-            currentLevelIndex = 0;
-        }
-
+        if (currentLevelIndex > 3) currentLevelIndex = 3;
         // Nếu shooter đang chạy → cập nhật luôn power
+        applyCurrentPowerLevel();
+    }
+
+    public void decreasePowerLevel () {
+        currentLevelIndex--;
+        if (currentLevelIndex < 0) currentLevelIndex = 0;
         applyCurrentPowerLevel();
     }
 
