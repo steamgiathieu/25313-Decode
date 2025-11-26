@@ -9,7 +9,6 @@ import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
 @TeleOp(name = "Main TeleOp", group = "TeleOp")
 public class MainTeleOp extends LinearOpMode {
-
     // Subsystems
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
@@ -78,7 +77,7 @@ public class MainTeleOp extends LinearOpMode {
 
             // =============================================
             // TELEMETRY
-            // =============================================
+            // =============================================    
             telemetry.addLine("=== Robot Status ===");
             telemetry.addData("Shooter Level", outtake.getCurrentLevelIndex());
             telemetry.addData("Shooter Power", outtake.getCurrentPowerLevel());

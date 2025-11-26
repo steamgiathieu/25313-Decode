@@ -1,21 +1,20 @@
 package org.firstinspires.ftc.team25313.subsystems.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class DriveSubsystem {
 
-    private final DcMotorEx frontLeft;
-    private final DcMotorEx frontRight;
-    private final DcMotorEx backLeft;
-    private final DcMotorEx backRight;
+    private final DcMotor frontLeft;
+    private final DcMotor frontRight;
+    private final DcMotor backLeft;
+    private final DcMotor backRight;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
-        frontLeft  = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
-        backLeft   = hardwareMap.get(DcMotorEx.class, "backLeft");
-        backRight  = hardwareMap.get(DcMotorEx.class, "backRight");
+        frontLeft  = hardwareMap.get(DcMotor.class, "front_left_drive");
+        frontRight = hardwareMap.get(DcMotor.class, "front_right_drive");
+        backLeft   = hardwareMap.get(DcMotor.class, "back_left_drive");
+        backRight  = hardwareMap.get(DcMotor.class, "back_right_drive");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);

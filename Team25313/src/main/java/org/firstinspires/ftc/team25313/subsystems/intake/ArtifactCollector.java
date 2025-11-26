@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.team25313.subsystems.intake;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class ArtifactCollector {
 
-    private final DcMotorEx intakeMotor;
+    private final DcMotor intakeMotor;
 
     // Tốc độ có thể chỉnh trên dashboard
     public static double INTAKE_POWER = 0.8;
     public static double OUTTAKE_REVERSE_POWER = -0.8;
 
     public ArtifactCollector(HardwareMap hwMap) {
-        intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
+        intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 

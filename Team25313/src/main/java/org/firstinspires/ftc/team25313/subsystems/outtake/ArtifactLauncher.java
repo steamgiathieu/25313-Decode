@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.team25313.subsystems.outtake;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ArtifactLauncher {
 
-    private final DcMotorEx leftShooter, rightShooter;
+    private final DcMotor leftShooter, rightShooter;
     private final Servo feedServo;
 
     // 4 mức lực bắn
@@ -19,8 +18,8 @@ public class ArtifactLauncher {
     public static double FEED_PUSH = 0.35;
 
     public ArtifactLauncher(HardwareMap hwMap) {
-        leftShooter = hwMap.get(DcMotorEx.class, "leftShooter");
-        rightShooter = hwMap.get(DcMotorEx.class, "rightShooter");
+        leftShooter = hwMap.get(DcMotor.class, "leftShooter");
+        rightShooter = hwMap.get(DcMotor.class, "rightShooter");
         feedServo = hwMap.get(Servo.class, "feedServo");
 
         leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
