@@ -33,18 +33,18 @@ public class MainTeleOp extends LinearOpMode {
         // =============================================
         while (opModeIsActive()) {
             double forward = -gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
-            double turn = gamepad1.right_stick_x;
+            double right = gamepad1.left_stick_x;
+            double rotate = gamepad1.right_stick_x;
 
             // dùng hàm mới của drivetrain đơn giản
-            driveSubsystem.drive(forward, strafe, turn);
+            driveSubsystem.drive(forward, right, rotate);
 
             // =============================================
             // INTAKE CONTROL
             // =============================================
-            if (gamepad1.right_bumper) {
+            if (gamepad2.right_bumper) {
                 intake.collect();
-            } else if (gamepad1.left_bumper) {
+            } else if (gamepad2.left_bumper) {
                 intake.reverse();
             } else {
                 intake.stop();

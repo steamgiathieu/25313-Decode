@@ -18,31 +18,35 @@ public class DriveSubsystem {
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /** Điều khiển robot kiểu mecanum */
-    public void drive(double x, double y, double turn) {
-        double fl = y + x + turn;
-        double bl = y - x + turn;
-        double fr = y - x - turn;
-        double br = y + x - turn;
+    public void drive(double forward, double right, double rotate) {
+        double frontLeftPower = forward + right + rotate;
+        double frontRightPower = forward - right - rotate;
+        double backRightPower = forward + right - rotate;
+        double backLeftPower = forward - right + rotate;
 
-        // scale tránh vượt >1
-        double max = Math.max(1.0, Math.max(Math.abs(fl),
-                Math.max(Math.abs(bl), Math.max(Math.abs(fr), Math.abs(br)))));
+        double maxPower = 1.0;
+        double maxSpeed = 1.0;  // make this slower for outreaches
 
-        frontLeft.setPower(fl / max);
-        backLeft.setPower(bl / max);
-        frontRight.setPower(fr / max);
-        backRight.setPower(br / max);
+        // This is needed to make sure we don't pass > 1.0 to any wheel
+        // It allows us to keep all of the motors in proportion to what they should
+        // be and not get clipped
+        maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
+        maxPower = Math.max(maxPower, Math.abs(frontRightPower));
+        maxPower = Math.max(maxPower, Math.abs(backRightPower));
+        maxPower = Math.max(maxPower, Math.abs(backLeftPower));
+
+        // We multiply by maxSpeed so that it can be set lower for outreaches
+        // When a young child is driving the robot, we may not want to allow full
+        // speed.
+        frontLeft.setPower(maxSpeed * (frontLeftPower / maxPower));
+        frontRight.setPower(maxSpeed * (frontRightPower / maxPower));
+        backLeft.setPower(maxSpeed * (backLeftPower / maxPower));
+        backRight.setPower(maxSpeed * (backRightPower / maxPower));
     }
 
     /** Dừng robot */

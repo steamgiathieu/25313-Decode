@@ -17,16 +17,12 @@ public class ArtifactLauncher {
     public static double FEED_REST = 0.0;
     public static double FEED_PUSH = 0.35;
 
-    public ArtifactLauncher(HardwareMap hwMap) {
-        leftShooter = hwMap.get(DcMotor.class, "leftShooter");
-        rightShooter = hwMap.get(DcMotor.class, "rightShooter");
-        feedServo = hwMap.get(Servo.class, "feedServo");
-
-        leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    public ArtifactLauncher(HardwareMap hardwareMap) {
+        leftShooter = hardwareMap.get(DcMotor.class, "leftShooter");
+        rightShooter = hardwareMap.get(DcMotor.class, "rightShooter");
+        feedServo = hardwareMap.get(Servo.class, "feedServo");
 
         rightShooter.setDirection(DcMotor.Direction.REVERSE);
-
         feedServo.setPosition(FEED_REST);
     }
 
@@ -64,19 +60,6 @@ public class ArtifactLauncher {
     // ===============================
 
     /** Tăng mức lực bắn → nếu vượt mức 3 thì quay về mức 0 */
-    public void increasePowerLevel() {
-        currentLevelIndex++;
-        if (currentLevelIndex > 3) currentLevelIndex = 3;
-        // Nếu shooter đang chạy → cập nhật luôn power
-        applyCurrentPowerLevel();
-    }
-
-    public void decreasePowerLevel () {
-        currentLevelIndex--;
-        if (currentLevelIndex < 0) currentLevelIndex = 0;
-        applyCurrentPowerLevel();
-    }
-
     /** Áp dụng mức lực hiện tại nếu shooter đang bật */
     public void applyCurrentPowerLevel() {
         double p = SHOOTER_LEVELS[currentLevelIndex];
@@ -94,5 +77,17 @@ public class ArtifactLauncher {
     /** Lấy index mức lực (0–3) */
     public int getCurrentLevelIndex() {
         return currentLevelIndex;
+    }
+    public void increasePowerLevel() {
+        currentLevelIndex++;
+        if (currentLevelIndex > 3) currentLevelIndex = 3;
+        // Nếu shooter đang chạy → cập nhật luôn power
+        applyCurrentPowerLevel();
+    }
+
+    public void decreasePowerLevel () {
+        currentLevelIndex--;
+        if (currentLevelIndex < 0) currentLevelIndex = 0;
+        applyCurrentPowerLevel();
     }
 }

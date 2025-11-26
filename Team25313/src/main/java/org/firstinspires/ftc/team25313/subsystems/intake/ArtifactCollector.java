@@ -7,13 +7,11 @@ public class ArtifactCollector {
 
     private final DcMotor intakeMotor;
 
-    // Tốc độ có thể chỉnh trên dashboard
     public static double INTAKE_POWER = 0.8;
-    public static double OUTTAKE_REVERSE_POWER = -0.8;
+    public static double INTAKE_REVERSE_POWER = -0.8;
 
-    public ArtifactCollector(HardwareMap hwMap) {
-        intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public ArtifactCollector(HardwareMap hardwareMap) {
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
     }
 
     /** Hút bóng vào robot */
@@ -21,11 +19,9 @@ public class ArtifactCollector {
         intakeMotor.setPower(INTAKE_POWER);
     }
 
-    /** Alias dùng cho TeleOp — tương đương intake() */
-
     /** Đẩy bóng ra ngoài (đảo chiều) */
     public void reverse() {
-        intakeMotor.setPower(OUTTAKE_REVERSE_POWER);
+        intakeMotor.setPower(INTAKE_REVERSE_POWER);
     }
 
     /** Dừng intake */
