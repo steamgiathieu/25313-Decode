@@ -15,7 +15,6 @@ public class MainTeleOp extends LinearOpMode {
     private ArtifactLauncher outtake;
 
     // button edge detection
-    private boolean feedPrev = false;
     private boolean UpPrev = false;
     private boolean DownPrev = false;
 
@@ -25,7 +24,7 @@ public class MainTeleOp extends LinearOpMode {
         intake = new ArtifactCollector(hardwareMap);
         outtake = new ArtifactLauncher(hardwareMap);
 
-        telemetry.addLine("Initialized MainTeleOp!");
+        telemetry.addLine("Initialized Main TeleOp!");
         waitForStart();
 
         // =============================================
@@ -42,26 +41,16 @@ public class MainTeleOp extends LinearOpMode {
             // =============================================
             // INTAKE CONTROL
             // =============================================
-            if (gamepad2.right_bumper) {
-                intake.collect();
-            } else if (gamepad2.left_bumper) {
-                intake.reverse();
-            } else {
-                intake.stop();
-            }
+            if (gamepad2.y) intake.collect();
+            else if (gamepad2.a) intake.reverse();
+            else intake.stop();
 
             // =============================================
             // LAUNCHER CONTROL
             // =============================================
 
-            if (gamepad2.a) outtake.startShooter();
-            if (gamepad2.b) outtake.stopShooter();
-
-            boolean feedPressed = gamepad2.x;
-            if (feedPressed && !feedPrev) {
-                outtake.shootSingle();
-            }
-            feedPrev = feedPressed;
+            if (gamepad2.x) outtake.startShooter();
+            else if (gamepad2.b) outtake.stopShooter();
 
             boolean Up = gamepad2.dpad_up;
             boolean Down = gamepad2.dpad_down;
@@ -78,7 +67,7 @@ public class MainTeleOp extends LinearOpMode {
             // =============================================
             // TELEMETRY
             // =============================================    
-            telemetry.addLine("=== Robot Status ===");
+            telemetry.addLine("=== Posterboy's Telemetry ===");
             telemetry.addData("Shooter Level", outtake.getCurrentLevelIndex());
             telemetry.addData("Shooter Power", outtake.getCurrentPowerLevel());
             telemetry.addData("Intake Mode",

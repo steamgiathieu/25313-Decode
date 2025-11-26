@@ -22,7 +22,6 @@ public class DriveSubsystem {
         backRight.setDirection(DcMotor.Direction.FORWARD);
     }
 
-    /** Điều khiển robot kiểu mecanum */
     public void drive(double forward, double right, double rotate) {
         double frontLeftPower = forward + right + rotate;
         double frontRightPower = forward - right - rotate;
