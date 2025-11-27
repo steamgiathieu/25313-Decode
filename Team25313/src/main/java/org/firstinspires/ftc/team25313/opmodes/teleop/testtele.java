@@ -2,12 +2,12 @@ package org.firstinspires.ftc.team25313.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ServoController;
+import com.qualcomm.robotcore.hardware.CRServo;
 
-@TeleOp(name = "testtele")
+@TeleOp(name = "ServoTest3 (Blocks to Java)")
 public class testtele extends LinearOpMode {
 
-    private ServoController ControlHub_ServoController;
+    private CRServo CR_SERVO;
 
     /**
      * This sample contains the bare minimum Blocks for any regular OpMode. The 3 blue
@@ -18,7 +18,7 @@ public class testtele extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-        ControlHub_ServoController = hardwareMap.get(ServoController.class, "Control Hub");
+        CR_SERVO = hardwareMap.get(CRServo.class, "CR_SERVO");
 
         // Put initialization blocks here.
         waitForStart();
@@ -26,12 +26,11 @@ public class testtele extends LinearOpMode {
             // Put run blocks here.
             while (opModeIsActive()) {
                 // Put loop blocks here.
-                ControlHub_ServoController.pwmEnable();
-                telemetry.addData("servo bruh bruh lmao", ControlHub_ServoController.getPwmStatus());
+                CR_SERVO.setPower(-1);
+                sleep(1000);
+                CR_SERVO.setPower(0);
+                sleep(1000);
                 telemetry.update();
-                sleep(5000);
-                ControlHub_ServoController.pwmDisable();
-                sleep(5000);
             }
         }
     }
