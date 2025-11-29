@@ -7,23 +7,26 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ArtifactLauncher {
 
     private final DcMotor leftShooter, rightShooter;
-    private final Servo feedServo;
+    private final Servo ShooterAssistant;
 
     // 4 mức lực bắn
-    private final double[] SHOOTER_LEVELS = {0.50, 0.65, 0.80, 1.00};
+    private final double[] SHOOTER_LEVELS = {0.1, 0.2, 0.3, 0.4};
     private int currentLevelIndex = 0;
 
-    // Servo feed positions
-    public static double FEED_REST = 0.0;
-    public static double FEED_PUSH = 0.35;
+    public static double assistantRest = 0.0;
+    public static double assistantPush = 0.35;
 
-    public ArtifactLauncher(HardwareMap hardwareMap) {
-        leftShooter = hardwareMap.get(DcMotor.class, "leftShooter");
-        rightShooter = hardwareMap.get(DcMotor.class, "rightShooter");
-        feedServo = hardwareMap.get(Servo.class, "feedServo");
+
+    public ArtifactLauncher(HardwareMap hwMap) {
+        leftShooter = hwMap.get(DcMotor.class, "leftShooter");
+        rightShooter = hwMap.get(DcMotor.class, "rightShooter");
+        ShooterAssistant = hwMap.get(Servo.class, "ShooterAssistant");
+
+        leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         rightShooter.setDirection(DcMotor.Direction.REVERSE);
-        feedServo.setPosition(FEED_REST);
+        ShooterAssistant.setPosition(assistantRest);
     }
 
     /** Bật shooter với mức lực hiện tại */
@@ -40,24 +43,14 @@ public class ArtifactLauncher {
     }
 
     /** Đẩy bóng vào shooter */
-    public void feed() {
-        feedServo.setPosition(FEED_PUSH);
+    public void push() {
+        ShooterAssistant.setPosition(assistantPush);
     }
 
     /** Thu servo về vị trí nghỉ */
-    public void resetFeed() {
-        feedServo.setPosition(FEED_REST);
+    public void rest() {
+        ShooterAssistant.setPosition(assistantRest);
     }
-
-    /** Bắn 1 quả */
-    public void shootSingle() {
-        feed();
-        resetFeed();
-    }
-
-    // ===============================
-    //  TÍNH NĂNG CHỈNH LỰC
-    // ===============================
 
     /** Tăng mức lực bắn → nếu vượt mức 3 thì quay về mức 0 */
     /** Áp dụng mức lực hiện tại nếu shooter đang bật */

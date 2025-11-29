@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
+import org.firstinspires.ftc.team25313.subsystems.sensor.REVDistanceSensor;
 
 @TeleOp(name = "Main TeleOp", group = "TeleOp")
 public class MainTeleOp extends LinearOpMode {
@@ -13,8 +14,10 @@ public class MainTeleOp extends LinearOpMode {
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
     private ArtifactLauncher outtake;
+    private REVDistanceSensor sensorDistance;
 
     // button edge detection
+
     private boolean UpPrev = false;
     private boolean DownPrev = false;
 
@@ -23,6 +26,7 @@ public class MainTeleOp extends LinearOpMode {
         driveSubsystem = new DriveSubsystem(hardwareMap);
         intake = new ArtifactCollector(hardwareMap);
         outtake = new ArtifactLauncher(hardwareMap);
+        sensorDistance = new REVDistanceSensor(hardwareMap);
 
         telemetry.addLine("Initialized Main TeleOp!");
         waitForStart();
@@ -52,27 +56,34 @@ public class MainTeleOp extends LinearOpMode {
             if (gamepad2.x) outtake.startShooter();
             else if (gamepad2.b) outtake.stopShooter();
 
-            boolean Up = gamepad2.dpad_up;
-            boolean Down = gamepad2.dpad_down;
+            boolean Up = gamepad1.dpad_up;
+            boolean Down = gamepad1.dpad_down;
             if (Up && !UpPrev) {
                 outtake.increasePowerLevel();
             }
             else if (Down && !DownPrev) {
                 outtake.decreasePowerLevel();
             }
-
             UpPrev = Up;
             DownPrev = Down;
 
+            // Servo
+            if (gamepad2.left_bumper) outtake.push();
+            else if (gamepad2.right_bumper) outtake.rest();
+
+            // Sensor
+            double Data = sensorDistance.GetData();
+
             // =============================================
             // TELEMETRY
-            // =============================================    
+            // =============================================
             telemetry.addLine("=== Posterboy's Telemetry ===");
             telemetry.addData("Shooter Level", outtake.getCurrentLevelIndex());
             telemetry.addData("Shooter Power", outtake.getCurrentPowerLevel());
             telemetry.addData("Intake Mode",
                     gamepad2.right_bumper ? "COLLECT" :
                             gamepad2.left_bumper ? "REVERSE" : "STOP");
+            telemetry.addData("Distance", "%.1f", Data);
             telemetry.update();
         }
     }
