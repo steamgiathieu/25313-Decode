@@ -36,25 +36,25 @@ public class MainTeleOp extends LinearOpMode {
         // =============================================
         while (opModeIsActive()) {
             double forward = -gamepad1.left_stick_y;
-            double right = gamepad1.left_stick_x;
+            double strafe = gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
 
-            // dùng hàm mới của drivetrain đơn giản
-            driveSubsystem.drive(forward, right, rotate);
+            driveSubsystem.drive(forward, strafe, rotate);
+
 
             // =============================================
             // INTAKE CONTROL
             // =============================================
-            if (gamepad2.y) intake.collect();
-            else if (gamepad2.a) intake.reverse();
+            if (gamepad1.y) intake.collect();
+            else if (gamepad1.a) intake.reverse();
             else intake.stop();
 
             // =============================================
             // LAUNCHER CONTROL
             // =============================================
 
-            if (gamepad2.x) outtake.startShooter();
-            else if (gamepad2.b) outtake.stopShooter();
+            if (gamepad1.x) outtake.startShooter();
+            else if (gamepad1.b) outtake.stopShooter();
 
             boolean Up = gamepad1.dpad_up;
             boolean Down = gamepad1.dpad_down;
@@ -68,8 +68,8 @@ public class MainTeleOp extends LinearOpMode {
             DownPrev = Down;
 
             // Servo
-            if (gamepad2.left_bumper) outtake.push();
-            else if (gamepad2.right_bumper) outtake.rest();
+            if (gamepad1.left_bumper) outtake.push();
+            else outtake.rest();
 
             // Sensor
             double Data = sensorDistance.GetData();
@@ -78,11 +78,10 @@ public class MainTeleOp extends LinearOpMode {
             // TELEMETRY
             // =============================================
             telemetry.addLine("=== Posterboy's Telemetry ===");
-            telemetry.addData("Shooter Level", outtake.getCurrentLevelIndex());
             telemetry.addData("Shooter Power", outtake.getCurrentPowerLevel());
             telemetry.addData("Intake Mode",
-                    gamepad2.right_bumper ? "COLLECT" :
-                            gamepad2.left_bumper ? "REVERSE" : "STOP");
+                    gamepad1.right_bumper ? "COLLECT" :
+                            gamepad1.left_bumper ? "REVERSE" : "STOP");
             telemetry.addData("Distance", "%.1f", Data);
             telemetry.update();
         }

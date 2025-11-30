@@ -3,15 +3,15 @@ package org.firstinspires.ftc.team25313.subsystems.outtake;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ArtifactLauncher {
 
     private final DcMotor leftShooter, rightShooter;
     private final Servo ShooterAssistant;
 
-    // 4 mức lực bắn
-    private final double[] SHOOTER_LEVELS = {0.1, 0.2, 0.3, 0.4};
-    private int currentLevelIndex = 0;
+    private double Power = 0.3;
+    private double delta = 0.01;
 
     public static double assistantRest = 0.0;
     public static double assistantPush = 0.35;
@@ -31,9 +31,8 @@ public class ArtifactLauncher {
 
     /** Bật shooter với mức lực hiện tại */
     public void startShooter() {
-        double power = SHOOTER_LEVELS[currentLevelIndex];
-        leftShooter.setPower(power);
-        rightShooter.setPower(power);
+        leftShooter.setPower(Power);
+        rightShooter.setPower(Power);
     }
 
     /** Tắt shooter */
@@ -46,8 +45,6 @@ public class ArtifactLauncher {
     public void push() {
         ShooterAssistant.setPosition(assistantPush);
     }
-
-    /** Thu servo về vị trí nghỉ */
     public void rest() {
         ShooterAssistant.setPosition(assistantRest);
     }
@@ -55,32 +52,23 @@ public class ArtifactLauncher {
     /** Tăng mức lực bắn → nếu vượt mức 3 thì quay về mức 0 */
     /** Áp dụng mức lực hiện tại nếu shooter đang bật */
     public void applyCurrentPowerLevel() {
-        double p = SHOOTER_LEVELS[currentLevelIndex];
+        double p = Power;
         if (leftShooter.getPower() > 0.05 || rightShooter.getPower() > 0.05) {
             leftShooter.setPower(p);
             rightShooter.setPower(p);
         }
     }
-
     /** Lấy mức lực hiện tại */
     public double getCurrentPowerLevel() {
-        return SHOOTER_LEVELS[currentLevelIndex];
-    }
-
-    /** Lấy index mức lực (0–3) */
-    public int getCurrentLevelIndex() {
-        return currentLevelIndex;
+        return Power;
     }
     public void increasePowerLevel() {
-        currentLevelIndex++;
-        if (currentLevelIndex > 3) currentLevelIndex = 3;
-        // Nếu shooter đang chạy → cập nhật luôn power
+        Power += delta;
         applyCurrentPowerLevel();
     }
 
     public void decreasePowerLevel () {
-        currentLevelIndex--;
-        if (currentLevelIndex < 0) currentLevelIndex = 0;
+        Power -= delta;
         applyCurrentPowerLevel();
     }
 }

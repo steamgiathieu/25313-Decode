@@ -24,27 +24,27 @@ public class DriveSubsystem {
 
     private static final double deadzone = 0.05;
     private double applyDeadzone(double value) {
-        if (Math.abs(value) < 0.05) return 0;
-        return Math.signum(value) * ((Math.abs(value) - 0.05) / (1 - 0.05));
+        return Math.abs(value) < 0.05 ? 0 : value;
     }
 
-    public void drive(double forward, double right, double rotate) {
-        forward = applyDeadzone(forward);
-        right = applyDeadzone(right);
-        rotate = applyDeadzone(rotate);
+    private double smooth (double x) {
+        return x * x * x;
+    }
 
-        double frontLeftPower = forward + right + rotate;
-        double frontRightPower = forward - right - rotate;
-        double backRightPower = forward + right - rotate;
-        double backLeftPower = forward - right + rotate;
+    public void drive(double forward, double strafe, double rotate) {
+        forward = smooth(applyDeadzone(forward));
+        strafe = smooth(applyDeadzone(strafe));
+        rotate = smooth(applyDeadzone(rotate));
 
-        // We multiply by maxSpeed so that it can be set lower for outreaches
-        // When a young child is driving the robot, we may not want to allow full
-        // speed.
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
+        double frontLeftPower = forward + strafe + rotate;
+        double frontRightPower = forward - strafe - rotate;
+        double backRightPower = forward + strafe - rotate;
+        double backLeftPower = forward - strafe + rotate;
+
+        frontLeft.setPower(frontLeftPower * 0.5);
+        frontRight.setPower(frontRightPower * 0.5);
+        backLeft.setPower(backLeftPower * 0.5);
+        backRight.setPower(backRightPower * 0.5);
     }
 
     /** Dừng robot */
