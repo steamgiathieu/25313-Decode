@@ -49,10 +49,10 @@ public class DriveSubsystem {
         maxPower = Math.max(maxPower, Math.abs(backRightPower));
         maxPower = Math.max(maxPower, Math.abs(backLeftPower));
 
-        frontLeft.setPower(maxSpeed * (frontLeftPower / maxPower));
-        frontRight.setPower(maxSpeed * (frontRightPower / maxPower));
-        backLeft.setPower(maxSpeed * (backLeftPower / maxPower));
-        backRight.setPower(maxSpeed * (backRightPower / maxPower));
+        frontLeft.setPower((maxSpeed * (frontLeftPower / maxPower)) * 0.5);
+        frontRight.setPower((maxSpeed * (frontRightPower / maxPower)) * 0.5);
+        backLeft.setPower((maxSpeed * (backLeftPower / maxPower)) * 0.5);
+        backRight.setPower((maxSpeed * (backRightPower / maxPower)) * 0.5);
     }
 
     /** Dừng robot */
