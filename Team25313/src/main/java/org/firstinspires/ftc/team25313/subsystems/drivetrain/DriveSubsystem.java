@@ -18,8 +18,8 @@ public class DriveSubsystem {
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+//        frontRight.setDirection(DcMotor.Direction.FORWARD);
+//        backRight.setDirection(DcMotor.Direction.FORWARD);
     }
 
     private static final double deadzone = 0.05;
@@ -41,10 +41,18 @@ public class DriveSubsystem {
         double backRightPower = forward + strafe - rotate;
         double backLeftPower = forward - strafe + rotate;
 
-        frontLeft.setPower(frontLeftPower * 0.5);
-        frontRight.setPower(frontRightPower * 0.5);
-        backLeft.setPower(backLeftPower * 0.5);
-        backRight.setPower(backRightPower * 0.5);
+        double maxPower = 1.0;
+        double maxSpeed = 1.0;
+
+        maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
+        maxPower = Math.max(maxPower, Math.abs(frontRightPower));
+        maxPower = Math.max(maxPower, Math.abs(backRightPower));
+        maxPower = Math.max(maxPower, Math.abs(backLeftPower));
+
+        frontLeft.setPower(maxSpeed * (frontLeftPower / maxPower));
+        frontRight.setPower(maxSpeed * (frontRightPower / maxPower));
+        backLeft.setPower(maxSpeed * (backLeftPower / maxPower));
+        backRight.setPower(maxSpeed * (backRightPower / maxPower));
     }
 
     /** Dừng robot */
