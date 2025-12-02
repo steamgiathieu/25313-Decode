@@ -2,93 +2,90 @@ package org.firstinspires.ftc.team25313;
 
 import com.acmerobotics.dashboard.config.Config;
 
-/**
- * Centralized configuration for the entire robot.
- * Use with FTC Dashboard for live tuning and consistent constants management.
- */
 @Config
 public final class Constants {
 
-    /*** --- General Robot Info --- ***/
-    public static final String ROBOT_NAME = "STEAM GIA THIEU";
-    public static final boolean USE_DASHBOARD = true;
+    // General Robot Info
+    public static final String botName = "STEAM GIA THIEU";
+    public static final boolean isUsingDashboard = true;
 
-    /*** --- Alliance (for auto & teleop logic) --- ***/
+    // Alliances
     public enum AllianceColor { BLUE, RED }
-    public static AllianceColor CURRENT_ALLIANCE = AllianceColor.BLUE;
+    public static AllianceColor currentAlliance = AllianceColor.BLUE;
 
-    /*** --- Drivetrain Motor Names --- ***/
-    public static final String FRONT_LEFT_MOTOR  = "frontLeft";
-    public static final String FRONT_RIGHT_MOTOR = "frontRight";
-    public static final String BACK_LEFT_MOTOR   = "backLeft";
-    public static final String BACK_RIGHT_MOTOR  = "backRight";
+    // Drivetrain motor name
+    public static final String frontLeft  = "frontLeft";
+    public static final String frontRight = "frontRight";
+    public static final String backLeft   = "backLeft";
+    public static final String backRight  = "backRight";
 
-    /*** --- Odometry Pods --- ***/
-    public static final String ODO_LEFT  = "odoLeft";
-    public static final String ODO_RIGHT = "odoRight";
-    public static final String ODO_BACK  = "odoBack";
+    // Odometry pods
+    public static final String odoLeft  = "odoLeft";
+    public static final String odoRight = "odoRight";
+    public static final String odoBack  = "odoBack";
 
-    /*** --- Drivetrain Constants --- ***/
-    public static final double TICKS_PER_REV = 537.7; // GoBilda 312 RPM
-    public static final double MAX_RPM = 312.0;
-    public static final double WHEEL_RADIUS = 1.8898; // inches
-    public static final double GEAR_RATIO = 1.0; // 1:1
-    public static final double TRACK_WIDTH = 14.5; // inches
-    public static final double ODOMETRY_TRACK_WIDTH = 14.8; // inches
-    public static final double ODOMETRY_CENTER_OFFSET = -7.2; // inches
+    // Drivetrain constants
+    public static final double ticksPerRev = 537.7;
+    public static final double maxRPM = 312.0;
+    public static final double wheelRads = 1.8898; // inches
+    public static final double gearRatio = 1.0; // 1:1
+    public static final double trackWidth = 14.5; // inches
+    public static final double odoTrackWidth = 14.8; // inches
+    public static final double odoCenterOffset = -7.2; // inches
 
-    /*** --- PIDF for Drive Motors --- ***/
-    public static double DRIVE_kP = 1.0;
-    public static double DRIVE_kI = 0.0;
-    public static double DRIVE_kD = 0.1;
-    public static double DRIVE_kF = 0.0;
+    // PIDF for Drive motors
+    public static double drive_kP = 1.0;
+    public static double drive_kI = 0.0;
+    public static double drive_kD = 0.1;
+    public static double drive_kF = 0.0;
 
-    /*** --- Motion Constraints (for PedroPathing / trajectory control) --- ***/
-    public static double MAX_VEL = 50.0; // inches/s
-    public static double MAX_ACCEL = 45.0; // inches/s^2
-    public static double MAX_ANG_VEL = Math.toRadians(180);
-    public static double MAX_ANG_ACCEL = Math.toRadians(180);
+    // Motion Constraints (for PedroPathing / trajectory control)
+    public static double maxVel = 50.0; // inches/s
+    public static double maxAccel = 45.0; // inches/s^2
+    public static double maxAngVel = Math.toRadians(180);
+    public static double maxAngAccel = Math.toRadians(180);
 
-    /*** --- Intake Subsystem --- ***/
-    public static final String INTAKE_MOTOR = "intakeMotor";
-    public static final double INTAKE_POWER = 1.0;
+    // Intake Subsystem
+    public static final String intakeMotor = "intakeMotor";
+    public static final double intakePower = 1.0;
 
-    /*** --- Outtake Subsystem --- ***/
-    public static final String OUTTAKE_MOTOR = "outtakeMotor";
-    public static final String OUTTAKE_SERVO = "outtakeServo";
-    public static final double OUTTAKE_SHOOT_POWER = 0.9;
-    public static final double OUTTAKE_SERVO_PUSH = 0.7;
-    public static final double OUTTAKE_SERVO_RETRACT = 0.2;
+    // Outtake Subsystem
+    public static final String outtakeMotor = "outtakeMotor";
+    public static final String outtakeServo = "outtakeServo";
+    public static final double outtakeLaunchPower = 0.9;
+    public static final double outtakeServoPush = 0.7;
+    public static final double outtakeServoRetract = 0.2;
 
-    /*** --- Lift Subsystem --- ***/
-    public static final String LIFT_MOTOR = "liftMotor";
-    public static final int LIFT_LOW = 200;
-    public static final int LIFT_MID = 400;
-    public static final int LIFT_HIGH = 600;
-    public static final double LIFT_POWER = 0.8;
+    // Lift Subsystem
+    public static final String leftLift = "leftLift";
+    public static final String rightLift = "rightLift";
+    public static final int liftLow = 200;
+    public static final int liftMid = 400;
+    public static final int liftHigh = 600;
+    public static final double liftPower = 0.8;
 
-    /*** --- Camera & Vision --- ***/
-    public static final String WEBCAM_NAME = "Webcam 1";
-    public static final String APRILTAG_PROCESSOR = "aprilTagProcessor";
-    public static final double CAMERA_X_OFFSET = 0.0; // inches
-    public static final double CAMERA_Y_OFFSET = 0.0; // inches
-    public static final double CAMERA_HEADING_OFFSET = 0.0; // radians
+    // Camera & Vision
+    public static final String webcamName = "Webcam 1";
+    public static final String aprilTagProcessor = "aprilTagProcessor";
+    public static final double camXOffset = 0.0; // inches
+    public static final double camYOffset = 0.0; // inches
+    public static final double camHeadingOffset = 0.0; // radians
 
-    /*** --- Miscellaneous --- ***/
-    public static final boolean FIELD_CENTRIC = true;
-    public static final boolean USE_ODOMETRY = true;
-    public static final boolean DEBUG_MODE = true;
+    // Miscellaneous
+    public static final boolean fieldCentric = true;
+    public static final boolean useOdometry = true;
+    public static final boolean debugMode = true;
 
-    /*** --- Utility Methods --- ***/
+    // Utility Methods
     private Constants() {
         // Prevent instantiation
     }
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return wheelRads * 2 * Math.PI * gearRatio * ticks / ticksPerRev;
     }
 
     public static double rpmToVelocity(double rpm) {
-        return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
+        return rpm * gearRatio * 2 * Math.PI * wheelRads / 60.0;
     }
 }

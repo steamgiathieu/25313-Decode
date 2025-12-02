@@ -9,7 +9,6 @@ import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.vision.Camera;
-import org.firstinspires.ftc.team25313.subsystems.vision.DetectArtifactProcessor;
 
 @Autonomous(name = "Main Auto", group = "Auto")
 public abstract class MainAuto extends LinearOpMode {
@@ -19,7 +18,6 @@ public abstract class MainAuto extends LinearOpMode {
 
     protected DriveSubsystem driveSubsystem;
     protected Camera camera;
-    protected DetectArtifactProcessor vision;
 
     protected abstract void initStartingCondition();
 
@@ -30,7 +28,6 @@ public abstract class MainAuto extends LinearOpMode {
         // Khởi tạo đúng HardwareMap
         driveSubsystem = new DriveSubsystem(hardwareMap);
         camera = new Camera(this);
-        vision = new DetectArtifactProcessor(this);
 
         // Lấy pose xuất phát
 //        Pose startPose = getStartPose(startingPos);
