@@ -3,7 +3,7 @@ package org.firstinspires.ftc.team25313.subsystems.drivetrain;
 public class DriveConstants {
 
     // Robot basic stats
-    public static final double wheelRad = 3.81889764; //inches
+    public static final double wheelRad = 1.90944882; //inches
     public static final double gearRatio = 1.0;
     public static final double trackWidth = 13.6; // d between front & back wheels in inches
     public static final double lateralDistance = 7.5; // d between left & right odo wheels in inches
