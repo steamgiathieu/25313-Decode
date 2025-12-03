@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team25313.subsystems.drivetrain.Control;
+package org.firstinspires.ftc.team25313.subsystems.drivetrain.control;
 
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.util.MathUtil;
 

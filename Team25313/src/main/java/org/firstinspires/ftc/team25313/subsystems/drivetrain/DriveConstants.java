@@ -17,7 +17,9 @@ public class DriveConstants {
     public static final double maxRPM = 312.0;
     public static final double maxRPMFraction = 0.85;
     public static final double maxVel = (maxRPM / 60.0) * (2 * Math.PI * wheelRad) * gearRatio;
-    public static final double maxAccel = 50.0;
+    public static final double maxAccelStrafe = 2.5;
+    public static final double maxAccelForward = 2.5;
+    public static final double maxAccelTurn = 3.0;
 
     // Feedforward
     public static final double kV = 1.0 / maxVel;
@@ -25,6 +27,8 @@ public class DriveConstants {
     public static final double kStatic = 0.03;
 
     // PID
+    public static double targetHeading = 0.0;
+    public static final double maxHeadingCorrection = 0.5;
     public static final double headingP = 2.5;
     public static final double headingI = 0.0;
     public static final double headingD = 0.15;
@@ -52,4 +56,8 @@ public class DriveConstants {
     // TeleOp limits
     public static final double slowModeMultiplier = 0.4;
     public static final double normalModeMultiplier = 1.0;
+
+    // Deadzone
+    public static final double deadzone = 0.05;
+
 }
