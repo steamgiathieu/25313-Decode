@@ -46,15 +46,14 @@ public final class Constants {
     public static double maxAngAccel = Math.toRadians(180);
 
     // Intake Subsystem
-    public static final String intakeMotor = "intakeMotor";
-    public static final double intakePower = 1.0;
+    public static final String intake = "intake_servo";
+    public static final double intakeIn = 1.0;
+    public static final double intakeOut = -1.0;
 
     // Outtake Subsystem
-    public static final String outtakeMotor = "outtakeMotor";
-    public static final String outtakeServo = "outtakeServo";
-    public static final double outtakeLaunchPower = 0.9;
-    public static final double outtakeServoPush = 0.7;
-    public static final double outtakeServoRetract = 0.2;
+    public static final String leftShooter = "leftShooter";
+    public static final String rightShooter = "rightShooter";
+    public static final double launchPower = 0.5;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";

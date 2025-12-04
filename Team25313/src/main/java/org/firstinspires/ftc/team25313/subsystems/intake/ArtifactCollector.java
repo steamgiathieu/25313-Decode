@@ -1,31 +1,26 @@
 package org.firstinspires.ftc.team25313.subsystems.intake;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.team25313.Constants;
 
 public class ArtifactCollector {
+    private CRServo intake;
+    private static final double intakeIn = Constants.intakeIn;
+    private static final double intakeOut = Constants.intakeOut;
 
-    private final DcMotor intakeMotor;
-
-    public static double INTAKE_POWER = 0.8;
-    public static double INTAKE_REVERSE_POWER = -0.8;
-
-    public ArtifactCollector(HardwareMap hardwareMap) {
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+    public ArtifactCollector(HardwareMap hwmap) {
+        intake = hwmap.get(CRServo.class, "intakeServo");
+    }
+    public void collect () {
+        intake.setPower(intakeIn);
     }
 
-    /** Hút bóng vào robot */
-    public void collect() {
-        intakeMotor.setPower(INTAKE_POWER);
+    public void reverse () {
+        intake.setPower(intakeOut);
     }
 
-    /** Đẩy bóng ra ngoài (đảo chiều) */
-    public void reverse() {
-        intakeMotor.setPower(INTAKE_REVERSE_POWER);
-    }
-
-    /** Dừng intake */
     public void stop() {
-        intakeMotor.setPower(0);
+        intake.setPower(0);
     }
 }

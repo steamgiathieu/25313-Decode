@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.team25313.subsystems.drivetrain;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.DrivePID;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.HeadingPID;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.SlewRateLimiter;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.util.MathUtil;
@@ -20,7 +19,6 @@ public class DriveSubsystem {
     private final SlewRateLimiter yLimiter;
     private final SlewRateLimiter turnLimiter;
 
-    private final DrivePID drivePID;
     private final HeadingPID headingPID;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
@@ -31,19 +29,19 @@ public class DriveSubsystem {
         rightBack = hardwareMap.get(DcMotor.class, "back_right_drive");
 
         imu = hardwareMap.get(IMU.class, "imu");
-
-        imu.initialize(new IMU.Parameters());
+        IMU.Parameters myIMUparameters;
+        myIMUparameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                )
+        );
+        imu.initialize(myIMUparameters);
 
         // Control classes
         xLimiter = new SlewRateLimiter(DriveConstants.maxAccelStrafe);
         yLimiter = new SlewRateLimiter(DriveConstants.maxAccelForward);
         turnLimiter = new SlewRateLimiter(DriveConstants.maxAccelTurn);
-
-        drivePID = new DrivePID(
-                DriveConstants.driveP,
-                DriveConstants.driveI,
-                DriveConstants.driveD
-        );
 
         headingPID = new HeadingPID(
                 DriveConstants.headingP,
@@ -63,11 +61,11 @@ public class DriveSubsystem {
         y = yLimiter.calculate(y);
         turn = turnLimiter.calculate(turn);
 
-        if (Math.abs(turn) < 0.02) {  // nếu không xoay bằng tay
+        if (Math.abs(turn) < 0.02) {  // if rotate was not made by user
             double correction = calculateHeadingCorrection();
-            turn = correction;         // dùng PID để giữ hướng
-        } else {
-            // người chơi tự xoay → update lại heading mục tiêu
+            turn = correction;         // use PID to correct heading
+        } else { // rotate manually
+            // Update heading
             DriveConstants.targetHeading = getHeading();
             headingPID.reset();
         }
@@ -79,19 +77,19 @@ public class DriveSubsystem {
         double cos = Math.cos(theta - Math.PI/4);
         double max = Math.max(Math.abs(sin), Math.abs(cos));
 
-        double lfP = power * cos/max + turn;
-        double rfP = power * sin/max - turn;
-        double lbP = power * sin/max + turn;
-        double rbP = power * cos/max - turn;
+        double leftFrontPower = power * cos/max + turn;
+        double rightFrontPower = power * sin/max - turn;
+        double leftBackPower = power * sin/max + turn;
+        double rightBackPower = power * cos/max - turn;
 
         if ((power + Math.abs(turn)) > 1) {
-            lfP /= power + turn;
-            rfP /= power + turn;
-            lbP /= power + turn;
-            rbP /= power + turn;
+            leftFrontPower /= power + turn;
+            rightFrontPower /= power + turn;
+            leftBackPower /= power + turn;
+            rightBackPower /= power + turn;
         }
 
-        setMotorPower(lfP, lbP, rfP, rbP);
+        setMotorPower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
     }
 
     public void setMotorPower(double lfP, double lbP, double rfP, double rbP) {
@@ -117,7 +115,7 @@ public class DriveSubsystem {
                 currentHeading
         );
 
-        // Clamp để robot không xoay quá mạnh
+        // Clamp to smooth rotation
         correction = MathUtil.clamp(
                 correction,
                 -DriveConstants.maxHeadingCorrection,
