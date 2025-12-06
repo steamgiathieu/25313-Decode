@@ -14,10 +14,10 @@ public final class Constants {
     public static AllianceColor currentAlliance = AllianceColor.BLUE;
 
     // Drivetrain motor name
-    public static final String frontLeft  = "frontLeft";
-    public static final String frontRight = "frontRight";
-    public static final String backLeft   = "backLeft";
-    public static final String backRight  = "backRight";
+    public static final String frontLeft  = "front_left_drive";
+    public static final String frontRight = "front_right_drive";
+    public static final String backLeft   = "back_left_drive";
+    public static final String backRight  = "back_right_drive";
 
     // Odometry pods
     public static final String odoLeft  = "odoLeft";
@@ -46,7 +46,7 @@ public final class Constants {
     public static double maxAngAccel = Math.toRadians(180);
 
     // Intake Subsystem
-    public static final String intake = "intake_servo";
+    public static final String intake = "intake";
     public static final double intakeIn = 1.0;
     public static final double intakeOut = -1.0;
 

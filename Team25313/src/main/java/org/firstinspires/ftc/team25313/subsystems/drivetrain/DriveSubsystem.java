@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.HeadingPID;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.SlewRateLimiter;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.util.MathUtil;
-
+import org.firstinspires.ftc.team25313.Constants;
 public class DriveSubsystem {
 
     private DcMotor leftFront, leftBack, rightFront, rightBack;
@@ -24,10 +24,10 @@ public class DriveSubsystem {
 
     public DriveSubsystem(HardwareMap hardwareMap) {
 
-        leftFront = hardwareMap.get(DcMotor.class, "front_left_drive");
-        leftBack = hardwareMap.get(DcMotor.class, "back_left_drive");
-        rightFront = hardwareMap.get(DcMotor.class, "front_right_drive");
-        rightBack = hardwareMap.get(DcMotor.class, "back_right_drive");
+        leftFront = hardwareMap.get(DcMotor.class, Constants.frontLeft);
+        leftBack = hardwareMap.get(DcMotor.class, Constants.backLeft);
+        rightFront = hardwareMap.get(DcMotor.class, Constants.frontRight);
+        rightBack = hardwareMap.get(DcMotor.class, Constants.backRight);
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -84,7 +84,7 @@ public class DriveSubsystem {
 
         double frontLeftPower = forward + strafe + rotate;
         double frontRightPower = forward- strafe - rotate;
-        double backLeftPower = forward- strafe + rotate;
+        double backLeftPower = forward - strafe + rotate;
         double backRightPower = forward + strafe - rotate;
         setMotorPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
     }
