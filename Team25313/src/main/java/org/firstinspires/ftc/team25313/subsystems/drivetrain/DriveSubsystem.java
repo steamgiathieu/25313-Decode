@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team25313.subsystems.drivetrain;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,11 +16,11 @@ public class DriveSubsystem {
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private IMU imu;
 
-    private final SlewRateLimiter xLimiter;
-    private final SlewRateLimiter yLimiter;
-    private final SlewRateLimiter turnLimiter;
+//    private final SlewRateLimiter xLimiter;
+//    private final SlewRateLimiter yLimiter;
+//    private final SlewRateLimiter turnLimiter;
 
-    private final HeadingPID headingPID;
+//    private final HeadingPID headingPID;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
 
@@ -28,100 +29,96 @@ public class DriveSubsystem {
         rightFront = hardwareMap.get(DcMotor.class, "front_right_drive");
         rightBack = hardwareMap.get(DcMotor.class, "back_right_drive");
 
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters myIMUparameters;
         myIMUparameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
                 )
         );
         imu.initialize(myIMUparameters);
 
         // Control classes
-        xLimiter = new SlewRateLimiter(DriveConstants.maxAccelStrafe);
-        yLimiter = new SlewRateLimiter(DriveConstants.maxAccelForward);
-        turnLimiter = new SlewRateLimiter(DriveConstants.maxAccelTurn);
-
-        headingPID = new HeadingPID(
-                DriveConstants.headingP,
-                DriveConstants.headingI,
-                DriveConstants.headingD
-        );
+//        xLimiter = new SlewRateLimiter(DriveConstants.maxAccelStrafe);
+//        yLimiter = new SlewRateLimiter(DriveConstants.maxAccelForward);
+//        turnLimiter = new SlewRateLimiter(DriveConstants.maxAccelTurn);
+//
+//        headingPID = new HeadingPID(
+//                DriveConstants.headingP,
+//                DriveConstants.headingI,
+//                DriveConstants.headingD
+//        );
     }
 
-    public void drive(double x, double y, double turn) {
+    public void drive(double forward, double strafe, double rotate) {
         // Apply deadzone
-        x = MathUtil.applyDeadzone(x);
-        y = MathUtil.applyDeadzone(y);
-        turn = MathUtil.applyDeadzone(turn);
+        forward = MathUtil.applyDeadzone(forward);
+        strafe = MathUtil.applyDeadzone(strafe);
+        rotate = MathUtil.applyDeadzone(rotate);
 
         // Smooth movement with slew rate limiters
-        x = xLimiter.calculate(x);
-        y = yLimiter.calculate(y);
-        turn = turnLimiter.calculate(turn);
+//        x = xLimiter.calculate(x);
+//        y = yLimiter.calculate(y);
+//        turn = turnLimiter.calculate(turn);
 
-        if (Math.abs(turn) < 0.02) {  // if rotate was not made by user
-            double correction = calculateHeadingCorrection();
-            turn = correction;         // use PID to correct heading
-        } else { // rotate manually
-            // Update heading
-            DriveConstants.targetHeading = getHeading();
-            headingPID.reset();
-        }
+//        if (Math.abs(turn) < 0.02) {  // if rotate was not made by user
+//            double correction = calculateHeadingCorrection();
+//            turn = correction;         // use PID to correct heading
+//        } else { // rotate manually
+//            // Update heading
+//            DriveConstants.targetHeading = getHeading();
+//            headingPID.reset();
+//        }
 
-        double theta = Math.atan2(y, x);
-        double power = Math.hypot(x, y);
+        double robotAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double theta = Math.atan2(forward, strafe);
+        double r = Math.hypot(forward, strafe);
+        theta = AngleUnit.normalizeRadians(theta - robotAngle);
 
-        double sin = Math.sin(theta - Math.PI/4);
-        double cos = Math.cos(theta - Math.PI/4);
-        double max = Math.max(Math.abs(sin), Math.abs(cos));
+        forward = r * Math.sin(theta);
+        strafe = r * Math.cos(theta);
 
-        double leftFrontPower = power * cos/max + turn;
-        double rightFrontPower = power * sin/max - turn;
-        double leftBackPower = power * sin/max + turn;
-        double rightBackPower = power * cos/max - turn;
-
-        if ((power + Math.abs(turn)) > 1) {
-            leftFrontPower /= power + turn;
-            rightFrontPower /= power + turn;
-            leftBackPower /= power + turn;
-            rightBackPower /= power + turn;
-        }
-
-        setMotorPower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
+        double frontLeftPower = forward + strafe + rotate;
+        double frontRightPower = forward- strafe - rotate;
+        double backLeftPower = forward- strafe + rotate;
+        double backRightPower = forward + strafe - rotate;
+        setMotorPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
     }
 
     public void setMotorPower(double lfP, double lbP, double rfP, double rbP) {
-        leftFront.setPower(lfP);
-        leftBack.setPower(lbP);
-        rightFront.setPower(rfP);
-        rightBack.setPower(rbP);
+        leftFront.setPower(lfP * 0.5);
+        leftBack.setPower(lbP * 0.5);
+        rightFront.setPower(rfP * 0.5);
+        rightBack.setPower(rbP * 0.5);
     }
 
-    public double getHeading() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-    }
-
-    public double headingPID(double targetHeading) {
-        return headingPID.calculate(targetHeading, getHeading());
-    }
-
-    public double calculateHeadingCorrection() {
-        double currentHeading = getHeading();
-
-        double correction = headingPID.calculate(
-                DriveConstants.targetHeading,
-                currentHeading
-        );
-
-        // Clamp to smooth rotation
-        correction = MathUtil.clamp(
-                correction,
-                -DriveConstants.maxHeadingCorrection,
-                DriveConstants.maxHeadingCorrection
-        );
-
-        return correction;
-    }
+//    public double getHeading() {
+//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+//    }
+//
+//    public double headingPID(double targetHeading) {
+//        return headingPID.calculate(targetHeading, getHeading());
+//    }
+//
+//    public double calculateHeadingCorrection() {
+//        double currentHeading = getHeading();
+//
+//        double correction = headingPID.calculate(
+//                DriveConstants.targetHeading,
+//                currentHeading
+//        );
+//
+//        // Clamp to smooth rotation
+//        correction = MathUtil.clamp(
+//                correction,
+//                -DriveConstants.maxHeadingCorrection,
+//                DriveConstants.maxHeadingCorrection
+//        );
+//
+//        return correction;
+//    }
 }
