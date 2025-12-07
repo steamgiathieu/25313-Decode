@@ -17,9 +17,7 @@ public class REVDistanceSensor {
     }
 
     public double GetData() {
-        double botToBarrier = sensorDistance.getDistance(DistanceUnit.METER);
-        double fieldLength = 1.8;
-        double botLength = 0.4;
-        return fieldLength - botLength - botToBarrier;
+        double botToGoal = sensorDistance.getDistance(DistanceUnit.METER);
+        return botToGoal;
     }
 }

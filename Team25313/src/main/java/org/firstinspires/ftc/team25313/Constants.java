@@ -8,6 +8,7 @@ public final class Constants {
     // General Robot Info
     public static final String botName = "STEAM GIA THIEU";
     public static final boolean isUsingDashboard = true;
+    public static final double botHeight = 0.457; //meters
 
     // Alliances
     public enum AllianceColor { BLUE, RED }
@@ -87,4 +88,7 @@ public final class Constants {
     public static double rpmToVelocity(double rpm) {
         return rpm * gearRatio * 2 * Math.PI * wheelRads / 60.0;
     }
+
+    // Stats from ARENA
+    public static double goalHeight = 136.55; //meters
 }
