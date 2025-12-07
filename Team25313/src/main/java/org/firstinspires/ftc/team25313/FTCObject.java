@@ -8,7 +8,7 @@ public abstract class FTCObject {
     protected final LinearOpMode opMode;
     protected final HardwareMap hardwareMap;
     protected final Telemetry telemetry;
-    public boolean isDebugMode = Constants.DEBUG_MODE;
+    public boolean isDebugMode = Constants.debugMode;
 
     public FTCObject(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -34,7 +34,7 @@ public abstract class FTCObject {
         }
     }
 
-    /** Dừng an toàn để tránh crash khi đang chạy opmode */
+    // safe sleep
     protected void safeSleep(long millis) {
         Ultility.sleep(millis);
     }

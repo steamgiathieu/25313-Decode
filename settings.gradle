@@ -1,3 +1,2 @@
 include ':FtcRobotController'
 include ':Team25313'
-include ':Pedro'
