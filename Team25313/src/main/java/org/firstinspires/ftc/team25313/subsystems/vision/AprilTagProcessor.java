@@ -1,110 +1,54 @@
+// AprilTagProcessor.java
 package org.firstinspires.ftc.team25313.subsystems.vision;
-import org.firstinspires.ftc.team25313.Constants;
 
-import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.openftc.apriltag.AprilTagDetection;
+import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class AprilTagProcessor {
+    private Telemetry telemetry;
 
-    public enum TargetType {
-        none,
-        goal,   // trụ bắn bóng
-        obelisk     // motif xếp bóng
+    public AprilTagProcessor(Telemetry telemetry) {
+        this.telemetry = telemetry;
     }
 
-    private static Constants.AllianceColor allianceColor = Constants.currentAlliance;
-    private boolean lockOnce = false;     // nếu true → chỉ đọc tag 1 lần
-    private boolean locked = false;       // đã đọc xong chưa
+    // Process the frame and detect AprilTags
+    public void processAprilTags(Mat frame) {
+        // Convert to grayscale
+        Mat gray = new Mat();
+        Imgproc.cvtColor(frame, gray, Imgproc.COLOR_BGR2GRAY);
 
-    private AprilTagDetection latestTag;
-    private double distanceToTag;
-    private double yawError;
+        // Call the AprilTag detection library (assuming you have an AprilTag library setup)
+        // In reality, you would use specific methods from the AprilTag library
+        // to find the tags. This is just pseudocode for illustration.
 
-    // ID
-    public int[] blueAllowedTags = {21, 22, 23, 20};
-    public int[] redAllowedTags  = {21, 22, 23, 24};
+        // Example AprilTag detection (replace with real AprilTag detection)
+        List<Rect> detectedTags = detectAprilTags(gray);
 
-    public AprilTagProcessor() {}
-
-    public void setAlliance(Constants.AllianceColor a) {
-        this.allianceColor = a;
-    }
-
-    public void lockAfterFirstDetect(boolean enable) {
-        this.lockOnce = enable;
-    }
-
-    // Find right tag for alliance
-    private boolean isTagAllowed(int id) {
-        if (allianceColor == Constants.currentAlliance) {
-            for (int tag : blueAllowedTags) if (tag == id) return true;
-        } else {
-            for (int tag : redAllowedTags) if (tag == id) return true;
-        }
-        return false;
-    }
-
-    // Call for frame
-    public void update(List<AprilTagDetection> detections) {
-        if (lockOnce && locked) return; // lock to avoid lag
-
-        latestTag = null;
-
-        for (AprilTagDetection det : detections) {
-            if (isTagAllowed(det.id)) {
-                latestTag = det;
-                break;  // just take the legit input
-            }
+        // Draw bounding boxes around the detected tags
+        for (Rect tag : detectedTags) {
+            Imgproc.rectangle(frame, tag.tl(), tag.br(), new Scalar(0, 255, 0), 2);
         }
 
-        if (latestTag != null) {
-            computeTagInfo(latestTag);
-
-            if (lockOnce) locked = true;
-        }
+        // Display telemetry info
+        telemetry.addData("Detected Tags", detectedTags.size());
+        telemetry.update();
     }
 
-    // Calculate from Tag
-    private void computeTagInfo(AprilTagDetection det) {
-        // d from tag to camera (m to cm)
-        double dx = det.pose.x;
-        double dy = det.pose.y;
-        double dz = det.pose.z;
+    // This method should implement the real AprilTag detection logic using a library.
+    private List<Rect> detectAprilTags(Mat image) {
+        List<Rect> tags = new ArrayList<>();
 
-        distanceToTag = Math.sqrt(dx*dx + dy*dy + dz*dz) * 100.0;
-        yawError = Math.toDegrees(Math.atan2(dx, dz));
-    }
+        // Here, you would use an actual AprilTag detection API to detect tags
+        // For example:
+        // AprilTagDetector detector = new AprilTagDetector();
+        // tags = detector.detect(image);
 
-    // Get-ter
-
-    public boolean hasTag() {
-        return latestTag != null;
-    }
-
-    public int getTagId() {
-        return latestTag != null ? latestTag.id : -1;
-    }
-
-    public double getDistanceCm() {
-        return distanceToTag;
-    }
-
-    public double getYawError() {
-        return yawError;
-    }
-
-    // Sort Tag type
-    public TargetType getTargetType() {
-        if (!hasTag()) return TargetType.none;
-
-        int id = latestTag.id;
-
-        if (id == 1 || id == 2) return TargetType.obelisk;
-        if (id == 3) return TargetType.goal;
-
-        return TargetType.none;
+        return tags;
     }
 }

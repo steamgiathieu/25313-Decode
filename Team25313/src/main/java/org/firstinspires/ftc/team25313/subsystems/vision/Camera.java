@@ -1,35 +1,37 @@
+// Camera.java
 package org.firstinspires.ftc.team25313.subsystems.vision;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.team25313.FTCObject;
+import org.opencv.core.Mat;
+import org.opencv.videoio.VideoCapture;
 
-public class Camera extends FTCObject {
-    private VisionPortal visionPortal;
+public class Camera {
     private WebcamName webcamName;
+    private VideoCapture videoCapture;
 
-    public Camera(LinearOpMode opMode) {
-        super(opMode);
+    public Camera(WebcamName webcamName) {
+        this.webcamName = webcamName;
+        this.videoCapture = new VideoCapture();
     }
 
-    public void initCamera() {
-        webcamName = opMode.hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(webcamName)
-                .setCameraResolution(new android.util.Size(640, 480))
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .build();
+    // Initialize the camera
+    public boolean initialize() {
+        // Open the camera using the hardware map and the webcamName
+        boolean isOpen = videoCapture.open(0);  // Normally 0 works for webcam in FTC
+        return isOpen;
     }
 
-    public VisionPortal getVisionPortal() {
-        return visionPortal;
-    }
-
-    public void closeCamera() {
-        if (visionPortal != null) {
-            visionPortal.close();
+    // Capture a frame from the camera
+    public Mat captureFrame() {
+        Mat frame = new Mat();
+        if (videoCapture.isOpened()) {
+            videoCapture.read(frame); // Read the current frame
         }
+        return frame;
+    }
+
+    // Close the camera when done
+    public void close() {
+        videoCapture.release();
     }
 }
