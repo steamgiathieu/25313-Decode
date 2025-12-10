@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team25313.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.vision.GoalPose;
@@ -25,6 +26,7 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             vision.update();
 
+            telemetry.addLine(Constants.botName);
             telemetry.addLine("=== Data of Vision ===");
             if (vision.hasTag()) {
                 AprilTagDetection det = vision.getCurrentTag();

@@ -4,11 +4,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public final class Ultility {
+public final class Utility {
 
     private static final ElapsedTime runtime = new ElapsedTime();
 
-    private Ultility() { }
+    private Utility() { }
 
     // Math Utilities
     // Limit in [min, max]
@@ -47,13 +47,13 @@ public final class Ultility {
     // Telemetry & Logging
 
     // Show log in telemetry
-    public static void log(Telemetry telemetry, String caption, Object value) {
+    public static void teleLog(Telemetry telemetry, String caption, Object value) {
         telemetry.addData(caption, value);
         telemetry.update();
     }
 
     // print to LogCat
-    public static void log(String tag, String message) {
+    public static void logCat(String tag, String message) {
         if (Constants.debugMode)
             RobotLog.dd(tag, message);
     }
@@ -108,5 +108,9 @@ public final class Ultility {
         double sum = 0;
         for (double v : values) sum += v;
         return values.length > 0 ? sum / values.length : 0;
+    }
+
+    public static double applyDeadzone(double value) {
+        return Math.abs(value) < Constants.deadzone ? 0 : value;
     }
 }

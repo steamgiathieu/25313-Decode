@@ -6,20 +6,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.HeadingPID;
-import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.SlewRateLimiter;
-import org.firstinspires.ftc.team25313.subsystems.drivetrain.util.MathUtil;
 import org.firstinspires.ftc.team25313.Constants;
+import org.firstinspires.ftc.team25313.Utility;
+
 public class DriveSubsystem {
 
     public DcMotor leftFront, leftBack, rightFront, rightBack;
     private IMU imu;
-
-//    private final SlewRateLimiter xLimiter;
-//    private final SlewRateLimiter yLimiter;
-//    private final SlewRateLimiter turnLimiter;
-
-//    private final HeadingPID headingPID;
 
     public DriveSubsystem(HardwareMap hardwareMap) {
 
@@ -28,10 +21,15 @@ public class DriveSubsystem {
         rightFront = hardwareMap.get(DcMotor.class, Constants.frontRight);
         rightBack = hardwareMap.get(DcMotor.class, Constants.backRight);
 
-        leftFront.setDirection(com.qualcomm.robotcore.hardware.DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -58,15 +56,16 @@ public class DriveSubsystem {
 //                DriveConstants.headingD
 //        );
     }
+
     public double frontLeftPower;
     public double frontRightPower;
     public double backLeftPower;
     public double backRightPower;
 
     public void driveRobotRelated(double forward, double strafe, double rotate) {
-//        forward = MathUtil.applyDeadzone(forward);
-//        strafe = MathUtil.applyDeadzone(strafe);
-//        rotate = MathUtil.applyDeadzone(rotate);
+        forward = Utility.applyDeadzone(forward);
+        strafe = Utility.applyDeadzone(strafe);
+        rotate = Utility.applyDeadzone(rotate);
 
         frontLeftPower = forward + strafe + rotate;
         frontRightPower = forward - strafe - rotate;
@@ -76,32 +75,18 @@ public class DriveSubsystem {
         double min = -0.5;
         double max = 0.5;
 
-        frontLeftPower = MathUtil.clamp(frontLeftPower, min, max);
-        frontRightPower = MathUtil.clamp(frontRightPower, min, max);
-        backLeftPower = MathUtil.clamp(backLeftPower, min, max);
-        backRightPower = MathUtil.clamp(backRightPower, min, max);
+        frontLeftPower = Utility.clamp(frontLeftPower, min, max);
+        frontRightPower = Utility.clamp(frontRightPower, min, max);
+        backLeftPower = Utility.clamp(backLeftPower, min, max);
+        backRightPower = Utility.clamp(backRightPower, min, max);
 
         setMotorPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
     }
 
     public void driveFieldRelated(double forward, double strafe, double rotate) {
-        forward = MathUtil.applyDeadzone(forward);
-        strafe = MathUtil.applyDeadzone(strafe);
-        rotate = MathUtil.applyDeadzone(rotate);
-
-        // Smooth movement with slew rate limiters
-//        x = xLimiter.calculate(x);
-//        y = yLimiter.calculate(y);
-//        turn = turnLimiter.calculate(turn);
-
-//        if (Math.abs(turn) < 0.02) {  // if rotate was not made by user
-//            double correction = calculateHeadingCorrection();
-//            turn = correction;         // use PID to correct heading
-//        } else { // rotate manually
-//            // Update heading
-//            DriveConstants.targetHeading = getHeading();
-//            headingPID.reset();
-//        }
+        forward = Utility.applyDeadzone(forward);
+        strafe = Utility.applyDeadzone(strafe);
+        rotate = Utility.applyDeadzone(rotate);
 
         double robotAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double theta = Math.atan2(forward, strafe);
@@ -112,11 +97,12 @@ public class DriveSubsystem {
         strafe = r * Math.cos(theta);
 
         double frontLeftPower = forward + strafe + rotate;
-        double frontRightPower = forward- strafe - rotate;
+        double frontRightPower = forward - strafe - rotate;
         double backLeftPower = forward - strafe + rotate;
         double backRightPower = forward + strafe - rotate;
         setMotorPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
     }
+
     public void setMotorPower(double lfP, double lbP, double rfP, double rbP) {
         leftFront.setPower(lfP);
         leftBack.setPower(lbP);
@@ -136,30 +122,4 @@ public class DriveSubsystem {
         }
         return rotate;
     }
-
-//    public double getHeading() {
-//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-//    }
-//
-//    public double headingPID(double targetHeading) {
-//        return headingPID.calculate(targetHeading, getHeading());
-//    }
-//
-//    public double calculateHeadingCorrection() {
-//        double currentHeading = getHeading();
-//
-//        double correction = headingPID.calculate(
-//                DriveConstants.targetHeading,
-//                currentHeading
-//        );
-//
-//        // Clamp to smooth rotation
-//        correction = MathUtil.clamp(
-//                correction,
-//                -DriveConstants.maxHeadingCorrection,
-//                DriveConstants.maxHeadingCorrection
-//        );
-//
-//        return correction;
-//    }
 }
