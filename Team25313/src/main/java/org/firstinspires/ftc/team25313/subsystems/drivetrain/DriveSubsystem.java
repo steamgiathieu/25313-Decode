@@ -44,17 +44,6 @@ public class DriveSubsystem {
                 )
         );
         imu.initialize(myIMUparameters);
-
-        // Control classes
-//        xLimiter = new SlewRateLimiter(DriveConstants.maxAccelStrafe);
-//        yLimiter = new SlewRateLimiter(DriveConstants.maxAccelForward);
-//        turnLimiter = new SlewRateLimiter(DriveConstants.maxAccelTurn);
-//
-//        headingPID = new HeadingPID(
-//                DriveConstants.headingP,
-//                DriveConstants.headingI,
-//                DriveConstants.headingD
-//        );
     }
 
     public double frontLeftPower;
