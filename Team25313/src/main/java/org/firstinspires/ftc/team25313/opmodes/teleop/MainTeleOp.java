@@ -4,8 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team25313.Constants;
+import org.firstinspires.ftc.team25313.FTCObject;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
-import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
+//import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.vision.GoalPose;
 import org.firstinspires.ftc.team25313.subsystems.vision.ObeliskPattern;
 import org.firstinspires.ftc.team25313.subsystems.vision.VisionSubsystem;
@@ -14,14 +15,17 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 @TeleOp(name = "Main TeleOp", group = "TeleOp")
 public class MainTeleOp extends LinearOpMode {
     private DriveSubsystem driveSubsystem;
-    private ArtifactCollector intake;
+//    private ArtifactCollector intake;
     private VisionSubsystem vision;
 
     @Override
     public void runOpMode() {
         driveSubsystem = new DriveSubsystem(hardwareMap);
-        intake = new ArtifactCollector(hardwareMap);
+//        intake = new ArtifactCollector(hardwareMap);
         vision = new VisionSubsystem(hardwareMap);
+
+        waitForStart();
+        if (isStopRequested()) return;
 
         while (opModeIsActive()) {
             vision.update();
@@ -49,17 +53,17 @@ public class MainTeleOp extends LinearOpMode {
                 telemetry.addData("Motif", motif[0] + " - " + motif[1] + " - " + motif[2]);
             }
 
-            double verticalRate = 0.5;
-            double horizontalRate = 0.5;
-            double rotateRate = 0.4;
+            double verticalRate = 1;
+            double horizontalRate = 1;
+            double rotateRate = 1;
             double forward = gamepad1.left_stick_y * verticalRate;
             double strafe = -gamepad1.left_stick_x * horizontalRate;
             double rotate = driveSubsystem.fixedRotate(-gamepad1.right_stick_x, rotateRate);
             driveSubsystem.driveRobotRelated(forward, strafe, rotate);
 
-            if (gamepad1.a) intake.collect();
-            else if (gamepad1.y) intake.reverse();
-            else intake.stop();
+//            if (gamepad1.a) intake.collect();
+//            else if (gamepad1.y) intake.reverse();
+//            else intake.stop();
 
             // Regular telemetry (Driver Station) and Dashboard telemetry
             telemetry.addLine("=== Data of Drivetrain ===");

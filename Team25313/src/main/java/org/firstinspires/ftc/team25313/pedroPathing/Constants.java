@@ -31,8 +31,8 @@ public class Constants {
             .leftRearEncoderDirection(Encoder.REVERSE)
             .rightFrontEncoderDirection(Encoder.FORWARD)
             .rightRearEncoderDirection(Encoder.FORWARD)
-            .robotWidth(15.5)
-            .robotLength(17);
+            .robotWidth(15.7480315)
+            .robotLength(17.7165354);
 
     public static FollowerConstants followerConstants = new FollowerConstants();
 

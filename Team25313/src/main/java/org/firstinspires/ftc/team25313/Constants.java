@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.team25313;
 
-import com.acmerobotics.dashboard.config.Config;
-
-@Config
 public final class Constants {
 
     // General Robot Info
