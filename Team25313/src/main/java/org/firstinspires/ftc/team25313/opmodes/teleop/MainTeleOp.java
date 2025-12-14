@@ -64,7 +64,7 @@ public class MainTeleOp extends LinearOpMode {
                 if (isLockToGoal) {
                     double yawError = gp.yawDeg;
                     rotate = headingPID.calculate(0, yawError);
-                    rotate = Math.max(-0.4, Math.min(0.4, rotate));
+                    rotate = Math.max(-1, Math.min(1, rotate));
                 }
             }
 
