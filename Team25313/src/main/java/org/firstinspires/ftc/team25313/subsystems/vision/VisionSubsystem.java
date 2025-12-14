@@ -1,29 +1,26 @@
 package org.firstinspires.ftc.team25313.subsystems.vision;
 
 import android.util.Size;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-
 import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
-
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
 import java.util.List;
+import com.bylazar.panels.Panels;
 
 public class VisionSubsystem {
 
     public VisionPortal portal;
     public AprilTagProcessor tag;
-
+    public Panels panels = Panels.INSTANCE;
     // Lưu thông tin AprilTag hiện thời
     private AprilTagDetection bestTag;
     private GoalPose latestGoalPose;
     private ObeliskPattern.Color[] latestPattern;
 
-    public VisionSubsystem(HardwareMap hw) {
+    public VisionSubsystem(HardwareMap hwMap) {
 
         tag = new AprilTagProcessor.Builder()
                 .setDrawTagID(true)
@@ -32,7 +29,7 @@ public class VisionSubsystem {
                 .build();
 
         portal = new VisionPortal.Builder()
-                .setCamera(hw.get(WebcamName.class, Constants.webcamName))
+                .setCamera(hwMap.get(WebcamName.class, Constants.webcamName))
                 .addProcessor(tag)
                 .setCameraResolution(new Size(1280, 720))
                 .enableLiveView(true)

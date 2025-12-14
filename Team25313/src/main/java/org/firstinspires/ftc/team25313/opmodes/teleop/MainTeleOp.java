@@ -7,6 +7,7 @@ import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.FTCObject;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 //import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
+import org.firstinspires.ftc.team25313.subsystems.drivetrain.pid.HeadingPID;
 import org.firstinspires.ftc.team25313.subsystems.vision.GoalPose;
 import org.firstinspires.ftc.team25313.subsystems.vision.ObeliskPattern;
 import org.firstinspires.ftc.team25313.subsystems.vision.VisionSubsystem;
@@ -23,12 +24,27 @@ public class MainTeleOp extends LinearOpMode {
         driveSubsystem = new DriveSubsystem(hardwareMap);
 //        intake = new ArtifactCollector(hardwareMap);
         vision = new VisionSubsystem(hardwareMap);
+        boolean isLockToGoal = false;
+        HeadingPID headingPID = new HeadingPID(0.02, 0, 0.02);
 
         waitForStart();
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
             vision.update();
+
+            if (gamepad1.a) {
+                isLockToGoal = true;
+            }
+            else if (gamepad1.b) {
+                isLockToGoal = false;
+            }
+            double verticalRate = 1;
+            double horizontalRate = 1;
+            double rotateRate = 1;
+            double forward = gamepad1.left_stick_y * verticalRate;
+            double strafe = -gamepad1.left_stick_x * horizontalRate;
+            double rotate = driveSubsystem.fixedRotate(-gamepad1.right_stick_x, rotateRate);
 
             telemetry.addLine(Constants.botName);
             telemetry.addLine("=== Data of Vision ===");
@@ -45,6 +61,11 @@ public class MainTeleOp extends LinearOpMode {
                 telemetry.addData("tz", gp.tz);
                 telemetry.addData("distance cm", gp.distanceCm());
                 telemetry.addData("yaw", gp.yawDeg);
+                if (isLockToGoal) {
+                    double yawError = gp.yawDeg;
+                    rotate = headingPID.calculate(0, yawError);
+                    rotate = Math.max(-0.4, Math.min(0.4, rotate));
+                }
             }
 
             // Obelisk motif
@@ -53,16 +74,10 @@ public class MainTeleOp extends LinearOpMode {
                 telemetry.addData("Motif", motif[0] + " - " + motif[1] + " - " + motif[2]);
             }
 
-            double verticalRate = 1;
-            double horizontalRate = 1;
-            double rotateRate = 1;
-            double forward = gamepad1.left_stick_y * verticalRate;
-            double strafe = -gamepad1.left_stick_x * horizontalRate;
-            double rotate = driveSubsystem.fixedRotate(-gamepad1.right_stick_x, rotateRate);
             driveSubsystem.driveRobotRelated(forward, strafe, rotate);
 
-//            if (gamepad1.a) intake.collect();
-//            else if (gamepad1.y) intake.reverse();
+//            if (gamepad2.a) intake.collect();
+//            else if (gamepad2.y) intake.reverse();
 //            else intake.stop();
 
             // Regular telemetry (Driver Station) and Dashboard telemetry
