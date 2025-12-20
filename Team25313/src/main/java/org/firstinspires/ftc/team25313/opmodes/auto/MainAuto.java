@@ -47,7 +47,7 @@ public abstract class MainAuto extends LinearOpMode {
             case BIG_TRIANGLE_BLUE:  return new Pose(26, 128, Math.toRadians(315));
             case SMALL_TRIANGLE_BLUE:return new Pose(56, 8, Math.toRadians(90));
             case BIG_TRIANGLE_RED:   return new Pose(115, 128, Math.toRadians(225));
-            case SMALL_TRIANGLE_RED: return new Pose(90, 8, Math.toRadians(90));
+            case SMALL_TRIANGLE_RED: return new Pose(87.5, 8, Math.toRadians(90));
             default: return new Pose(0, 0, 0);
         }
     }

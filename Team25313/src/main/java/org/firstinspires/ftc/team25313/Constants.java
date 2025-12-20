@@ -4,7 +4,7 @@ public final class Constants {
 
     // General Robot Info
     public static final String botName = "accelerada";
-    public static final double botHeight = 0.457; //meters
+    public static final double botHeight = 0.45; //meters
 
     // Alliances
     public enum AllianceColor { BLUE, RED }
@@ -38,14 +38,18 @@ public final class Constants {
     public static double maxAngAccel = Math.toRadians(180);
 
     // Intake Subsystem
-    public static final String intake = "intake";
-    public static final double intakeIn = 1.0;
-    public static final double intakeOut = -1.0;
+    public static final String intakeMotor = "intakeMotor";
+    public static final String intakeServo = "intakeServo";
+    public static final double intakeServoIn = 1.0;
+    public static final double intakeMotorIn = 0.6;
 
     // Outtake Subsystem
-    public static final String leftShooter = "leftShooter";
-    public static final String rightShooter = "rightShooter";
-    public static final double launchPower = 0.5;
+    public static final String shooter = "shooter";
+    public static final double shooterRad = 0.045;
+    public static final double shooterMaxRPM = 6000;
+    public static final double shooterReady = 0.1;
+    public static final double baseZonePower = 0.8;
+    public static final double goalZonePower = 0.6;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";
@@ -66,9 +70,10 @@ public final class Constants {
     public static final double cameraRoll = 0.0;
 
     // Miscellaneous
-    public static final boolean fieldCentric = true;
+    public static final boolean isFieldCentric = true;
     public static final boolean useOdometry = true;
     public static final boolean debugMode = true;
+    public static final boolean isPanelsAvailable = false;
 
     // Utility Methods
     private Constants() {
@@ -84,5 +89,7 @@ public final class Constants {
     }
 
     // Stats from ARENA
-    public static double goalHeight = 136.55; //meters
+    public static double goalHeight = 1.3655; //meters
+    public static double deltaHeight = goalHeight - botHeight;
+    public static double fallAccelerate = 9.8;
 }

@@ -31,7 +31,7 @@ public class VisionSubsystem {
         portal = new VisionPortal.Builder()
                 .setCamera(hwMap.get(WebcamName.class, Constants.webcamName))
                 .addProcessor(tag)
-                .setCameraResolution(new Size(1280, 720))
+                .setCameraResolution(new Size(640, 480))
                 .enableLiveView(true)
                 .build();
     }

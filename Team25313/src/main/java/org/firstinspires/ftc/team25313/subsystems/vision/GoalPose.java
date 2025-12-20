@@ -11,7 +11,7 @@ public class GoalPose {
         this.yawDeg = yawDeg;
     }
 
-    public double distanceCm() {
-        return Math.sqrt(tx*tx + ty*ty + tz*tz) * 100.0;
+    public double distanceMeters() {
+        return Math.sqrt(tx*tx + ty*ty + tz*tz);
     }
 }
