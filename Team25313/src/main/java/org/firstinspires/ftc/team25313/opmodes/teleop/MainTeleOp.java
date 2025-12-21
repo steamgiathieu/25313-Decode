@@ -51,6 +51,8 @@ public class MainTeleOp extends LinearOpMode {
             double verticalRate = 1;
             double horizontalRate = 1;
             double rotateRate = 1;
+            // Gamepad left_stick_y is typically negative when pushed forward.
+            // Invert the Y axis so a forward push produces positive forward power.
             double forward = gamepad1.left_stick_y * verticalRate;
             double strafe = -gamepad1.left_stick_x * horizontalRate;
             double rotate = driveSubsystem.fixedRotate(-gamepad1.right_stick_x, rotateRate);
@@ -85,17 +87,13 @@ public class MainTeleOp extends LinearOpMode {
 
             driveSubsystem.driveRobotRelated(forward, strafe, rotate);
 
-            if (gamepad1.y) {
-                intake.collect();
-            }
-            else if (gamepad1.a){
-                intake.stop();
-            }
+            if (gamepad2.y) intake.collect();
+            else if (gamepad2.a) intake.stop();
 
-            if (gamepad1.x) outtake.setLauncherReady();
-            else if (gamepad1.dpad_up) outtake.setBaseLaunch();
-            else if (gamepad1.dpad_down) outtake.setGoalLaunch();
-            else if (gamepad1.b) outtake.setLauncherOff();
+            if (gamepad2.x) outtake.setLauncherReady();
+            else if (gamepad2.dpad_up) outtake.setBaseLaunch();
+            else if (gamepad2.dpad_down) outtake.setGoalLaunch();
+            else if (gamepad2.b) outtake.setLauncherOff();
 
             outtake.update();
 

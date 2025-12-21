@@ -23,8 +23,6 @@ public class DriveSubsystem {
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
 
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -61,8 +59,8 @@ public class DriveSubsystem {
         backLeftPower = forward - strafe + rotate;
         backRightPower = forward + strafe - rotate;
 
-        double min = -0.5;
-        double max = 0.5;
+        double min = -1;
+        double max = 1;
 
         frontLeftPower = Utility.clamp(frontLeftPower, min, max);
         frontRightPower = Utility.clamp(frontRightPower, min, max);

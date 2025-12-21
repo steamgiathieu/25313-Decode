@@ -42,6 +42,8 @@ public final class Constants {
     public static final String intakeServo = "intakeServo";
     public static final double intakeServoIn = 1.0;
     public static final double intakeMotorIn = 0.6;
+    public static final String leftPusher = "leftPusher";
+    public static final String rightPusher = "rightPusher";
 
     // Outtake Subsystem
     public static final String shooter = "shooter";
