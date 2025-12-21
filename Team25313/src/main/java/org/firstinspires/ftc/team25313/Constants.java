@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.team25313;
 
-import com.acmerobotics.dashboard.config.Config;
-
-@Config
 public final class Constants {
 
     // General Robot Info
-    public static final String botName = "STEAM GIA THIEU";
-    public static final boolean isUsingDashboard = true;
+    public static final String botName = "accelerada";
+    public static final double botHeight = 0.45; //meters
 
     // Alliances
     public enum AllianceColor { BLUE, RED }
@@ -19,19 +16,14 @@ public final class Constants {
     public static final String backLeft   = "back_left_drive";
     public static final String backRight  = "back_right_drive";
 
-    // Odometry pods
-    public static final String odoLeft  = "odoLeft";
-    public static final String odoRight = "odoRight";
-    public static final String odoBack  = "odoBack";
-
     // Drivetrain constants
-    public static final double ticksPerRev = 537.7;
-    public static final double maxRPM = 312.0;
-    public static final double wheelRads = 1.8898; // inches
-    public static final double gearRatio = 1.0; // 1:1
-    public static final double trackWidth = 14.5; // inches
-    public static final double odoTrackWidth = 14.8; // inches
-    public static final double odoCenterOffset = -7.2; // inches
+    public static final double pulsePerRev = 7.0;
+    public static final double quadrature = 4.0;
+    public static final double wheelRads = 2.5; // inches
+    public static final double gearRatio = 19.2; // 19.2:1
+    public static final double ticksPerRev = pulsePerRev * quadrature * gearRatio;
+    public static final double ticksToInches = (2 * Math.PI * wheelRads) / ticksPerRev;
+    public static final double deadzone = 0.05;
 
     // PIDF for Drive motors
     public static double drive_kP = 1.0;
@@ -39,21 +31,27 @@ public final class Constants {
     public static double drive_kD = 0.1;
     public static double drive_kF = 0.0;
 
-    // Motion Constraints (for PedroPathing / trajectory control)
+    // Motion Constraints (for PedroPathing)
     public static double maxVel = 50.0; // inches/s
     public static double maxAccel = 45.0; // inches/s^2
     public static double maxAngVel = Math.toRadians(180);
     public static double maxAngAccel = Math.toRadians(180);
 
     // Intake Subsystem
-    public static final String intake = "intake";
-    public static final double intakeIn = 1.0;
-    public static final double intakeOut = -1.0;
+    public static final String intakeMotor = "intakeMotor";
+    public static final String intakeServo = "intakeServo";
+    public static final double intakeServoIn = 1.0;
+    public static final double intakeMotorIn = 0.6;
+    public static final String leftPusher = "leftPusher";
+    public static final String rightPusher = "rightPusher";
 
     // Outtake Subsystem
-    public static final String leftShooter = "leftShooter";
-    public static final String rightShooter = "rightShooter";
-    public static final double launchPower = 0.5;
+    public static final String shooter = "shooter";
+    public static final double shooterRad = 0.045;
+    public static final double shooterMaxRPM = 6000;
+    public static final double shooterReady = 0.1;
+    public static final double baseZonePower = 0.8;
+    public static final double goalZonePower = 0.6;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";
@@ -66,14 +64,18 @@ public final class Constants {
     // Camera & Vision
     public static final String webcamName = "Webcam 1";
     public static final String aprilTagProcessor = "aprilTagProcessor";
-    public static final double camXOffset = 0.0; // inches
-    public static final double camYOffset = 0.0; // inches
-    public static final double camHeadingOffset = 0.0; // radians
+    public static final double cameraForward = 4.0;
+    public static final double cameraLeft = 0.0;
+    public static final double cameraUp = 9.0;
+    public static final double cameraYaw = 0.0;
+    public static final double cameraPitch = 0.0;
+    public static final double cameraRoll = 0.0;
 
     // Miscellaneous
-    public static final boolean fieldCentric = true;
+    public static final boolean isFieldCentric = true;
     public static final boolean useOdometry = true;
     public static final boolean debugMode = true;
+    public static final boolean isPanelsAvailable = false;
 
     // Utility Methods
     private Constants() {
@@ -87,4 +89,9 @@ public final class Constants {
     public static double rpmToVelocity(double rpm) {
         return rpm * gearRatio * 2 * Math.PI * wheelRads / 60.0;
     }
+
+    // Stats from ARENA
+    public static double goalHeight = 1.3655; //meters
+    public static double deltaHeight = goalHeight - botHeight;
+    public static double fallAccelerate = 9.8;
 }

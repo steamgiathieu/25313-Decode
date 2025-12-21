@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.team25313.subsystems.drivetrain.control;
+package org.firstinspires.ftc.team25313.subsystems.drivetrain.pid;
 
-import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.team25313.Utility;
 
 public class HeadingPID {
 
     private double kP, kI, kD;
 
-    private double targetAngle = 0;
     private double integral = 0;
     private double lastError = 0;
     private long lastTime;
@@ -24,7 +23,7 @@ public class HeadingPID {
     public void reset() {
         this.integral = 0;
         this.lastError = 0;
-        this.lastTime = (long) (lastTime / 1e9);
+        this.lastTime = System.nanoTime();
     }
 
     // Normalize angle to [-180, 180]
@@ -35,10 +34,6 @@ public class HeadingPID {
         return angle;
     }
 
-    private double clamp(double x, double min, double max) {
-        return Math.max(min, Math.min(max, x));
-    }
-
     public double calculate(double targetHeading, double currentHeading) {
         long now = System.nanoTime();
         double dt = (now - lastTime) / 1e9;
@@ -47,8 +42,10 @@ public class HeadingPID {
         double error = angleWrap(targetHeading - currentHeading);
 
         // Integral
-        integral += error * dt;
-        integral = clamp(integral, -integralLimit, integralLimit);
+        if (Math.abs(error) < 20) {
+            integral += error * dt;
+            integral = Utility.clamp(integral, -integralLimit, integralLimit);
+        }
 
         // Derivative
         double derivative = (error - lastError) * derivativeFilter;
@@ -56,6 +53,7 @@ public class HeadingPID {
         lastError = error;
 
         // PID output
-        return kP * error + kI * integral + kD * derivative;
+        double output  = kP * error + kI * integral + kD * derivative;
+        return Utility.clamp(output, -1, 1);
     }
 }
