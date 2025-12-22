@@ -11,20 +11,16 @@ import org.firstinspires.ftc.team25313.Utility;
 public class ArtifactLauncher {
 
     private final DcMotor shooter;
+    private final Servo primaryAssistant;
+    private final Servo secondaryAssistant;
     private ShooterState state = ShooterState.off;
-//    private final Servo ShooterAssistant;
-
-    private double powerRest;
-
-//    public static double assistantRest = 0.0;
-//    public static double assistantPush = 0.35;
 
 
     public ArtifactLauncher(HardwareMap hwMap) {
         shooter = hwMap.get(DcMotor.class, Constants.shooter);
-//        ShooterAssistant = hwMap.get(Servo.class, "ShooterAssistant");
-
-//        ShooterAssistant.setPosition(assistantRest);
+        primaryAssistant = hwMap.get(Servo.class, Constants.primaryAssistant);
+        secondaryAssistant = hwMap.get(Servo.class, Constants.secondaryAssistant);
+        secondaryAssistant.setDirection(Servo.Direction.REVERSE);
     }
 
     public enum ShooterState {
@@ -73,21 +69,21 @@ public class ArtifactLauncher {
     public boolean isRunning() {
         return state != ShooterState.off;
     }
-    /** Đẩy bóng vào shooter */
-//    public void push() {
-//        ShooterAssistant.setPosition(assistantPush);
-//    }
-//    public void rest() {
-//        ShooterAssistant.setPosition(assistantRest);
-//    }
-//    public double getCurrentPowerLevel() {
-//        return Power;
-//    }
     public double getShooterPower(double distanceToGoal) {
         double theta = Math.atan(Constants.deltaHeight / distanceToGoal);
         double targetVelocity = Math.sqrt((Constants.deltaHeight * 2 * Constants.fallAccelerate) / Math.pow(Math.sin(theta), 2));
         double targetRPM = (30 * targetVelocity) / (Math.PI) * Constants.shooterRad;
         double power = targetRPM / 6000;
         return power;
+    }
+
+    public void launch() {
+        primaryAssistant.setPosition(Constants.primaryAssistantAngle);
+        Utility.sleep(500);
+        secondaryAssistant.setPosition(Constants.secondaryAssistantAngle);
+    }
+    public void rest() {
+        primaryAssistant.setPosition(0);
+        secondaryAssistant.setPosition(0);
     }
 }

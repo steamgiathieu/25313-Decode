@@ -95,6 +95,9 @@ public class MainTeleOp extends LinearOpMode {
             else if (gamepad2.dpad_down) outtake.setGoalLaunch();
             else if (gamepad2.b) outtake.setLauncherOff();
 
+            if (gamepad2.right_bumper) outtake.launch();
+            else outtake.rest();
+
             outtake.update();
 
             // Regular telemetry (Driver Station) and Dashboard telemetry

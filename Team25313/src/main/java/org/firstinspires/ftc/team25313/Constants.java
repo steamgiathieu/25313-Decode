@@ -47,11 +47,15 @@ public final class Constants {
 
     // Outtake Subsystem
     public static final String shooter = "shooter";
+    public static final String primaryAssistant = "primaryAssistant";
+    public static final String secondaryAssistant = "secondaryAssistant";
     public static final double shooterRad = 0.045;
     public static final double shooterMaxRPM = 6000;
     public static final double shooterReady = 0.1;
     public static final double baseZonePower = 0.8;
     public static final double goalZonePower = 0.6;
+    public static final double primaryAssistantAngle = 0.3;
+    public static final double secondaryAssistantAngle = 0.4;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";
