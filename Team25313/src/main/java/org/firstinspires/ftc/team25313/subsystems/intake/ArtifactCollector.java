@@ -20,6 +20,9 @@ public class ArtifactCollector {
         rightPusher = hwmap.get(CRServo.class, Constants.rightPusher);
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
         rightPusher.setDirection(CRServo.Direction.REVERSE);
+        intakeServo.setPower(0);
+        leftPusher.setPower(0);
+        rightPusher.setPower(0);
     }
 
     private boolean running = false;

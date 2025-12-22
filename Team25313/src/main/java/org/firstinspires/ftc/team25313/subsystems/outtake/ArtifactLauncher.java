@@ -21,6 +21,8 @@ public class ArtifactLauncher {
         primaryAssistant = hwMap.get(Servo.class, Constants.primaryAssistant);
         secondaryAssistant = hwMap.get(Servo.class, Constants.secondaryAssistant);
         secondaryAssistant.setDirection(Servo.Direction.REVERSE);
+        primaryAssistant.setPosition(0);
+        secondaryAssistant.setPosition(0);
     }
 
     public enum ShooterState {

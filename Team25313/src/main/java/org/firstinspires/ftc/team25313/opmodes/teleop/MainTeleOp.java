@@ -30,7 +30,6 @@ public class MainTeleOp extends LinearOpMode {
         intake = new ArtifactCollector(hardwareMap);
         outtake = new ArtifactLauncher(hardwareMap);
 
-        intake.stop();
         outtake.setLauncherOff();
 //        vision = new VisionSubsystem(hardwareMap);
 //        boolean isLockToGoal = false;
