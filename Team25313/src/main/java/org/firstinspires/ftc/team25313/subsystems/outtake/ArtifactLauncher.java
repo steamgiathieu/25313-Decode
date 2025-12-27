@@ -1,28 +1,30 @@
 package org.firstinspires.ftc.team25313.subsystems.outtake;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team25313.Constants;
-import org.firstinspires.ftc.team25313.Utility;
 
 public class ArtifactLauncher {
 
     private final DcMotor shooter;
-    private final Servo primaryAssistant;
-    private final Servo secondaryAssistant;
+    private final Servo lowPusher;
+    private final Servo highPusher;
     private ShooterState state = ShooterState.off;
-
+    private ShooterActionState actionState = ShooterActionState.idle;
+    private ShooterMode mode = ShooterMode.single;
+    private final ElapsedTime timer = new ElapsedTime();
+    private int shotCount = 0;
+    private static final int burstMax = 3;
 
     public ArtifactLauncher(HardwareMap hwMap) {
         shooter = hwMap.get(DcMotor.class, Constants.shooter);
-        primaryAssistant = hwMap.get(Servo.class, Constants.primaryAssistant);
-        secondaryAssistant = hwMap.get(Servo.class, Constants.secondaryAssistant);
-        secondaryAssistant.setDirection(Servo.Direction.REVERSE);
-        primaryAssistant.setPosition(0);
-        secondaryAssistant.setPosition(0);
+        lowPusher = hwMap.get(Servo.class, Constants.lowPusher);
+        highPusher = hwMap.get(Servo.class, Constants.highPusher);
+        highPusher.setDirection(Servo.Direction.REVERSE);
+        rest();
     }
 
     public enum ShooterState {
@@ -37,6 +39,9 @@ public class ArtifactLauncher {
             this.power = power;
         }
     }
+
+    public enum ShooterActionState {idle, spinup, pushlow, pushhigh, reset}
+    public enum ShooterMode {single, continuous}
     public void setLauncherReady() {
         state = ShooterState.ready;
     }
@@ -51,41 +56,72 @@ public class ArtifactLauncher {
             state = ShooterState.goal;
         }
     }
-
     public void setLauncherOff() {
         state = ShooterState.off;
     }
 
     public void update() {
+
         shooter.setPower(state.power);
+        switch (actionState) {
+            case pushlow:
+                lowPusher.setPosition(Constants.lowAngle);
+                if (timer.milliseconds() > 250) {
+                    lowPusher.setPosition(0);
+                    timer.reset();
+                    actionState = ShooterActionState.pushhigh;
+                }
+                break;
+            case pushhigh:
+                highPusher.setPosition(Constants.highAngle);
+                if (timer.milliseconds() > 250) {
+                    highPusher.setPosition(0);
+                    timer.reset();
+                    actionState = ShooterActionState.reset;
+                }
+                break;
+            case reset:
+                if (timer.milliseconds() > 300) {
+                    shotCount++;
+                    if (mode == ShooterMode.continuous) {
+                        timer.reset();
+                        actionState = ShooterActionState.pushlow;
+                    } else {
+                        actionState = ShooterActionState.idle;
+                        shotCount = 0;
+                    }
+                }
+                break;
+        }
+
     }
 
-    public ShooterState getState() {
-        return state;
+    public void toggleMode() {
+        mode = (mode == ShooterMode.single) ? ShooterMode.continuous : ShooterMode.single;
     }
 
-    public double getPower() {
-        return state.power;
+    public void shoot() {
+        if (actionState == ShooterActionState.idle && state != ShooterState.off) {
+            timer.reset();
+            actionState = ShooterActionState.pushlow;
+        }
+    }
+
+    public void rest() {
+        lowPusher.setPosition(0);
+        highPusher.setPosition(0);
     }
 
     public boolean isRunning() {
         return state != ShooterState.off;
     }
-    public double getShooterPower(double distanceToGoal) {
-        double theta = Math.atan(Constants.deltaHeight / distanceToGoal);
-        double targetVelocity = Math.sqrt((Constants.deltaHeight * 2 * Constants.fallAccelerate) / Math.pow(Math.sin(theta), 2));
-        double targetRPM = (30 * targetVelocity) / (Math.PI) * Constants.shooterRad;
-        double power = targetRPM / 6000;
-        return power;
+    public ShooterState getState() {
+        return state;
     }
-
-    public void launch() {
-        primaryAssistant.setPosition(Constants.primaryAssistantAngle);
-        Utility.sleep(500);
-        secondaryAssistant.setPosition(Constants.secondaryAssistantAngle);
+    public ShooterActionState getActionState() {
+        return actionState;
     }
-    public void rest() {
-        primaryAssistant.setPosition(0);
-        secondaryAssistant.setPosition(0);
+    public ShooterMode getMode() {
+        return mode;
     }
 }

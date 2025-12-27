@@ -23,6 +23,7 @@ public class MainTeleOp extends LinearOpMode {
     private ArtifactCollector intake;
     private ArtifactLauncher outtake;
 //    private VisionSubsystem vision;
+    boolean burstPrev = false;
 
     @Override
     public void runOpMode() {
@@ -47,14 +48,9 @@ public class MainTeleOp extends LinearOpMode {
 //            else if (gamepad1.b) {
 //                isLockToGoal = false;
 //            }
-            double verticalRate = 1;
-            double horizontalRate = 1;
-            double rotateRate = 1;
-            // Gamepad left_stick_y is typically negative when pushed forward.
-            // Invert the Y axis so a forward push produces positive forward power.
-            double forward = gamepad1.left_stick_y * verticalRate;
-            double strafe = -gamepad1.left_stick_x * horizontalRate;
-            double rotate = driveSubsystem.fixedRotate(-gamepad1.right_stick_x, rotateRate);
+            double forward = gamepad1.left_stick_y;
+            double strafe = -gamepad1.left_stick_x;
+            double rotate = -gamepad1.right_stick_x;
 
 //            telemetry.addLine(Constants.botName);
 //            telemetry.addLine("=== Data of Vision ===");
@@ -87,23 +83,28 @@ public class MainTeleOp extends LinearOpMode {
             driveSubsystem.driveRobotRelated(forward, strafe, rotate);
 
             if (gamepad2.y) intake.collect();
-            else if (gamepad2.a) intake.stop();
+            else if (gamepad2.a) intake.reverse();
+            else intake.stop();
 
             if (gamepad2.x) outtake.setLauncherReady();
             else if (gamepad2.dpad_up) outtake.setBaseLaunch();
             else if (gamepad2.dpad_down) outtake.setGoalLaunch();
             else if (gamepad2.b) outtake.setLauncherOff();
-
-            if (gamepad2.right_bumper) outtake.launch();
-            else outtake.rest();
-
+            boolean isBursting = gamepad2.left_bumper;
+            if (isBursting && !burstPrev) {
+                outtake.toggleMode();
+            }
+            burstPrev = isBursting;
+            if (gamepad2.right_bumper) {
+                outtake.shoot();
+            }
             outtake.update();
 
             // Regular telemetry (Driver Station) and Dashboard telemetry
             telemetry.addLine("accelerada");
             Utility.teleDrivePose(telemetry, forward, strafe, rotate);
             Utility.teleIntake(telemetry, intake.isRunning());
-            Utility.teleOuttake(telemetry, outtake.isRunning(), outtake.getPower());
+            Utility.teleOuttake(telemetry, outtake);
             Utility.teleUpdate(telemetry);
         }
     }

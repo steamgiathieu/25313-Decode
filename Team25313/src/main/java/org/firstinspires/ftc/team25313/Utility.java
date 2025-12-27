@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.team25313;
 
 import com.bylazar.panels.Panels;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
 /**
  * Utility class
@@ -98,19 +100,14 @@ public final class Utility {
         PanelsData.isIntake = isIntake;
     }
 
-    public static void teleOuttake(
-            Telemetry telemetry,
-            boolean isReady, double launchPower
-    )
-    {
-        // Driver Hub
-        telemetry.addData("Outtake", isReady);
-        telemetry.addData("Launch Power", launchPower);
-
-        // Panels
-        PanelsData.isReady = isReady;
-        PanelsData.launchPower = launchPower;
-    }
+   public static void teleOuttake (Telemetry telemetry, ArtifactLauncher outtake) {
+        boolean running = outtake.isRunning();
+        ArtifactLauncher.ShooterState state = outtake.getState();
+        ArtifactLauncher.ShooterMode mode = outtake.getMode();
+        telemetry.addData("Outtake", running);
+        telemetry.addData("Outtake State", state.name());
+        telemetry.addData("Mode", mode.name());
+   }
     public static void teleAprilTag(
             Telemetry telemetry,
             int id,
@@ -187,14 +184,6 @@ public final class Utility {
 
     public static double applyDeadzone(double value) {
         return Math.abs(value) < Constants.deadzone ? 0.0 : value;
-    }
-
-    public static double applyDeadzone(double value, double threshold) {
-        return Math.abs(value) < threshold ? 0.0 : value;
-    }
-
-    public static double reverseY(double value) {
-        return -value;
     }
 
     /* =======================

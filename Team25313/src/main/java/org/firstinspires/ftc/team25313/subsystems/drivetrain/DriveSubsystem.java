@@ -37,8 +37,8 @@ public class DriveSubsystem {
         IMU.Parameters myIMUparameters;
         myIMUparameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
                 )
         );
         imu.initialize(myIMUparameters);
@@ -49,25 +49,29 @@ public class DriveSubsystem {
     public double backLeftPower;
     public double backRightPower;
 
+    private double rotateRate = 0.5;
     public void driveRobotRelated(double forward, double strafe, double rotate) {
         forward = Utility.applyDeadzone(forward);
         strafe = Utility.applyDeadzone(strafe);
-        rotate = Utility.applyDeadzone(rotate);
+        rotate = fixedSpeed(Utility.applyDeadzone(rotate), rotateRate);
 
         frontLeftPower = forward + strafe + rotate;
         frontRightPower = forward - strafe - rotate;
         backLeftPower = forward - strafe + rotate;
         backRightPower = forward + strafe - rotate;
 
-        double min = -1;
-        double max = 1;
+        double maxPower = 1;
+        double maxSpeed = 1;  // make this slower for outreaches
 
-        frontLeftPower = Utility.clamp(frontLeftPower, min, max);
-        frontRightPower = Utility.clamp(frontRightPower, min, max);
-        backLeftPower = Utility.clamp(backLeftPower, min, max);
-        backRightPower = Utility.clamp(backRightPower, min, max);
+        maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
+        maxPower = Math.max(maxPower, Math.abs(frontRightPower));
+        maxPower = Math.max(maxPower, Math.abs(backRightPower));
+        maxPower = Math.max(maxPower, Math.abs(backLeftPower));
 
-        setMotorPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+        leftFront.setPower(maxSpeed * (frontLeftPower / maxPower));
+        rightFront.setPower(maxSpeed * (frontRightPower / maxPower));
+        leftBack.setPower(maxSpeed * (backLeftPower / maxPower));
+        rightBack.setPower(maxSpeed * (backRightPower / maxPower));
     }
 
     public void driveFieldRelated(double forward, double strafe, double rotate) {
@@ -97,16 +101,16 @@ public class DriveSubsystem {
         rightBack.setPower(rbP);
     }
 
-    public double fixedRotate(double rotateRaw, double rotateRate) {
-        double rotationDeadzone = 0.05;
-        double rotate; // final rotation command sent to drivetrain
+    public double fixedSpeed(double rawVal, double fixedRate) {
+        double valueDeadzone = 0.05;
+        double value; // final rotation command sent to drivetrain
 
-        if (Math.abs(rotateRaw) > rotationDeadzone) {
+        if (Math.abs(rawVal) > valueDeadzone) {
             // Fixed speed: use sign of joystick but fixed magnitude
-            rotate = Math.signum(rotateRaw) * rotateRate;
+            value = Math.signum(rawVal) * fixedRate;
         } else {
-            rotate = 0.0;
+            value = 0.0;
         }
-        return rotate;
+        return value;
     }
 }
