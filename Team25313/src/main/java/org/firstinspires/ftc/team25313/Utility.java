@@ -88,11 +88,7 @@ public final class Utility {
         PanelsData.rotate = rotate;
     }
 
-    public static void teleIntake(
-            Telemetry telemetry,
-            boolean isIntake
-    )
-    {
+    public static void teleIntake(Telemetry telemetry, boolean isIntake) {
         // Driver Hub
         telemetry.addData("Intake", isIntake);
 
@@ -107,6 +103,7 @@ public final class Utility {
         telemetry.addData("Outtake", running);
         telemetry.addData("Outtake State", state.name());
         telemetry.addData("Mode", mode.name());
+        telemetry.addData("Action State", outtake.getActionState());
    }
     public static void teleAprilTag(
             Telemetry telemetry,

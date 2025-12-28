@@ -40,8 +40,8 @@ public class ArtifactLauncher {
         }
     }
 
-    public enum ShooterActionState {idle, spinup, pushlow, pushhigh, reset}
-    public enum ShooterMode {single, continuous}
+    public enum ShooterActionState {idle, pushlow, pushhigh, reset}
+    public enum ShooterMode {single, burst}
     public void setLauncherReady() {
         state = ShooterState.ready;
     }
@@ -83,7 +83,7 @@ public class ArtifactLauncher {
             case reset:
                 if (timer.milliseconds() > 300) {
                     shotCount++;
-                    if (mode == ShooterMode.continuous) {
+                    if (mode == ShooterMode.burst && shotCount < burstMax) {
                         timer.reset();
                         actionState = ShooterActionState.pushlow;
                     } else {
@@ -93,20 +93,19 @@ public class ArtifactLauncher {
                 }
                 break;
         }
-
     }
 
     public void toggleMode() {
-        mode = (mode == ShooterMode.single) ? ShooterMode.continuous : ShooterMode.single;
+        mode = (mode == ShooterMode.single) ? ShooterMode.burst : ShooterMode.single;
     }
 
     public void shoot() {
         if (actionState == ShooterActionState.idle && state != ShooterState.off) {
+            shotCount = 0;
             timer.reset();
             actionState = ShooterActionState.pushlow;
         }
     }
-
     public void rest() {
         lowPusher.setPosition(0);
         highPusher.setPosition(0);
