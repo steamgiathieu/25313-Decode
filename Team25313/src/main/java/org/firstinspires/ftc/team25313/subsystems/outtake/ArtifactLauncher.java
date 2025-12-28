@@ -66,7 +66,7 @@ public class ArtifactLauncher {
         switch (actionState) {
             case pushlow:
                 lowPusher.setPosition(Constants.lowAngle);
-                if (timer.milliseconds() > 250) {
+                if (timer.milliseconds() > 500) {
                     lowPusher.setPosition(0);
                     timer.reset();
                     actionState = ShooterActionState.pushhigh;
@@ -74,14 +74,14 @@ public class ArtifactLauncher {
                 break;
             case pushhigh:
                 highPusher.setPosition(Constants.highAngle);
-                if (timer.milliseconds() > 250) {
+                if (timer.milliseconds() > 500) {
                     highPusher.setPosition(0);
                     timer.reset();
                     actionState = ShooterActionState.reset;
                 }
                 break;
             case reset:
-                if (timer.milliseconds() > 300) {
+                if (timer.milliseconds() > 2500) {
                     shotCount++;
                     if (mode == ShooterMode.burst && shotCount < burstMax) {
                         timer.reset();
