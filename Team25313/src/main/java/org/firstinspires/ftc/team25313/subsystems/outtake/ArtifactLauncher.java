@@ -1,126 +1,207 @@
 package org.firstinspires.ftc.team25313.subsystems.outtake;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import android.health.connect.datatypes.units.Power;
 
+import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team25313.Constants;
 
 public class ArtifactLauncher {
 
     private final DcMotor shooter;
     private final Servo lowPusher;
-    private final Servo highPusher;
-    private ShooterState state = ShooterState.off;
-    private ShooterActionState actionState = ShooterActionState.idle;
-    private ShooterMode mode = ShooterMode.single;
+
     private final ElapsedTime timer = new ElapsedTime();
-    private int shotCount = 0;
-    private static final int burstMax = 3;
 
-    public ArtifactLauncher(HardwareMap hwMap) {
-        shooter = hwMap.get(DcMotor.class, Constants.shooter);
-        lowPusher = hwMap.get(Servo.class, Constants.lowPusher);
-        highPusher = hwMap.get(Servo.class, Constants.highPusher);
-        highPusher.setDirection(Servo.Direction.REVERSE);
-        rest();
-    }
+    // enum
 
-    public enum ShooterState {
+    public enum Mode { single, burst }
+    public enum ActionState { idle, push, reset, next }
+    public enum ShooterPowerState {
         off(0),
-        ready(Constants.shooterReady),
+        ready(0.45),     // lực mồi để lên tốc
         base(Constants.baseZonePower),
         goal(Constants.goalZonePower);
 
         public final double power;
 
-        ShooterState(double power) {
+        ShooterPowerState(double power) {
             this.power = power;
         }
     }
-
-    public enum ShooterActionState {idle, pushlow, pushhigh, reset}
-    public enum ShooterMode {single, burst}
-    public void setLauncherReady() {
-        state = ShooterState.ready;
+    public enum ShooterTarget {
+        none,
+        base,
+        goal
     }
-    public void setBaseLaunch() {
-        if (state != ShooterState.off) {
-            state = ShooterState.base;
+
+    // state
+
+    private Mode mode = Mode.single;
+    private ActionState actionState = ActionState.idle;
+    private ShooterTarget target = ShooterTarget.none;
+    private ShooterPowerState powerState = ShooterPowerState.off;
+
+    private int shotCount = 0;
+    private static final int burstMax = 3;
+
+    private double holdPower = 0.55; // default
+
+    // intake callback
+
+    private Runnable intakeLoader = null;
+
+    // constructor
+
+    public ArtifactLauncher(HardwareMap hw) {
+        shooter = hw.get(DcMotor.class, Constants.shooter);
+        lowPusher = hw.get(Servo.class, Constants.lowPusher);
+        lowPusher.setPosition(0);
+    }
+
+    // config
+
+    public void setIntakeLoader(Runnable intakeAction) {
+        this.intakeLoader = intakeAction;
+    }
+
+    public void setMode(Mode m) {
+        mode = m;
+    }
+
+    public void setPowerForGoalZone() {
+        holdPower = Constants.goalZonePower;
+    }
+
+    public void setPowerForBaseZone() {
+        holdPower = Constants.baseZonePower;
+    }
+
+    // shoot api
+
+    public void launch() {
+        if (actionState == ActionState.idle && isReadyToShoot()) {
+            shotCount = 0;
+            timer.reset();
+            actionState = ActionState.push;
         }
     }
 
-    public void setGoalLaunch() {
-        if (state != ShooterState.off) {
-            state = ShooterState.goal;
-        }
+    public void selectBaseTarget() {
+        target = ShooterTarget.base;
+        powerState = ShooterPowerState.base;
+        timer.reset();
     }
-    public void setLauncherOff() {
-        state = ShooterState.off;
+
+    public void selectGoalTarget() {
+        target = ShooterTarget.goal;
+        powerState = ShooterPowerState.goal;
+        timer.reset();
     }
+
+    public void clearTarget() {
+        target = ShooterTarget.none;
+        powerState = ShooterPowerState.off;
+    }
+
+    // update for fsm
 
     public void update() {
 
-        shooter.setPower(state.power);
+        updateShooterPower();
+
         switch (actionState) {
-            case pushlow:
+
+            case idle:
+                break;
+
+            case push:
                 lowPusher.setPosition(Constants.lowAngle);
-                if (timer.milliseconds() > 500) {
+                if (timer.milliseconds() > 300) {
                     lowPusher.setPosition(0);
                     timer.reset();
-                    actionState = ShooterActionState.pushhigh;
+                    actionState = ActionState.reset;
                 }
                 break;
-            case pushhigh:
-                highPusher.setPosition(Constants.highAngle);
-                if (timer.milliseconds() > 500) {
-                    highPusher.setPosition(0);
-                    timer.reset();
-                    actionState = ShooterActionState.reset;
-                }
-                break;
+
             case reset:
-                if (timer.milliseconds() > 2500) {
+                if (timer.milliseconds() > 300) {
                     shotCount++;
-                    if (mode == ShooterMode.burst && shotCount < burstMax) {
-                        timer.reset();
-                        actionState = ShooterActionState.pushlow;
+
+                    if (mode == Mode.burst && shotCount < burstMax) {
+                        actionState = ActionState.next;
                     } else {
-                        actionState = ShooterActionState.idle;
-                        shotCount = 0;
+                        stopShooter();
+                        actionState = ActionState.idle;
+                    }
+                    timer.reset();
+                }
+                break;
+
+            case next:
+                if (intakeLoader != null) intakeLoader.run();
+                actionState = ActionState.push;
+                break;
+        }
+    }
+
+    // power fsm
+
+    private void startSpinUp() {
+        powerState = ShooterPowerState.ready;
+        timer.reset();
+    }
+
+    private void stopShooter() {
+        powerState = ShooterPowerState.off;
+    }
+
+    private void updateShooterPower() {
+        switch (powerState) {
+            case ready:
+                shooter.setPower(ShooterPowerState.ready.power);
+
+                // chờ motor ổn định
+                if (timer.milliseconds() > 300) {
+                    if (target == ShooterTarget.base) {
+                        powerState = ShooterPowerState.base;
+                    } else if (target == ShooterTarget.goal) {
+                        powerState = ShooterPowerState.goal;
                     }
                 }
                 break;
+
+            default:
+                shooter.setPower(powerState.power);
+                break;
         }
     }
 
-    public void toggleMode() {
-        mode = (mode == ShooterMode.single) ? ShooterMode.burst : ShooterMode.single;
+    private boolean isReadyToShoot() {
+        if (target == ShooterTarget.none) return false;
+        return powerState == ShooterPowerState.base
+                || powerState == ShooterPowerState.goal;
     }
 
-    public void shoot() {
-        if (actionState == ShooterActionState.idle && state != ShooterState.off) {
-            shotCount = 0;
-            timer.reset();
-            actionState = ShooterActionState.pushlow;
-        }
-    }
-    public void rest() {
-        lowPusher.setPosition(0);
-        highPusher.setPosition(0);
+    // get
+
+    public boolean isBusy() {
+        return actionState != ActionState.idle;
     }
 
-    public boolean isRunning() {
-        return state != ShooterState.off;
+    public ShooterPowerState getPowerState() {
+        return powerState;
     }
-    public ShooterState getState() {
-        return state;
-    }
-    public ShooterActionState getActionState() {
+
+    public ActionState getActionState() {
         return actionState;
     }
-    public ShooterMode getMode() {
+
+    public Mode getMode() {
         return mode;
+    }
+
+    public double getCurrentPower() {
+        return shooter.getPower();
     }
 }

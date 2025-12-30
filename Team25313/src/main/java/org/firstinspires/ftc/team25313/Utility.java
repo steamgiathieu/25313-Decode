@@ -97,13 +97,11 @@ public final class Utility {
     }
 
    public static void teleOuttake (Telemetry telemetry, ArtifactLauncher outtake) {
-        boolean running = outtake.isRunning();
-        ArtifactLauncher.ShooterState state = outtake.getState();
-        ArtifactLauncher.ShooterMode mode = outtake.getMode();
-        telemetry.addData("Outtake", running);
-        telemetry.addData("Outtake State", state.name());
-        telemetry.addData("Mode", mode.name());
-        telemetry.addData("Action State", outtake.getActionState());
+        telemetry.addData("Outtake State", outtake.getPowerState());
+        telemetry.addData("Outtake Power", outtake.getCurrentPower());
+        telemetry.addData("Outtake Busy", outtake.isBusy());
+        telemetry.addData("Outtake Mode", outtake.getMode());
+        telemetry.addData("Outtake Action State", outtake.getActionState());
    }
     public static void teleAprilTag(
             Telemetry telemetry,
