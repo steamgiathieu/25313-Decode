@@ -7,17 +7,15 @@ import org.firstinspires.ftc.team25313.Utility;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
+import org.firstinspires.ftc.team25313.commands.CallForLaunching;
 
 @TeleOp(name = "Main TeleOp", group = "TeleOp")
 public class MainTeleOp extends LinearOpMode {
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
     private ArtifactLauncher outtake;
-    boolean prevLaunch = false;
-    boolean prevMode = false;
-    boolean prevUp = false;
-    boolean prevDown = false;
-
+    boolean prevA = false;
+    boolean prevRB = false;
     @Override
     public void runOpMode() {
         driveSubsystem = new DriveSubsystem(hardwareMap);
@@ -38,11 +36,31 @@ public class MainTeleOp extends LinearOpMode {
             else if (gamepad2.a) intake.reverse();
             else intake.stop();
 
+            CallForLaunching launchCmd =
+                    new CallForLaunching(outtake, intake);
+
+            if (gamepad2.a && !prevA) {
+                launchCmd.fire();
+            }
+            prevA = gamepad2.a;
+
+            if (gamepad2.right_bumper && !prevRB) {
+                launchCmd.toggleMode();
+            }
+            prevRB = gamepad2.right_bumper;
+
+            if (gamepad2.b) {
+                launchCmd.stop();
+            }
+
+            launchCmd.update();
+
+
             // where is outtake hah
             telemetry.addLine("accelerada");
             Utility.teleDrivePose(telemetry, forward, strafe, rotate);
             Utility.teleIntake(telemetry, intake.isRunning());
-            Utility.teleOuttake(telemetry, outtake);
+//            Utility.teleOuttake(telemetry, outtake);
             Utility.teleUpdate(telemetry);
         }
     }
