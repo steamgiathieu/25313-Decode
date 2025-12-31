@@ -42,14 +42,15 @@ public final class Constants {
     public static final double intakeMotorIn = 0.6;
 
     // Outtake Subsystem
-    public static final String shooter = "shooter";
+    public static final String lowShooter = "lowShooter";
+    public static final String highShooter = "highShooter";
     public static final String lowPusher = "lowPusher";
     public static final String highPusher = "highPusher";
     public static final double shooterRad = 0.045;
     public static final double shooterMaxRPM = 6000;
     public static final double shooterReady = 0.1;
-    public static final double baseZonePower = 0.75;
-    public static final double goalZonePower = 0.55;
+    public static final double baseZonePower = 0.5;
+    public static final double goalZonePower = 0.3;
     public static final double lowAngle = 0.3;
     public static final double highAngle = 0.25;
 

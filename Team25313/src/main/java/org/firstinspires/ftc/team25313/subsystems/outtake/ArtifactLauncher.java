@@ -5,145 +5,185 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team25313.Constants;
 
 public class ArtifactLauncher {
-    private final DcMotor shooter;
+
+    // hardware
+    private final DcMotor lowShooter;
+    private final DcMotor highShooter;
     private final Servo lowPusher;
     private final Servo highPusher;
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    public enum Mode { single, burst }
-    public enum ActionState {
+
+    public enum FireMode {
+        single,
+        burst
+    }
+
+    public enum FireState {
         idle,
         lowPush,
-        lowReset,
         highPush,
-        highReset
+        reset,
+        cooldown
     }
-    public enum ShooterTarget { none, base, goal }
-    private Mode mode = Mode.single;
-    private ActionState actionState = ActionState.idle;
-    private ShooterTarget target = ShooterTarget.none;
+
+    public enum PowerState {
+        off,
+        spinUp,
+        hold
+    }
+
+
+    private FireMode fireMode = FireMode.single;
+    private FireState fireState = FireState.idle;
+    private PowerState powerState = PowerState.off;
 
     private int shotCount = 0;
-    private static final int burstMax = 3;
+    private static final int burstCount = 3;
 
-    private static final double lowPushPos  = 0.3;
-    private static final double highPushPos = 0.25;
+    private double targetPower = Constants.baseZonePower;
 
-    private static final long lowPushTime   = 300;
-    private static final long lowResetTime  = 100;
-    private static final long highPushTime  = 300;
+    // ===== timing (ms) =====
+    private static final long lowPushTime = 300;
+    private static final long highPushTime = 200;
+    private static final long cooldownTime = 2000;
+
 
     public ArtifactLauncher(HardwareMap hw) {
-        shooter = hw.get(DcMotor.class, Constants.shooter);
+        lowShooter = hw.get(DcMotor.class, Constants.lowShooter);
+        highShooter = hw.get(DcMotor.class, Constants.highShooter);
+
         lowPusher = hw.get(Servo.class, Constants.lowPusher);
         highPusher = hw.get(Servo.class, Constants.highPusher);
 
         highPusher.setDirection(Servo.Direction.REVERSE);
-        resetServos();
-    }
 
-    public void fire() {
-        if (actionState == ActionState.idle && target != ShooterTarget.none) {
-            shotCount = 0;
-            timer.reset();
-            actionState = ActionState.lowPush;
-        }
-    }
-
-    public void update() {
-        updateShooterPower();
-        updateFSM();
-    }
-
-    public void toggleMode() {
-        mode = (mode == Mode.single) ? Mode.burst : Mode.single;
-    }
-
-    public void stop() {
-        shooter.setPower(0);
-        actionState = ActionState.idle;
-        target = ShooterTarget.none;
-        shotCount = 0;
-        resetServos();
-    }
-
-    public void selectBaseTarget() {
-        target = ShooterTarget.base;
-    }
-
-    public void selectGoalTarget() {
-        target = ShooterTarget.goal;
-    }
-
-    private void updateFSM() {
-        switch (actionState) {
-
-            case lowPush:
-                lowPusher.setPosition(lowPushPos);
-                if (timer.milliseconds() >= lowPushTime) {
-                    lowPusher.setPosition(0);
-                    timer.reset();
-                    actionState = ActionState.lowReset;
-                }
-                break;
-
-            case lowReset:
-                if (timer.milliseconds() >= lowResetTime) {
-                    timer.reset();
-                    actionState = ActionState.highPush;
-                }
-                break;
-
-            case highPush:
-                highPusher.setPosition(highPushPos);
-                if (timer.milliseconds() >= highPushTime) {
-                    highPusher.setPosition(0);
-                    timer.reset();
-                    actionState = ActionState.highReset;
-                }
-                break;
-
-            case highReset:
-                shotCount++;
-                if (mode == Mode.burst && shotCount < burstMax) {
-                    timer.reset();
-                    actionState = ActionState.lowPush;
-                } else {
-                    actionState = ActionState.idle;
-                    shotCount = 0;
-                }
-                break;
-
-            case idle:
-                break;
-        }
-    }
-
-    private void updateShooterPower() {
-        switch (target) {
-            case base:
-                shooter.setPower(Constants.baseZonePower);
-                break;
-            case goal:
-                shooter.setPower(Constants.goalZonePower);
-                break;
-            case none:
-                shooter.setPower(0);
-                break;
-        }
-    }
-
-    private void resetServos() {
         lowPusher.setPosition(0);
         highPusher.setPosition(0);
     }
 
-    public boolean isBusy() {
-        return actionState != ActionState.idle;
+    public void spinUp() {
+        powerState = PowerState.spinUp;
+        timer.reset();
     }
 
-    public Mode getMode() { return mode; }
-    public ActionState getActionState() { return actionState; }
-    public ShooterTarget getTarget() { return target; }
+    public void stop() {
+        powerState = PowerState.off;
+        fireState = FireState.idle;
+        shotCount = 0;
+
+        lowShooter.setPower(0);
+        highShooter.setPower(0);
+
+        lowPusher.setPosition(0);
+        highPusher.setPosition(0);
+    }
+
+    public void setBasePower() {
+        targetPower = Constants.baseZonePower;
+    }
+
+    public void setGoalPower() {
+        targetPower = Constants.goalZonePower;
+    }
+
+    // ===== mode =====
+
+    public void toggleFireMode() {
+        fireMode = (fireMode == FireMode.single)
+                ? FireMode.burst
+                : FireMode.single;
+    }
+
+    public void requestFire() {
+        if (powerState == PowerState.hold && fireState == FireState.idle) {
+            shotCount = 0;
+            fireState = FireState.lowPush;
+            timer.reset();
+        }
+    }
+
+    public void update() {
+
+        // motor power FSM
+        switch (powerState) {
+            case off:
+                lowShooter.setPower(0);
+                highShooter.setPower(0);
+                break;
+
+            case spinUp:
+                lowShooter.setPower(0.5);
+                highShooter.setPower(0.5);
+
+                if (timer.milliseconds() > 500) {
+                    powerState = PowerState.hold;
+                }
+                break;
+
+            case hold:
+                lowShooter.setPower(targetPower);
+                highShooter.setPower(targetPower);
+                break;
+        }
+
+        switch (fireState) {
+
+            case idle:
+                break;
+
+            case lowPush:
+                lowPusher.setPosition(Constants.lowAngle);
+                if (timer.milliseconds() > lowPushTime) {
+                    lowPusher.setPosition(0);
+                    fireState = FireState.highPush;
+                    timer.reset();
+                }
+                break;
+
+            case highPush:
+                highPusher.setPosition(Constants.highAngle);
+                if (timer.milliseconds() > highPushTime) {
+                    highPusher.setPosition(0);
+                    fireState = FireState.reset;
+                    timer.reset();
+                }
+                break;
+
+            case reset:
+                shotCount++;
+
+                if (fireMode == FireMode.burst && shotCount < burstCount) {
+                    fireState = FireState.cooldown;
+                    timer.reset();
+                } else {
+                    fireState = FireState.idle;
+                }
+                break;
+
+            case cooldown:
+                if (timer.milliseconds() > cooldownTime) {
+                    fireState = FireState.lowPush;
+                    timer.reset();
+                }
+                break;
+        }
+    }
+
+    public FireMode getFireMode() {
+        return fireMode;
+    }
+
+    public FireState getFireState() {
+        return fireState;
+    }
+
+    public PowerState getPowerState() {
+        return powerState;
+    }
+
+    public double getTargetPower() {
+        return targetPower;
+    }
 }

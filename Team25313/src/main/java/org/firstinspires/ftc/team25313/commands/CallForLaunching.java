@@ -1,62 +1,55 @@
 package org.firstinspires.ftc.team25313.commands;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
-import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 
 public class CallForLaunching {
 
     private final ArtifactLauncher launcher;
-    private final ArtifactCollector intake;
 
-    private boolean firingRequested = false;
+    private boolean lastX, lastB, lastRB, lastLB, lastDpadUp, lastDpadDown;
 
-    public CallForLaunching(ArtifactLauncher launcher,
-                            ArtifactCollector intake) {
+    public CallForLaunching(ArtifactLauncher launcher) {
         this.launcher = launcher;
-        this.intake = intake;
     }
 
-    public void fire() {
-        if (!launcher.isBusy()) {
-            firingRequested = true;
-            launcher.fire();
-        }
-    }
+    public void update(Gamepad gp) {
 
-    public void toggleMode() {
-        launcher.toggleMode();
-    }
-
-    public void stop() {
-        firingRequested = false;
-        launcher.stop();
-        intake.stop();
-    }
-
-    public void update() {
-        if (launcher.isBusy()) {
-            intake.collect();
-        } else {
-            intake.stop();
-            firingRequested = false;
+        // spin up
+        if (gp.x && !lastX) {
+            launcher.spinUp();
         }
 
-        launcher.update();
-    }
+        // stop
+        if (gp.b && !lastB) {
+            launcher.stop();
+        }
 
-    public boolean isBusy() {
-        return launcher.isBusy();
-    }
+        // fire
+        if (gp.right_bumper && !lastRB) {
+            launcher.requestFire();
+        }
 
-//    public ArtifactLauncher.Mode getMode() {
-//        return launcher.getMode();
-//    }
-//
-//    public int getShotsFired() {
-//        return launcher.getShotsFired();
-//    }
-//
-//    public String getLauncherState() {
-//        return launcher.getActionState();
-//    }
+        // toggle fire mode
+        if (gp.left_bumper && !lastLB) {
+            launcher.toggleFireMode();
+        }
+
+        // select power
+        if (gp.dpad_up && !lastDpadUp) {
+            launcher.setGoalPower();
+        }
+
+        if (gp.dpad_down && !lastDpadDown) {
+            launcher.setBasePower();
+        }
+
+        // save states
+        lastX = gp.x;
+        lastB = gp.b;
+        lastRB = gp.right_bumper;
+        lastLB = gp.left_bumper;
+        lastDpadUp = gp.dpad_up;
+        lastDpadDown = gp.dpad_down;
+    }
 }

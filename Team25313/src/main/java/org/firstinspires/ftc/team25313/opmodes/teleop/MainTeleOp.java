@@ -14,13 +14,13 @@ public class MainTeleOp extends LinearOpMode {
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
     private ArtifactLauncher outtake;
-    boolean prevA = false;
-    boolean prevRB = false;
+    private CallForLaunching launcherCmd;
     @Override
     public void runOpMode() {
         driveSubsystem = new DriveSubsystem(hardwareMap);
         intake = new ArtifactCollector(hardwareMap);
         outtake = new ArtifactLauncher(hardwareMap);
+        launcherCmd = new CallForLaunching(outtake);
 
         waitForStart();
         if (isStopRequested()) return;
@@ -36,27 +36,9 @@ public class MainTeleOp extends LinearOpMode {
             else if (gamepad2.a) intake.reverse();
             else intake.stop();
 
-            CallForLaunching launchCmd =
-                    new CallForLaunching(outtake, intake);
+            launcherCmd.update(gamepad2);
+            outtake.update();
 
-            if (gamepad2.a && !prevA) {
-                launchCmd.fire();
-            }
-            prevA = gamepad2.a;
-
-            if (gamepad2.right_bumper && !prevRB) {
-                launchCmd.toggleMode();
-            }
-            prevRB = gamepad2.right_bumper;
-
-            if (gamepad2.b) {
-                launchCmd.stop();
-            }
-
-            launchCmd.update();
-
-
-            // where is outtake hah
             telemetry.addLine("accelerada");
             Utility.teleDrivePose(telemetry, forward, strafe, rotate);
             Utility.teleIntake(telemetry, intake.isRunning());
