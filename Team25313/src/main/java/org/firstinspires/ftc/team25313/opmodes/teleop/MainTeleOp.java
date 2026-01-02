@@ -29,9 +29,9 @@ public class MainTeleOp extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            double forward = gamepad1.left_stick_y;
-            double strafe = -gamepad1.left_stick_x;
-            double rotate = -gamepad1.right_stick_x;
+            double forward = -gamepad1.left_stick_y;
+            double strafe = gamepad1.left_stick_x;
+            double rotate = gamepad1.right_stick_x;
 
             driveSubsystem.driveRobotRelated(forward, strafe, rotate);
 
