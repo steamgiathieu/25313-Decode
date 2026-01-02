@@ -5,51 +5,57 @@ import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
 public class CallForLaunching {
 
-    private final ArtifactLauncher launcher;
+    private final ArtifactLauncher outtake;
+    private final Gamepad gamepad;
 
-    private boolean lastX, lastB, lastRB, lastLB, lastDpadUp, lastDpadDown;
-
-    public CallForLaunching(ArtifactLauncher launcher) {
-        this.launcher = launcher;
+    // prev states (edge detect)
+    private boolean prevShoot = false;
+    private boolean prevToggleMode = false;
+    private boolean prevEnable = false;
+    private boolean prevDisable = false;
+    private Runnable intakeOn = null;
+    private Runnable intakeOff = null;
+    public void setIntakeCallbacks(Runnable on, Runnable off) {
+        intakeOn = on;
+        intakeOff = off;
+    }
+    public CallForLaunching(ArtifactLauncher outtake, Gamepad gamepad) {
+        this.outtake = outtake;
+        this.gamepad = gamepad;
     }
 
-    public void update(Gamepad gp) {
-
-        // spin up
-        if (gp.x && !lastX) {
-            launcher.spinUp();
+    public void update() {
+        if (gamepad.x && !prevEnable) {
+            outtake.enableLauncher();
         }
 
-        // stop
-        if (gp.b && !lastB) {
-            launcher.stop();
+        if (gamepad.b && !prevDisable) {
+            outtake.disableLauncher();
         }
 
-        // fire
-        if (gp.right_bumper && !lastRB) {
-            launcher.requestFire();
+        if (gamepad.left_bumper && !prevToggleMode) {
+            outtake.toggleMode();
         }
 
-        // toggle fire mode
-        if (gp.left_bumper && !lastLB) {
-            launcher.toggleFireMode();
+        if (gamepad.dpad_down) {
+            outtake.setBasePower();
         }
 
-        // select power
-        if (gp.dpad_up && !lastDpadUp) {
-            launcher.setGoalPower();
+        if (gamepad.dpad_up) {
+            outtake.setGoalPower();
         }
 
-        if (gp.dpad_down && !lastDpadDown) {
-            launcher.setBasePower();
+        if (gamepad.right_bumper && !prevShoot) {
+            outtake.shoot();
         }
 
-        // save states
-        lastX = gp.x;
-        lastB = gp.b;
-        lastRB = gp.right_bumper;
-        lastLB = gp.left_bumper;
-        lastDpadUp = gp.dpad_up;
-        lastDpadDown = gp.dpad_down;
+        if (gamepad.a) {
+            outtake.stopShooter();
+        }
+
+        prevShoot = gamepad.right_bumper;
+        prevToggleMode = gamepad.left_bumper;
+        prevEnable = gamepad.x;
+        prevDisable = gamepad.b;
     }
 }

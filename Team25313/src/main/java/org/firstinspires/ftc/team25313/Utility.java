@@ -96,13 +96,14 @@ public final class Utility {
         PanelsData.isIntake = isIntake;
     }
 
-//   public static void teleOuttake (Telemetry telemetry, ArtifactLauncher outtake) {
-//        telemetry.addData("Outtake State", outtake.getPowerState());
-//        telemetry.addData("Outtake Power", outtake.getCurrentPower());
-//        telemetry.addData("Outtake Busy", outtake.isBusy());
-//        telemetry.addData("Outtake Mode", outtake.getMode());
-//        telemetry.addData("Outtake Action State", outtake.getActionState());
-//   }
+    public static void teleOuttake(Telemetry telemetry, ArtifactLauncher outtake) {
+        telemetry.addData("Launch Mode", outtake.getMode());
+        telemetry.addData("Power", outtake.getPowerState());
+        telemetry.addData("Action", outtake.getActionState());
+        telemetry.addData("Shot count", outtake.getShotCount());
+        telemetry.addData("Is shooting", outtake.isShooting());
+    }
+
     public static void teleAprilTag(
             Telemetry telemetry,
             int id,
