@@ -45,13 +45,17 @@ public final class Constants {
     public static final String shooter = "shooter";
     public static final String lowPusher = "lowPusher";
     public static final String highPusher = "highPusher";
-    public static final double shooterRad = 0.045;
-    public static final double shooterMaxRPM = 6000;
-    public static final double shooterReady = 0.1;
-    public static final double baseZonePower = 0.7;
-    public static final double goalZonePower = 0.5;
+    public static final double shooterP = 5;
+    public static final double shooterI = 0.0;
+    public static final double shooterD = 0.1;
+    public static final double shooterF = 7.5;
+    public static final double shooterRPMTolerance = 100;
+    public static final double pusherRest = 0.0;
     public static final double lowAngle = 0.3;
     public static final double highAngle = 0.25;
+    public static final double baseZoneVelocity = 1260;
+    public static final double goalZoneVelocity = 1100;
+    public static final double shooterVelocityTolerance = 150;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";

@@ -6,17 +6,17 @@ import org.firstinspires.ftc.team25313.Constants;
 
 public class ArtifactLauncher {
 
-    private final DcMotor shooter;
+    private final DcMotorEx shooter;
     private final Servo lowPusher;
     private final Servo highPusher;
 
     private final ElapsedTime timer = new ElapsedTime();
 
-
     public enum ShooterMode { single, burst }
 
     public enum ActionState {
         idle,
+        waitingForSpeed,
         lowPush,
         highPush,
         wait
@@ -24,20 +24,20 @@ public class ArtifactLauncher {
 
     public enum ShooterPowerState {
         off(0),
-        base(Constants.baseZonePower),
-        goal(Constants.goalZonePower);
+        base(Constants.baseZoneVelocity),
+        goal(Constants.goalZoneVelocity);
 
-        public final double power;
-        ShooterPowerState(double power) {
-            this.power = power;
+        public final double velocity;
+        ShooterPowerState(double velocity) {
+            this.velocity = velocity;
         }
     }
+
 
     private ShooterMode mode = ShooterMode.single;
     private ActionState actionState = ActionState.idle;
     private ShooterPowerState powerState = ShooterPowerState.off;
-    private boolean launcherEnabled = false;
-
+    private boolean launcherEnabled = true;
 
     private int shotCount = 0;
     private static final int burstMax = 3;
@@ -46,9 +46,17 @@ public class ArtifactLauncher {
     private Runnable intakeOff = null;
 
     public ArtifactLauncher(HardwareMap hw) {
-        shooter = hw.get(DcMotor.class, Constants.shooter);
+        shooter = hw.get(DcMotorEx.class, Constants.shooter);
         lowPusher = hw.get(Servo.class, Constants.lowPusher);
         highPusher = hw.get(Servo.class, Constants.highPusher);
+
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setVelocityPIDFCoefficients(
+                Constants.shooterP,
+                Constants.shooterI,
+                Constants.shooterD,
+                Constants.shooterF
+        );
 
         highPusher.setDirection(Servo.Direction.REVERSE);
         rest();
@@ -56,14 +64,16 @@ public class ArtifactLauncher {
 
     public void enableLauncher() {
         launcherEnabled = true;
-        powerState = ShooterPowerState.goal; // hoặc base mặc định
+        powerState = ShooterPowerState.goal;
     }
 
     public void disableLauncher() {
         launcherEnabled = false;
         powerState = ShooterPowerState.off;
+        shooter.setVelocity(0);
         actionState = ActionState.idle;
         shotCount = 0;
+        rest();
     }
 
     public void setIntakeCallbacks(Runnable on, Runnable off) {
@@ -72,9 +82,12 @@ public class ArtifactLauncher {
     }
 
     public void toggleMode() {
-        mode = (mode == ShooterMode.single) ? ShooterMode.burst : ShooterMode.single;
+        if (actionState == ActionState.idle) {
+            mode = (mode == ShooterMode.single)
+                    ? ShooterMode.burst
+                    : ShooterMode.single;
+        }
     }
-
     public void setBasePower() {
         powerState = ShooterPowerState.base;
     }
@@ -83,17 +96,14 @@ public class ArtifactLauncher {
         powerState = ShooterPowerState.goal;
     }
 
-    public void stopShooter() {
-        powerState = ShooterPowerState.off;
-        actionState = ActionState.idle;
-        shotCount = 0;
-        if (intakeOff != null) intakeOff.run();
-    }
-
-    /* ================= SHOOT ================= */
-
     public void shoot() {
-        if (actionState == ActionState.idle && powerState != ShooterPowerState.off) {
+        System.out.println("SHOOT CALLED");
+
+        if (launcherEnabled
+                && actionState == ActionState.idle
+                && powerState != ShooterPowerState.off) {
+
+            System.out.println("SHOOT ACCEPTED");
             shotCount = 0;
             timer.reset();
             actionState = ActionState.lowPush;
@@ -102,18 +112,31 @@ public class ArtifactLauncher {
 
     public void update() {
         if (!launcherEnabled) {
-            shooter.setPower(0);
+            shooter.setVelocity(0);
+            rest();
             return;
         }
 
-        shooter.setPower(powerState.power);
+        if (powerState == ShooterPowerState.off) {
+            shooter.setVelocity(0);
+            return;
+        }
+
+        shooter.setVelocity(powerState.velocity);
 
         switch (actionState) {
+
+            case waitingForSpeed:
+                if (isShooterReady()) {
+                    timer.reset();
+                    actionState = ActionState.lowPush;
+                }
+                break;
 
             case lowPush:
                 lowPusher.setPosition(Constants.lowAngle);
                 if (timer.milliseconds() > 300) {
-                    lowPusher.setPosition(0);
+                    lowPusher.setPosition(Constants.pusherRest);
                     timer.reset();
                     actionState = ActionState.highPush;
                 }
@@ -122,7 +145,7 @@ public class ArtifactLauncher {
             case highPush:
                 highPusher.setPosition(Constants.highAngle);
                 if (timer.milliseconds() > 300) {
-                    highPusher.setPosition(0);
+                    highPusher.setPosition(Constants.pusherRest);
                     timer.reset();
                     actionState = ActionState.wait;
                 }
@@ -130,48 +153,65 @@ public class ArtifactLauncher {
 
             case wait:
                 if (timer.milliseconds() > 2000) {
-
                     shotCount++;
-
                     if (mode == ShooterMode.burst && shotCount < burstMax) {
+                        if (intakeOn != null) intakeOn.run();
+
                         timer.reset();
                         actionState = ActionState.lowPush;
+
                     } else {
+                        if (intakeOff != null) intakeOff.run();
                         actionState = ActionState.idle;
                         shotCount = 0;
                     }
                 }
                 break;
+
         }
-        if (mode == ShooterMode.burst && launcherEnabled && actionState == ActionState.wait && shotCount > 0 && shotCount < burstMax) {
+
+        handleIntake();
+    }
+
+    private boolean isShooterReady() {
+        return Math.abs(shooter.getVelocity() - powerState.velocity)
+                < Constants.shooterVelocityTolerance;
+    }
+
+    private void handleIntake() {
+        if (mode == ShooterMode.burst && actionState == ActionState.wait) {
             if (intakeOn != null) intakeOn.run();
         } else {
             if (intakeOff != null) intakeOff.run();
         }
     }
 
-    public ShooterMode getMode() {
+    private void rest() {
+        lowPusher.setPosition(Constants.pusherRest);
+        highPusher.setPosition(Constants.pusherRest);
+    }
+
+    public double getCurrentVelocity() {
+        return shooter.getVelocity();
+    }
+
+    public double getTargetVelocity() {
+        return powerState.velocity;
+    }
+
+    public ShooterMode getShooterMode() {
         return mode;
     }
 
-    public ActionState getActionState() {
-        return actionState;
-    }
-
-    public ShooterPowerState getPowerState() {
-        return powerState;
+    public boolean isLauncherEnabled() {
+        return launcherEnabled;
     }
 
     public boolean isShooting() {
         return actionState != ActionState.idle;
     }
 
-    public int getShotCount() {
-        return shotCount;
-    }
-
-    private void rest() {
-        lowPusher.setPosition(0);
-        highPusher.setPosition(0);
+    public ActionState getActionState() {
+        return actionState;
     }
 }
