@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
+import org.firstinspires.ftc.team25313.subsystems.vision.VisionSubsystem;
 
 /**
  * Utility class
@@ -110,29 +111,9 @@ public final class Utility {
         telemetry.addData("Shooting", outtake.isShooting());
     }
 
-    public static void teleAprilTag(
-            Telemetry telemetry,
-            int id,
-            double tx, double ty, double tz,
-            double yawDeg
-    ) {
-        telemetry.addData("Tag ID", id);
-        telemetry.addData("tx", tx);
-        telemetry.addData("ty", ty);
-        telemetry.addData("tz", tz);
-        telemetry.addData("yaw", yawDeg);
-
-        PanelsData.tagId = id;
-        PanelsData.tx = tx;
-        PanelsData.ty = ty;
-        PanelsData.tz = tz;
-        PanelsData.yawDeg = yawDeg;
-    }
-
-    public static void teleMotif(Telemetry telemetry, String motif) {
-        telemetry.addData("Motif", motif);
-        PanelsData.motif = motif;
-    }
+//    public static void teleVision(Telemetry telemetry, VisionS) {
+//        telemetry.addData("Is enabled", vi)
+//    }
 
     /* =======================
      * LOGCAT

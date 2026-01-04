@@ -9,7 +9,7 @@ import org.firstinspires.ftc.team25313.Constants;
 public class BigTriangleAutoforRed extends MainAuto {
     @Override
     protected void initStartingCondition() {
-        allianceColor = Constants.AllianceColor.RED;
+        allianceColor = Constants.AllianceColor.red;
         startingPos = StartingPos.BIG_TRIANGLE_RED;
     }
 }

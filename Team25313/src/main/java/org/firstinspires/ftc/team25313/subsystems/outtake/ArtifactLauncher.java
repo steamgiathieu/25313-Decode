@@ -44,6 +44,12 @@ public class ArtifactLauncher {
 
     private Runnable intakeOn = null;
     private Runnable intakeOff = null;
+    private double commandedVelocity = 0;
+    private final ElapsedTime slewTimer = new ElapsedTime();
+
+    // Giới hạn
+    private static final double maxAccel = 300;
+    private static final double maxOverPow = 40;
 
     public ArtifactLauncher(HardwareMap hw) {
         shooter = hw.get(DcMotorEx.class, Constants.shooter);
@@ -73,6 +79,7 @@ public class ArtifactLauncher {
         shooter.setVelocity(0);
         actionState = ActionState.idle;
         shotCount = 0;
+        commandedVelocity = 0;
         rest();
     }
 
@@ -90,20 +97,18 @@ public class ArtifactLauncher {
     }
     public void setBasePower() {
         powerState = ShooterPowerState.base;
+        commandedVelocity = shooter.getVelocity();
     }
 
     public void setGoalPower() {
         powerState = ShooterPowerState.goal;
+        commandedVelocity = shooter.getVelocity();
     }
 
     public void shoot() {
-        System.out.println("SHOOT CALLED");
-
         if (launcherEnabled
                 && actionState == ActionState.idle
                 && powerState != ShooterPowerState.off) {
-
-            System.out.println("SHOOT ACCEPTED");
             shotCount = 0;
             timer.reset();
             actionState = ActionState.lowPush;
@@ -122,7 +127,7 @@ public class ArtifactLauncher {
             return;
         }
 
-        shooter.setVelocity(powerState.velocity);
+        setRightVelocity();
 
         switch (actionState) {
 
@@ -152,7 +157,7 @@ public class ArtifactLauncher {
                 break;
 
             case wait:
-                if (timer.milliseconds() > 2000) {
+                if (Math.abs(shooter.getVelocity()) >= getTargetVelocity()) {
                     shotCount++;
                     if (mode == ShooterMode.burst && shotCount < burstMax) {
                         if (intakeOn != null) intakeOn.run();
@@ -173,9 +178,30 @@ public class ArtifactLauncher {
         handleIntake();
     }
 
-    private boolean isShooterReady() {
+    private void setRightVelocity() {
+        double target = powerState.velocity;
+
+        double dt = slewTimer.seconds();
+        slewTimer.reset();
+
+        double maxDelta = maxAccel * dt;
+        double delta = target - commandedVelocity;
+
+        if (delta > maxDelta) delta = maxDelta;
+        if (delta < -maxDelta) delta = -maxDelta;
+
+        commandedVelocity += delta;
+
+        if (commandedVelocity > target + maxOverPow) {
+            commandedVelocity = target + maxOverPow;
+        }
+
+        shooter.setVelocity(commandedVelocity);
+    }
+    private boolean isShooterReady () {
         return Math.abs(shooter.getVelocity() - powerState.velocity)
-                < Constants.shooterVelocityTolerance;
+                <= Constants.shooterVelocityTolerance
+                && shooter.getVelocity() <= powerState.velocity + 40;
     }
 
     private void handleIntake() {
