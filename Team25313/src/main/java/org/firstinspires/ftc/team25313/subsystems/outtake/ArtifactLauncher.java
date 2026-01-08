@@ -157,7 +157,7 @@ public class ArtifactLauncher {
                 break;
 
             case wait:
-                if (Math.abs(shooter.getVelocity()) >= getTargetVelocity()) {
+                if (isShooterReady()) {
                     shotCount++;
                     if (mode == ShooterMode.burst && shotCount < burstMax) {
                         if (intakeOn != null) intakeOn.run();
