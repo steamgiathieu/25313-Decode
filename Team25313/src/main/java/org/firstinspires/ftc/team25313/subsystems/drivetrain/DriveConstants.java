@@ -64,6 +64,11 @@ public class DriveConstants {
     public static double deadzone = 0.05;
 
     // Tuning parameter for strafing
-    public static double strafeMultiplier = 1.1; // Adjust this value to fix strafe error
+    // Giải thích: Hệ số bù đắp ma sát khi đi ngang.
+    // Cách chỉnh: 
+    // 1. Nếu robot đi ngang chậm hơn mong muốn hoặc bị hụt hướng, hãy TĂNG giá trị này (vd: 1.1 -> 1.15).
+    // 2. Nếu robot đi ngang quá nhạy hoặc quá nhanh so với đi thẳng, hãy GIẢM giá trị này (vd: 1.1 -> 1.05).
+    // Giá trị mặc định thường nằm trong khoảng 1.0 đến 1.2.
+    public static double strafeMultiplier = 1.1;
 
 }

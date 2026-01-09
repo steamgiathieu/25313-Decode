@@ -52,7 +52,10 @@ public class DriveSubsystem {
         x = MathUtil.applyDeadzone(x);
         rx = MathUtil.applyDeadzone(rx);
 
-        // Áp dụng strafeMultiplier để bù đắp việc ma sát khi đi ngang thường lớn hơn đi thẳng
+        // Áp dụng strafeMultiplier để bù đắp ma sát.
+        // Giải thích: Bánh Mecanum khi đi ngang (strafe) thường gặp lực cản/ma sát lớn hơn so với đi thẳng hoặc lùi.
+        // Điều này làm robot đi ngang chậm hơn dự kiến. Việc nhân với strafeMultiplier (thường > 1.0, ví dụ 1.1) 
+        // giúp bù đắp lực này để robot di chuyển theo phương ngang chính xác hơn.
         x = x * DriveConstants.strafeMultiplier;
 
         // Chuyển đổi sang Field Centric (nếu muốn robot luôn đi theo hướng của người lái)
