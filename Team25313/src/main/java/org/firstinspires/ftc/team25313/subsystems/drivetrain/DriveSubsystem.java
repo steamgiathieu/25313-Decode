@@ -2,123 +2,87 @@ package org.firstinspires.ftc.team25313.subsystems.drivetrain;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.HeadingPID;
-import org.firstinspires.ftc.team25313.subsystems.drivetrain.control.SlewRateLimiter;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.util.MathUtil;
 import org.firstinspires.ftc.team25313.Constants;
+
 public class DriveSubsystem {
 
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private IMU imu;
 
-//    private final SlewRateLimiter xLimiter;
-//    private final SlewRateLimiter yLimiter;
-//    private final SlewRateLimiter turnLimiter;
-
-//    private final HeadingPID headingPID;
-
     public DriveSubsystem(HardwareMap hardwareMap) {
-
         leftFront = hardwareMap.get(DcMotor.class, Constants.frontLeft);
         leftBack = hardwareMap.get(DcMotor.class, Constants.backLeft);
         rightFront = hardwareMap.get(DcMotor.class, Constants.frontRight);
         rightBack = hardwareMap.get(DcMotor.class, Constants.backRight);
 
+        // Hầu hết robot FTC cần đảo chiều các motor bên trái
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters myIMUparameters;
-        myIMUparameters = new IMU.Parameters(
+        IMU.Parameters myIMUparameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.UP,
                         RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
                 )
         );
         imu.initialize(myIMUparameters);
-
-        // Control classes
-//        xLimiter = new SlewRateLimiter(DriveConstants.maxAccelStrafe);
-//        yLimiter = new SlewRateLimiter(DriveConstants.maxAccelForward);
-//        turnLimiter = new SlewRateLimiter(DriveConstants.maxAccelTurn);
-//
-//        headingPID = new HeadingPID(
-//                DriveConstants.headingP,
-//                DriveConstants.headingI,
-//                DriveConstants.headingD
-//        );
     }
 
-    public void drive(double forward, double strafe, double rotate) {
-        // Apply deadzone
-        forward = MathUtil.applyDeadzone(forward);
-        strafe = MathUtil.applyDeadzone(strafe);
-        rotate = MathUtil.applyDeadzone(rotate);
+    /**
+     * @param y Tới/Lui (Forward/Back)
+     * @param x Sang trái/phải (Strafe)
+     * @param rx Xoay (Rotate)
+     */
+    public void drive(double y, double x, double rx) {
+        // Áp dụng deadzone để tránh trôi joystick
+        y = MathUtil.applyDeadzone(y);
+        x = MathUtil.applyDeadzone(x);
+        rx = MathUtil.applyDeadzone(rx);
 
-        // Smooth movement with slew rate limiters
-//        x = xLimiter.calculate(x);
-//        y = yLimiter.calculate(y);
-//        turn = turnLimiter.calculate(turn);
+        // Áp dụng strafeMultiplier để bù đắp việc ma sát khi đi ngang thường lớn hơn đi thẳng
+        x = x * DriveConstants.strafeMultiplier;
 
-//        if (Math.abs(turn) < 0.02) {  // if rotate was not made by user
-//            double correction = calculateHeadingCorrection();
-//            turn = correction;         // use PID to correct heading
-//        } else { // rotate manually
-//            // Update heading
-//            DriveConstants.targetHeading = getHeading();
-//            headingPID.reset();
-//        }
+        // Chuyển đổi sang Field Centric (nếu muốn robot luôn đi theo hướng của người lái)
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        double robotAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double theta = Math.atan2(forward, strafe);
-        double r = Math.hypot(forward, strafe);
-        theta = AngleUnit.normalizeRadians(theta - robotAngle);
+        // Xoay vector đầu vào theo hướng robot
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        forward = r * Math.sin(theta);
-        strafe = r * Math.cos(theta);
+        // Công thức chuẩn cho Mecanum Drive (Field Centric)
+        // frontLeft = y + x + rx
+        // backLeft = y - x + rx
+        // frontRight = y - x - rx
+        // backRight = y + x - rx
+        
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1.0);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
 
-        double frontLeftPower = forward + strafe + rotate;
-        double frontRightPower = forward- strafe - rotate;
-        double backLeftPower = forward - strafe + rotate;
-        double backRightPower = forward + strafe - rotate;
         setMotorPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
     }
 
     public void setMotorPower(double lfP, double lbP, double rfP, double rbP) {
-        leftFront.setPower(lfP * 0.5);
-        leftBack.setPower(lbP * 0.5);
-        rightFront.setPower(rfP * 0.5);
-        rightBack.setPower(rbP * 0.5);
+        // Nhân với multiplier để giới hạn tốc độ nếu cần (hiện tại là 1.0)
+        double multi = DriveConstants.normalModeMultiplier;
+        leftFront.setPower(lfP * multi);
+        leftBack.setPower(lbP * multi);
+        rightFront.setPower(rfP * multi);
+        rightBack.setPower(rbP * multi);
     }
-
-//    public double getHeading() {
-//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-//    }
-//
-//    public double headingPID(double targetHeading) {
-//        return headingPID.calculate(targetHeading, getHeading());
-//    }
-//
-//    public double calculateHeadingCorrection() {
-//        double currentHeading = getHeading();
-//
-//        double correction = headingPID.calculate(
-//                DriveConstants.targetHeading,
-//                currentHeading
-//        );
-//
-//        // Clamp to smooth rotation
-//        correction = MathUtil.clamp(
-//                correction,
-//                -DriveConstants.maxHeadingCorrection,
-//                DriveConstants.maxHeadingCorrection
-//        );
-//
-//        return correction;
-//    }
 }
