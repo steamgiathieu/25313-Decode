@@ -3,241 +3,154 @@ package org.firstinspires.ftc.team25313.subsystems.outtake;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team25313.Constants;
+import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 
 public class ArtifactLauncher {
 
-    private final DcMotorEx shooter;
-    private final Servo lowPusher;
-    private final Servo highPusher;
+    private final DcMotorEx leftLauncher;
+    private final DcMotorEx rightLauncher;
+    private final Servo pusher;
 
-    private final ElapsedTime timer = new ElapsedTime();
-
-    public enum ShooterMode { single, burst }
-
-    public enum ActionState {
-        idle,
-        waitingForSpeed,
-        lowPush,
-        highPush,
-        wait
-    }
-
-    public enum ShooterPowerState {
-        off(0),
-        base(Constants.baseZoneVelocity),
-        goal(Constants.goalZoneVelocity);
-
-        public final double velocity;
-        ShooterPowerState(double velocity) {
-            this.velocity = velocity;
-        }
-    }
-
-
-    private ShooterMode mode = ShooterMode.single;
-    private ActionState actionState = ActionState.idle;
-    private ShooterPowerState powerState = ShooterPowerState.off;
-    private boolean launcherEnabled = true;
-
-    private int shotCount = 0;
-    private static final int burstMax = 3;
-
-    private Runnable intakeOn = null;
-    private Runnable intakeOff = null;
-    private double commandedVelocity = 0;
     private final ElapsedTime slewTimer = new ElapsedTime();
 
-    // Giới hạn
-    private static final double maxAccel = 300;
-    private static final double maxOverPow = 40;
+    public enum PowerLevel {
+        near(Constants.nearShotVelocity),
+        mid(Constants.midShotVelocity),
+        far(Constants.farShotVelocity);
 
-    public ArtifactLauncher(HardwareMap hw) {
-        shooter = hw.get(DcMotorEx.class, Constants.shooter);
-        lowPusher = hw.get(Servo.class, Constants.lowPusher);
-        highPusher = hw.get(Servo.class, Constants.highPusher);
+        public final double velocity;
+        PowerLevel(double v) { velocity = v; }
+    }
 
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter.setVelocityPIDFCoefficients(
-                Constants.shooterP,
-                Constants.shooterI,
-                Constants.shooterD,
-                Constants.shooterF
+    private PowerLevel powerLevel = PowerLevel.near;
+
+    private boolean enabled = false;
+    private boolean feeding = false;
+
+    private double commandedVelocity = 0;
+
+    private ArtifactCollector intake;
+
+    public ArtifactLauncher(HardwareMap hw, ArtifactCollector intake) {
+        this.intake = intake;
+        leftLauncher  = hw.get(DcMotorEx.class, Constants.leftLauncher);
+        rightLauncher = hw.get(DcMotorEx.class, Constants.rightLauncher);
+        pusher        = hw.get(Servo.class, Constants.pusher);
+
+        leftLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        setupMotor(leftLauncher);
+        setupMotor(rightLauncher);
+
+        restPusher();
+    }
+
+    private void setupMotor(DcMotorEx m) {
+        m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        m.setVelocityPIDFCoefficients(
+                Constants.launcherP,
+                Constants.launcherI,
+                Constants.launcherD,
+                Constants.launcherF
         );
-
-        highPusher.setDirection(Servo.Direction.REVERSE);
-        rest();
+        m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
-    public void enableLauncher() {
-        launcherEnabled = true;
-        powerState = ShooterPowerState.goal;
+    public void enable() {
+        enabled = true;
+        slewTimer.reset();
     }
 
-    public void disableLauncher() {
-        launcherEnabled = false;
-        powerState = ShooterPowerState.off;
-        shooter.setVelocity(0);
-        actionState = ActionState.idle;
-        shotCount = 0;
+    public void disable() {
+        enabled = false;
+        feeding = false;
         commandedVelocity = 0;
-        rest();
+
+        setVelocity(0);
+        restPusher();
+        intake.stop();
     }
 
-    public void setIntakeCallbacks(Runnable on, Runnable off) {
-        intakeOn = on;
-        intakeOff = off;
+    public void startFeeding() {
+        if (!enabled) return;
+
+        feeding = true;
+
+        intake.setOuttakeFeed();
+        pusher.setPosition(Constants.pusherRestPos); // 0.17
     }
 
-    public void toggleMode() {
-        if (actionState == ActionState.idle) {
-            mode = (mode == ShooterMode.single)
-                    ? ShooterMode.burst
-                    : ShooterMode.single;
-        }
-    }
-    public void setBasePower() {
-        powerState = ShooterPowerState.base;
-        commandedVelocity = shooter.getVelocity();
+    public void stopFeeding() {
+        feeding = false;
+        restPusher();
     }
 
-    public void setGoalPower() {
-        powerState = ShooterPowerState.goal;
-        commandedVelocity = shooter.getVelocity();
+    public void powerUp() {
+        if (powerLevel == PowerLevel.near) powerLevel = PowerLevel.mid;
+        else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.far;
     }
 
-    public void shoot() {
-        if (launcherEnabled
-                && actionState == ActionState.idle
-                && powerState != ShooterPowerState.off) {
-            shotCount = 0;
-            timer.reset();
-            actionState = ActionState.lowPush;
-        }
+    public void powerDown() {
+        if (powerLevel == PowerLevel.far) powerLevel = PowerLevel.mid;
+        else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.near;
     }
 
     public void update() {
-        if (!launcherEnabled) {
-            shooter.setVelocity(0);
-            rest();
-            return;
+        if (!enabled) return;
+        updateVelocity();
+        if (feeding) {
+            intake.setOuttakeFeed();
+            pusher.setPosition(Constants.pusherRestPos);
         }
-
-        if (powerState == ShooterPowerState.off) {
-            shooter.setVelocity(0);
-            return;
-        }
-
-        setRightVelocity();
-
-        switch (actionState) {
-
-            case waitingForSpeed:
-                if (isShooterReady()) {
-                    timer.reset();
-                    actionState = ActionState.lowPush;
-                }
-                break;
-
-            case lowPush:
-                lowPusher.setPosition(Constants.lowAngle);
-                if (timer.milliseconds() > 300) {
-                    lowPusher.setPosition(Constants.pusherRest);
-                    timer.reset();
-                    actionState = ActionState.highPush;
-                }
-                break;
-
-            case highPush:
-                highPusher.setPosition(Constants.highAngle);
-                if (timer.milliseconds() > 300) {
-                    highPusher.setPosition(Constants.pusherRest);
-                    timer.reset();
-                    actionState = ActionState.wait;
-                }
-                break;
-
-            case wait:
-                if (isShooterReady()) {
-                    shotCount++;
-                    if (mode == ShooterMode.burst && shotCount < burstMax) {
-                        if (intakeOn != null) intakeOn.run();
-
-                        timer.reset();
-                        actionState = ActionState.lowPush;
-
-                    } else {
-                        if (intakeOff != null) intakeOff.run();
-                        actionState = ActionState.idle;
-                        shotCount = 0;
-                    }
-                }
-                break;
-
-        }
-
-        handleIntake();
     }
 
-    private void setRightVelocity() {
-        double target = powerState.velocity;
+    /* ===================== INTERNAL ===================== */
+
+    private void updateVelocity() {
+        double target = powerLevel.velocity;
 
         double dt = slewTimer.seconds();
         slewTimer.reset();
 
-        double maxDelta = maxAccel * dt;
+        double maxDelta = Constants.launcherMaxAccel * dt;
         double delta = target - commandedVelocity;
-
-        if (delta > maxDelta) delta = maxDelta;
-        if (delta < -maxDelta) delta = -maxDelta;
+        delta = Math.max(-maxDelta, Math.min(maxDelta, delta));
 
         commandedVelocity += delta;
 
-        if (commandedVelocity > target + maxOverPow) {
-            commandedVelocity = target + maxOverPow;
+        if (commandedVelocity > target + Constants.launcherOverdriveLimit) {
+            commandedVelocity = target + Constants.launcherOverdriveLimit;
         }
 
-        shooter.setVelocity(commandedVelocity);
-    }
-    private boolean isShooterReady () {
-        return Math.abs(shooter.getVelocity() - powerState.velocity)
-                <= Constants.shooterVelocityTolerance
-                && shooter.getVelocity() <= powerState.velocity + 40;
+        setVelocity(commandedVelocity);
     }
 
-    private void handleIntake() {
-        if (mode == ShooterMode.burst && actionState == ActionState.wait) {
-            if (intakeOn != null) intakeOn.run();
-        } else {
-            if (intakeOff != null) intakeOff.run();
-        }
+    private void setVelocity(double v) {
+        leftLauncher.setVelocity(v);
+        rightLauncher.setVelocity(v);
     }
 
-    private void rest() {
-        lowPusher.setPosition(Constants.pusherRest);
-        highPusher.setPosition(Constants.pusherRest);
+    private boolean isReady() {
+        return Math.abs(getCurrentVelocity() - powerLevel.velocity)
+                <= Constants.launcherVelocityTolerance;
     }
 
-    public double getCurrentVelocity() {
-        return shooter.getVelocity();
+    private double getCurrentVelocity() {
+        return (leftLauncher.getVelocity() + rightLauncher.getVelocity()) / 2.0;
     }
 
-    public double getTargetVelocity() {
-        return powerState.velocity;
+    private void restPusher() {
+        pusher.setPosition(Constants.pusherLaunchPos); // 0.07
     }
 
-    public ShooterMode getShooterMode() {
-        return mode;
-    }
+    /* ===================== TELEMETRY ===================== */
 
-    public boolean isLauncherEnabled() {
-        return launcherEnabled;
-    }
-
-    public boolean isShooting() {
-        return actionState != ActionState.idle;
-    }
-
-    public ActionState getActionState() {
-        return actionState;
+    public boolean isEnabled() { return enabled; }
+    public boolean isReadyToShoot() { return isReady(); }
+    public PowerLevel getPowerLevel() { return powerLevel; }
+    public double getTargetVelocity() { return powerLevel.velocity; }
+    public double getActualVelocity() { return getCurrentVelocity(); }
+    public boolean isFeeding() {
+        return feeding;
     }
 }

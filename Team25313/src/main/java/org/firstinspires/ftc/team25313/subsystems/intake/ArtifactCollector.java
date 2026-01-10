@@ -1,34 +1,68 @@
 package org.firstinspires.ftc.team25313.subsystems.intake;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.team25313.Constants;
 
 public class ArtifactCollector {
-    private DcMotor collector;
+    private final DcMotorEx collector;
 
-
-    public ArtifactCollector(HardwareMap hwmap) {
-        collector = hwmap.get(DcMotor.class, Constants.collector);
-        collector.setDirection(DcMotor.Direction.REVERSE);
+    public enum IntakeMode {
+        idle,
+        manualCollect,
+        manualReverse,
+        outtakeFeed
     }
 
-    private boolean running = false;
-    public void collect () {
-        collector.setPower(Constants.intakeMotorIn);
-        running = true;
+    private IntakeMode mode = IntakeMode.idle;
+
+    public ArtifactCollector(HardwareMap hw) {
+        collector = hw.get(DcMotorEx.class, Constants.collector);
+        collector.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void reverse () {
-        collector.setPower(-Constants.intakeMotorIn);
+    /* ===== MODE SETTERS ===== */
+
+    public void setManualCollect() {
+        mode = IntakeMode.manualCollect;
+    }
+
+    public void setManualReverse() {
+        mode = IntakeMode.manualReverse;
+    }
+
+    public void setOuttakeFeed() {
+        mode = IntakeMode.outtakeFeed;
     }
 
     public void stop() {
-        collector.setPower(0);
-        running = false;
+        mode = IntakeMode.idle;
     }
 
-    public boolean isRunning() {
-        return running;
+    public boolean isOuttakeFeeding() {
+        return mode == IntakeMode.outtakeFeed;
+    }
+
+    public void update() {
+        switch (mode) {
+
+            case manualCollect:
+                collector.setPower(Constants.intakeMotorIn);
+                break;
+
+            case manualReverse:
+                collector.setPower(-(Constants.intakeMotorIn));
+                break;
+
+            case outtakeFeed:
+                collector.setPower(Constants.intakeMotorIn);
+                break;
+
+            case idle:
+            default:
+                collector.setPower(0);
+                break;
+        }
     }
 }

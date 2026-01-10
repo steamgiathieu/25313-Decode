@@ -53,7 +53,8 @@ public class DriveSubsystem {
     public void driveRobotRelated(double forward, double strafe, double rotate) {
         forward = Utility.applyDeadzone(forward);
         strafe = Utility.applyDeadzone(strafe);
-        rotate = fixedSpeed(Utility.applyDeadzone(rotate), rotateRate);
+//        rotate = fixedSpeed(Utility.applyDeadzone(rotate), rotateRate);
+        rotate = Utility.applyDeadzone(rotate);
 
         frontLeftPower = forward + strafe + rotate;
         frontRightPower = forward - strafe - rotate;
@@ -101,13 +102,15 @@ public class DriveSubsystem {
         rightBack.setPower(rbP);
     }
 
-    public double fixedSpeed(double rawVal, double fixedRate) {
+    public double fixedSpeed(double rawVal, double maxFixedRate) {
         double valueDeadzone = 0.05;
-        double value; // final rotation command sent to drivetrain
+        double minFixedRate = maxFixedRate / 2;
+        rawVal = Math.abs(rawVal);
+        double value;
 
-        if (Math.abs(rawVal) > valueDeadzone) {
-            // Fixed speed: use sign of joystick but fixed magnitude
-            value = Math.signum(rawVal) * fixedRate;
+        if (rawVal > valueDeadzone) {
+            if (rawVal <= 0.5) value = Math.signum(rawVal) * minFixedRate;
+            else value = Math.signum(rawVal) * maxFixedRate;
         } else {
             value = 0.0;
         }

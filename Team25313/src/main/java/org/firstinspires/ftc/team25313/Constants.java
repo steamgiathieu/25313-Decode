@@ -42,20 +42,23 @@ public final class Constants {
     public static final double intakeMotorIn = 0.6;
 
     // Outtake Subsystem
-    public static final String shooter = "shooter";
-    public static final String lowPusher = "lowPusher";
-    public static final String highPusher = "highPusher";
-    public static final double shooterP = 1.6;
-    public static final double shooterI = 0.00005;
-    public static final double shooterD = 0.00005;
-    public static final double shooterF = 14.8;
-    public static final double pusherRest = 0.0;
-    public static final double lowAngle = 0.3;
-    public static final double highAngle = 0.25;
-    public static final double baseZoneVelocity = 1260;
-    public static final double goalZoneVelocity = 1050;
-    public static double shooterVelocityTolerance = 40;
-    public static double maxVelocityStep = 150;
+    public static final String leftLauncher = "leftLauncher";
+    public static final String rightLauncher = "rightLauncher";
+    public static final String pusher = "pusher";
+    public static final double nearShotVelocity = 1300;
+    public static final double midShotVelocity  = 1500;
+    public static final double farShotVelocity  = 1700;
+    public static final double launcherP = 20;
+    public static final double launcherI = 0.0;
+    public static final double launcherD = 0.00001;
+    public static final double launcherF = 13;
+    public static final double launcherMaxAccel = 500;
+    public static final double launcherOverdriveLimit = 40;
+    public static final double launcherVelocityTolerance = 35;
+    public static final int burstCount = 3;
+    public static final double pusherRestPos = 0.17;
+    public static final double pusherLaunchPos = 0.07;
+    public static final long pusherFireTimeMs = 140;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";

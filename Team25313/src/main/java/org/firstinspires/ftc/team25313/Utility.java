@@ -89,27 +89,33 @@ public final class Utility {
         PanelsData.rotate = rotate;
     }
 
-    public static void teleIntake(Telemetry telemetry, boolean isIntake) {
-        // Driver Hub
-        telemetry.addData("Intake", isIntake);
+//    public static void teleIntake(Telemetry telemetry, boolean isIntake) {
+//        // Driver Hub
+//        telemetry.addData("Intake", isIntake);
+//
+//        // Panels
+//        PanelsData.isIntake = isIntake;
+//    }
 
-        // Panels
-        PanelsData.isIntake = isIntake;
-    }
-
-    public static void teleOuttake(Telemetry telemetry, ArtifactLauncher outtake) {
-        telemetry.addData("Is enabled", outtake.isLauncherEnabled());
-        telemetry.addData("Mode", outtake.getShooterMode());
-        telemetry.addData("State", outtake.getActionState());
+    public static void teleOuttake(
+            Telemetry telemetry,
+            ArtifactLauncher outtake
+    ) {
         telemetry.addData(
                 "Velocity",
                 "%.0f / %.0f",
-                outtake.getCurrentVelocity(),
+                outtake.getActualVelocity(),
                 outtake.getTargetVelocity()
         );
-
-        telemetry.addData("Shooting", outtake.isShooting());
+        telemetry.addData(
+                "Ready",
+                outtake.isReadyToShoot() ? "YES" : "NO"
+        );
+        telemetry.addData("Power level", outtake.getPowerLevel());
+        PanelsData.launchPower = outtake.getTargetVelocity();
+        PanelsData.isReady = outtake.isReadyToShoot();
     }
+
 
 //    public static void teleVision(Telemetry telemetry, VisionS) {
 //        telemetry.addData("Is enabled", vi)
