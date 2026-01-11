@@ -50,7 +50,21 @@ public class testauto extends LinearOpMode {
 
         // 4. Vòng lặp chính
         while (opModeIsActive()) {
-            // Xử lý hình ảnh
+            double seconds = timer.seconds();
+            double cycleTime = seconds % 4.0; // Chu kỳ 4 giây (2 giây trái + 2 giây phải)
+
+            // Điều khiển robot đi ngang (Strafe)
+            if (cycleTime < 2.0) {
+                // Strafe sang trái trong 2 giây đầu
+                driveSubsystem.drive(0, -0.5, 0);
+                telemetry.addData("Movement", "Strafing Left");
+            } else {
+                // Strafe sang phải trong 2 giây sau
+                driveSubsystem.drive(0, 0.5, 0);
+                telemetry.addData("Movement", "Strafing Right");
+            }
+
+            // Xử lý hình ảnh AprilTag
             visionSubsystem.processFrame();
             List<AprilTagDetection> currentDetections = visionSubsystem.getAprilTagProcessor().getDetections();
             
@@ -59,15 +73,17 @@ public class testauto extends LinearOpMode {
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.ftcPose != null) {
                     telemetry.addLine(String.format("\n> TAG ID %d", detection.id));
-                    telemetry.addData("  X", "%.2f", -detection.ftcPose.x);
-                    telemetry.addData("  Y", "%.2f", -detection.ftcPose.y);
+                    telemetry.addData("  Bot X relative to Tag", "%.2f", -detection.ftcPose.x);
+                    telemetry.addData("  Bot Y relative to Tag", "%.2f", -detection.ftcPose.y);
                 }
             }
 
-            telemetry.addData("Timer", "%.2f s", timer.seconds());
+            telemetry.addData("Timer", "%.2f s", seconds);
             telemetry.update();
         }
 
+        // Dừng robot và đóng camera
+        driveSubsystem.drive(0, 0, 0);
         visionSubsystem.close();
     }
 }
