@@ -30,12 +30,12 @@ public abstract class FTCObject {
 
     protected void log(String caption, Object value) {
         if (isDebugMode) {
-            Ultility.log("FTCObject", caption + ": " + value);
+            Utility.logCat("FTCObject", caption + ": " + value);
         }
     }
 
     // safe sleep
     protected void safeSleep(long millis) {
-        Ultility.sleep(millis);
+        Utility.sleep(millis);
     }
 }

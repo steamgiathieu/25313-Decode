@@ -1,74 +1,156 @@
 package org.firstinspires.ftc.team25313.subsystems.outtake;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.team25313.Constants;
+import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 
 public class ArtifactLauncher {
 
-    private final DcMotor leftShooter, rightShooter;
-    private final Servo ShooterAssistant;
+    private final DcMotorEx leftLauncher;
+    private final DcMotorEx rightLauncher;
+    private final Servo pusher;
 
-    private double Power = 0.3;
-    private double delta = 0.01;
+    private final ElapsedTime slewTimer = new ElapsedTime();
 
-    public static double assistantRest = 0.0;
-    public static double assistantPush = 0.35;
+    public enum PowerLevel {
+        near(Constants.nearShotVelocity),
+        mid(Constants.midShotVelocity),
+        far(Constants.farShotVelocity);
 
-
-    public ArtifactLauncher(HardwareMap hwMap) {
-        leftShooter = hwMap.get(DcMotor.class, "leftShooter");
-        rightShooter = hwMap.get(DcMotor.class, "rightShooter");
-        ShooterAssistant = hwMap.get(Servo.class, "ShooterAssistant");
-
-        leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        rightShooter.setDirection(DcMotor.Direction.REVERSE);
-        ShooterAssistant.setPosition(assistantRest);
+        public final double velocity;
+        PowerLevel(double v) { velocity = v; }
     }
 
-    /** Bật shooter với mức lực hiện tại */
-    public void startShooter() {
-        leftShooter.setPower(Power);
-        rightShooter.setPower(Power);
+    private PowerLevel powerLevel = PowerLevel.near;
+
+    private boolean enabled = false;
+    private boolean feeding = false;
+
+    private double commandedVelocity = 0;
+
+    private ArtifactCollector intake;
+
+    public ArtifactLauncher(HardwareMap hw, ArtifactCollector intake) {
+        this.intake = intake;
+        leftLauncher  = hw.get(DcMotorEx.class, Constants.leftLauncher);
+        rightLauncher = hw.get(DcMotorEx.class, Constants.rightLauncher);
+        pusher        = hw.get(Servo.class, Constants.pusher);
+
+        leftLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        setupMotor(leftLauncher);
+        setupMotor(rightLauncher);
+
+        restPusher();
     }
 
-    /** Tắt shooter */
-    public void stopShooter() {
-        leftShooter.setPower(0);
-        rightShooter.setPower(0);
+    private void setupMotor(DcMotorEx m) {
+        m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        m.setVelocityPIDFCoefficients(
+                Constants.launcherP,
+                Constants.launcherI,
+                Constants.launcherD,
+                Constants.launcherF
+        );
+        m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
-    /** Đẩy bóng vào shooter */
-    public void push() {
-        ShooterAssistant.setPosition(assistantPush);
-    }
-    public void rest() {
-        ShooterAssistant.setPosition(assistantRest);
+    public void enable() {
+        enabled = true;
+        slewTimer.reset();
     }
 
-    /** Tăng mức lực bắn → nếu vượt mức 3 thì quay về mức 0 */
-    /** Áp dụng mức lực hiện tại nếu shooter đang bật */
-    public void applyCurrentPowerLevel() {
-        double p = Power;
-        if (leftShooter.getPower() > 0.05 || rightShooter.getPower() > 0.05) {
-            leftShooter.setPower(p);
-            rightShooter.setPower(p);
+    public void disable() {
+        enabled = false;
+        feeding = false;
+        commandedVelocity = 0;
+
+        setVelocity(0);
+        restPusher();
+        intake.stop();
+    }
+
+    public void startFeeding() {
+        if (!enabled) return;
+
+        feeding = true;
+
+        intake.setOuttakeFeed();
+        pusher.setPosition(Constants.pusherRestPos); // 0.17
+    }
+
+    public void stopFeeding() {
+        feeding = false;
+        restPusher();
+    }
+
+    public void powerUp() {
+        if (powerLevel == PowerLevel.near) powerLevel = PowerLevel.mid;
+        else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.far;
+    }
+
+    public void powerDown() {
+        if (powerLevel == PowerLevel.far) powerLevel = PowerLevel.mid;
+        else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.near;
+    }
+
+    public void update() {
+        if (!enabled) return;
+        updateVelocity();
+        if (feeding) {
+            intake.setOuttakeFeed();
+            pusher.setPosition(Constants.pusherRestPos);
         }
     }
-    /** Lấy mức lực hiện tại */
-    public double getCurrentPowerLevel() {
-        return Power;
-    }
-    public void increasePowerLevel() {
-        Power += delta;
-        applyCurrentPowerLevel();
+
+    /* ===================== INTERNAL ===================== */
+
+    private void updateVelocity() {
+        double target = powerLevel.velocity;
+
+        double dt = slewTimer.seconds();
+        slewTimer.reset();
+
+        double maxDelta = Constants.launcherMaxAccel * dt;
+        double delta = target - commandedVelocity;
+        delta = Math.max(-maxDelta, Math.min(maxDelta, delta));
+
+        commandedVelocity += delta;
+
+        if (commandedVelocity > target + Constants.launcherOverdriveLimit) {
+            commandedVelocity = target + Constants.launcherOverdriveLimit;
+        }
+
+        setVelocity(commandedVelocity);
     }
 
-    public void decreasePowerLevel () {
-        Power -= delta;
-        applyCurrentPowerLevel();
+    private void setVelocity(double v) {
+        leftLauncher.setVelocity(v);
+        rightLauncher.setVelocity(v);
+    }
+
+    private boolean isReady() {
+        return Math.abs(getCurrentVelocity() - powerLevel.velocity)
+                <= Constants.launcherVelocityTolerance;
+    }
+
+    private double getCurrentVelocity() {
+        return (leftLauncher.getVelocity() + rightLauncher.getVelocity()) / 2.0;
+    }
+
+    private void restPusher() {
+        pusher.setPosition(Constants.pusherLaunchPos); // 0.07
+    }
+
+    /* ===================== TELEMETRY ===================== */
+
+    public boolean isEnabled() { return enabled; }
+    public boolean isReadyToShoot() { return isReady(); }
+    public PowerLevel getPowerLevel() { return powerLevel; }
+    public double getTargetVelocity() { return powerLevel.velocity; }
+    public double getActualVelocity() { return getCurrentVelocity(); }
+    public boolean isFeeding() {
+        return feeding;
     }
 }

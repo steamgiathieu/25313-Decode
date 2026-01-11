@@ -8,8 +8,6 @@ import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
-//import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
-//import org.firstinspires.ftc.team25313.subsystems.vision.Camera;
 
 @Autonomous(name = "Main Auto", group = "Auto")
 public abstract class MainAuto extends LinearOpMode {
@@ -46,10 +44,10 @@ public abstract class MainAuto extends LinearOpMode {
 
     private Pose getStartPose(StartingPos pos) {
         switch (pos) {
-            case BIG_TRIANGLE_BLUE:  return new Pose(10, 60, Math.toRadians(270));
-            case SMALL_TRIANGLE_BLUE:return new Pose(12, 36, Math.toRadians(270));
-            case BIG_TRIANGLE_RED:   return new Pose(-10, 60, Math.toRadians(90));
-            case SMALL_TRIANGLE_RED: return new Pose(-12, 36, Math.toRadians(90));
+            case BIG_TRIANGLE_BLUE:  return new Pose(26, 128, Math.toRadians(315));
+            case SMALL_TRIANGLE_BLUE:return new Pose(54, 10, Math.toRadians(98));
+            case BIG_TRIANGLE_RED:   return new Pose(115, 128, Math.toRadians(225));
+            case SMALL_TRIANGLE_RED: return new Pose(87.5, 8, Math.toRadians(90));
             default: return new Pose(0, 0, 0);
         }
     }
