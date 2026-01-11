@@ -1,84 +1,109 @@
 package org.firstinspires.ftc.team25313.subsystems.vision;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team25313.Constants;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.*;
+
+import java.util.List;
 
 public class VisionSubsystem {
 
-    private VisionPortal portal;
-    private AprilTagProcessor tagProcessor;
+    public enum Alliance {
+        blue,
+        red
+    }
 
-    private Constants.AllianceColor alliance;
+    public enum ShotLevel {
+        near,
+        mid,
+        far,
+        none
+    }
 
-    private double lastDistance = -1;
-    private boolean hasValidTag = false;
+    private final AprilTagProcessor tagProcessor;
 
-    public VisionSubsystem(HardwareMap hardwareMap, Constants.AllianceColor alliance) {
+    private Alliance alliance = Alliance.blue;
+    private int goalTagId;
+
+    private double distanceToGoal = -1;   // meters
+    private double yawToGoalDeg = 0;       // degrees
+    private boolean hasTarget = false;
+
+    public VisionSubsystem(AprilTagProcessor tagProcessor, Alliance alliance) {
+        this.tagProcessor = tagProcessor;
+        setAlliance(alliance);
+    }
+
+    /* ===================== CONFIG ===================== */
+
+    public void setAlliance(Alliance alliance) {
         this.alliance = alliance;
-
-        tagProcessor = new AprilTagProcessor.Builder()
-                .setDrawAxes(false)
-                .setDrawCubeProjection(false)
-                .setDrawTagOutline(false)
-                .build();
-
-        portal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(tagProcessor)
-                .build();
-
-        portal.stopStreaming();
+        goalTagId = (alliance == Alliance.blue)
+                ? Constants.blueGoalTagId
+                : Constants.redGoalTagId;
     }
 
-    public boolean hasTarget() {
-        return hasValidTag;
+    public Alliance getAlliance() {
+        return alliance;
     }
 
-    public double getDistance() {
-        return lastDistance;
-    }
-
-    public double getRecommendedVelocity() {
-        if (!hasValidTag) return -1;
-
-        double baseDist = 70;
-        double goalDist = 30;
-
-        double baseVel = 4300;
-        double goalVel = 3600;
-
-        double d = Math.min(Math.max(lastDistance, goalDist), baseDist);
-
-        return goalVel +
-                (baseVel - goalVel) * (d - goalDist) / (baseDist - goalDist);
-    }
-
-    private int getTargetTagId() {
-        return alliance == Constants.AllianceColor.blue ? 20 : 24;
-    }
+    /* ===================== UPDATE ===================== */
 
     public void update() {
-        hasValidTag = false;
+        hasTarget = false;
+        distanceToGoal = -1;
+        yawToGoalDeg = 0;
 
-        for (AprilTagDetection detection : tagProcessor.getDetections()) {
+        List<AprilTagDetection> detections = tagProcessor.getDetections();
 
-            if (detection.id == getTargetTagId()) {
-                lastDistance = detection.ftcPose.range; // inch
-                hasValidTag = true;
-                break;
-            }
+        for (AprilTagDetection det : detections) {
+            if (det.metadata == null) continue;
+            if (det.id != goalTagId) continue;
+
+            distanceToGoal = det.ftcPose.range;
+            yawToGoalDeg = det.ftcPose.yaw;
+            hasTarget = true;
+            break;
         }
     }
 
-    public void enablePanelsStream() {
-        portal.resumeStreaming();
+    /* ===================== LOGIC ===================== */
+
+    public ShotLevel getSuggestedShot() {
+        if (!hasTarget) return ShotLevel.none;
+
+        if (distanceToGoal <= Constants.shotNearMaxDist) {
+            return ShotLevel.near;
+        } else if (distanceToGoal <= Constants.shotMidMaxDist) {
+            return ShotLevel.mid;
+        } else {
+            return ShotLevel.far;
+        }
     }
 
-    public void disablePanelsStream() {
-        portal.stopStreaming();
+    public double getAimAccuracyPercent() {
+        if (!hasTarget) return 0;
+
+        double error = Math.abs(yawToGoalDeg);
+        double accuracy = 1.0 - (error / Constants.maxAimYawDeg);
+        return Math.max(0, Math.min(accuracy, 1.0)) * 100.0;
+    }
+
+    public double getRotateHint() {
+        if (!hasTarget) return 0;
+        return yawToGoalDeg / Constants.maxAimYawDeg;
+    }
+
+    /* ===================== GETTERS ===================== */
+
+    public boolean hasTarget() {
+        return hasTarget;
+    }
+
+    public double getDistanceToGoal() {
+        return distanceToGoal;
+    }
+
+    public double getYawToGoalDeg() {
+        return yawToGoalDeg;
     }
 }

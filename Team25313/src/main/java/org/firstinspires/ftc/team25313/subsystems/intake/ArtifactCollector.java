@@ -22,8 +22,6 @@ public class ArtifactCollector {
         collector.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    /* ===== MODE SETTERS ===== */
-
     public void setManualCollect() {
         mode = IntakeMode.manualCollect;
     }

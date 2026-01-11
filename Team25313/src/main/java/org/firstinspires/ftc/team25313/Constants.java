@@ -51,14 +51,12 @@ public final class Constants {
     public static final double launcherP = 20;
     public static final double launcherI = 0.0;
     public static final double launcherD = 0.00001;
-    public static final double launcherF = 13;
+    public static final double launcherF = 12.5;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
-    public static final int burstCount = 3;
     public static final double pusherRestPos = 0.17;
     public static final double pusherLaunchPos = 0.07;
-    public static final long pusherFireTimeMs = 140;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";
@@ -71,12 +69,12 @@ public final class Constants {
     // Camera & Vision
     public static final String webcamName = "Webcam 1";
     public static final String aprilTagProcessor = "aprilTagProcessor";
-    public static final double cameraForward = 4.0;
-    public static final double cameraLeft = 0.0;
-    public static final double cameraUp = 9.0;
-    public static final double cameraYaw = 0.0;
-    public static final double cameraPitch = 0.0;
-    public static final double cameraRoll = 0.0;
+    public static final int blueGoalTagId = 20;
+    public static final int redGoalTagId  = 24;
+    public static final double maxAimYawDeg = 15.0;
+    public static final double shotNearMaxDist = 1.2;
+    public static final double shotMidMaxDist  = 2.0;
+
 
     // Miscellaneous
     public static final boolean isFieldCentric = true;

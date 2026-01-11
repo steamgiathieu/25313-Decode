@@ -97,6 +97,40 @@ public final class Utility {
 //        PanelsData.isIntake = isIntake;
 //    }
 
+    public static void teleVision(
+            Telemetry telemetry,
+            VisionSubsystem vision
+    ) {
+        telemetry.addData("Has Target", vision.hasTarget());
+
+        if (vision.hasTarget()) {
+            telemetry.addData(
+                    "Distance (m)",
+                    "%.2f",
+                    vision.getDistanceToGoal()
+            );
+
+            telemetry.addData(
+                    "Yaw to Goal (deg)",
+                    "%.1f",
+                    vision.getYawToGoalDeg()
+            );
+
+            telemetry.addData(
+                    "Aim Accuracy (%)",
+                    "%.1f",
+                    vision.getAimAccuracyPercent()
+            );
+
+            telemetry.addData(
+                    "Suggested Shot",
+                    vision.getSuggestedShot()
+            );
+        } else {
+            telemetry.addLine("No goal detected");
+        }
+    }
+
     public static void teleOuttake(
             Telemetry telemetry,
             ArtifactLauncher outtake
