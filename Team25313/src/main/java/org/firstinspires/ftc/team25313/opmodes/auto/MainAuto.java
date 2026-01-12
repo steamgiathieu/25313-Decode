@@ -1,68 +1,164 @@
-//main auto file to run all starting positions are called from specific builded auto mode
 package org.firstinspires.ftc.team25313.opmodes.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.team25313.Constants;
-import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
+import org.firstinspires.ftc.team25313.opmodes.auto.paths.*;
 
-@Autonomous(name = "Main Auto", group = "Auto")
-public abstract class MainAuto extends LinearOpMode {
+public abstract class MainAuto extends OpMode {
 
-    protected Constants.AllianceColor allianceColor;
-    protected StartingPos startingPos;
+    protected Follower follower;
+    protected AutoPaths paths;
 
-    protected DriveSubsystem driveSubsystem;
-//    protected Camera camera;
+    protected enum AutoState {
+        START,
+        PATH_1,
+        WAIT_1,
+        PATH_2,
+        PATH_3,
+        WAIT_3,
+        PATH_4,
+        PATH_5,
+        WAIT_5,
+        PATH_6,
+        DONE
+    }
 
+    protected AutoState autoState = AutoState.START;
+    protected long waitStartTime;
+
+    // ---- abstract ----
     protected abstract void initStartingCondition();
 
     @Override
-    public void runOpMode() {
+    public void init() {
         initStartingCondition();
 
-        // Khởi tạo đúng HardwareMap
-        driveSubsystem = new DriveSubsystem(hardwareMap);
-//        camera = new Camera(this);
+        follower = org.firstinspires.ftc.team25313.pedroPathing.Constants.createFollower(hardwareMap);
 
-        // Lấy pose xuất phát
-//        Pose startPose = getStartPose(startingPos);
-//        driveSubsystem.getDrive().setPoseEstimate(startPose);
+        follower.setStartingPose(getStartingPose());
 
-        telemetry.addData("Alliance", allianceColor);
-        telemetry.addData("Starting Pos", startingPos);
-        telemetry.update();
-
-        waitForStart();
-        if (isStopRequested()) return;
-
-        executeAutoRoutine();
+        buildPaths();
     }
 
-    private Pose getStartPose(StartingPos pos) {
-        switch (pos) {
-            case BIG_TRIANGLE_BLUE:  return new Pose(26, 128, Math.toRadians(315));
-            case SMALL_TRIANGLE_BLUE:return new Pose(54, 10, Math.toRadians(98));
-            case BIG_TRIANGLE_RED:   return new Pose(115, 128, Math.toRadians(225));
-            case SMALL_TRIANGLE_RED: return new Pose(87.5, 8, Math.toRadians(90));
-            default: return new Pose(0, 0, 0);
+    @Override
+    public void loop() {
+        follower.update();
+
+        runIntake();
+        runOuttake();
+
+        switch (autoState) {
+
+            case START:
+                follower.followPath(paths.getPath1());
+                autoState = AutoState.PATH_1;
+                break;
+
+            case PATH_1:
+                if (!follower.isBusy()) {
+                    startWait();
+                    autoState = AutoState.WAIT_1;
+                }
+                break;
+
+            case WAIT_1:
+                if (waitPassed()) {
+                    shoot();
+                    follower.followPath(paths.getPath2());
+                    autoState = AutoState.PATH_2;
+                }
+                break;
+
+            case PATH_2:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.getPath3());
+                    autoState = AutoState.PATH_3;
+                }
+                break;
+
+            case PATH_3:
+                if (!follower.isBusy()) {
+                    startWait();
+                    autoState = AutoState.WAIT_3;
+                }
+                break;
+
+            case WAIT_3:
+                if (waitPassed()) {
+                    shoot();
+                    follower.followPath(paths.getPath4());
+                    autoState = AutoState.PATH_4;
+                }
+                break;
+
+            case PATH_4:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.getPath5());
+                    autoState = AutoState.PATH_5;
+                }
+                break;
+
+            case PATH_5:
+                if (!follower.isBusy()) {
+                    startWait();
+                    autoState = AutoState.WAIT_5;
+                }
+                break;
+
+            case WAIT_5:
+                if (waitPassed()) {
+                    shoot();
+                    follower.followPath(paths.getPath6());
+                    autoState = AutoState.PATH_6;
+                }
+                break;
+
+            case PATH_6:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.DONE;
+                }
+                break;
+
+            case DONE:
+                stopAll();
+                break;
         }
     }
 
-    private void executeAutoRoutine() {
-        // TODO: viết các bước auto thật
-        // · Detect artifact
-        // · Move to position
-        // · Launch balls
+    // ---------- helpers ----------
+
+    protected void buildPaths() {
+        paths = new SmallTriangleBluePaths(follower);
     }
 
-    public enum StartingPos {
-        BIG_TRIANGLE_BLUE,
-        SMALL_TRIANGLE_BLUE,
-        BIG_TRIANGLE_RED,
-        SMALL_TRIANGLE_RED
+    protected Pose getStartingPose() {
+        return new Pose(72, 8, Math.toRadians(90));
+    }
+
+    protected void startWait() {
+        waitStartTime = System.currentTimeMillis();
+    }
+
+    protected boolean waitPassed() {
+        return System.currentTimeMillis() - waitStartTime >= 4500;
+    }
+
+    protected void runIntake() {
+        // intake chạy liên tục
+    }
+
+    protected void runOuttake() {
+        // outtake giữ sẵn
+    }
+
+    protected void shoot() {
+        // đẩy servo bắn
+    }
+
+    protected void stopAll() {
+        // stop motor/servo
     }
 }

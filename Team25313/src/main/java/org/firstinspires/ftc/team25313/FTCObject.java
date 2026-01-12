@@ -33,9 +33,4 @@ public abstract class FTCObject {
             Utility.logCat("FTCObject", caption + ": " + value);
         }
     }
-
-    // safe sleep
-    protected void safeSleep(long millis) {
-        Utility.sleep(millis);
-    }
 }
