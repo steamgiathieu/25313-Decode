@@ -77,7 +77,7 @@ public class ArtifactLauncher {
         feeding = true;
 
         intake.setOuttakeFeed();
-        pusher.setPosition(Constants.pusherRestPos); // 0.17
+        pusher.setPosition(Constants.pusherLaunchPos);
     }
 
     public void stopFeeding() {
@@ -100,7 +100,7 @@ public class ArtifactLauncher {
         updateVelocity();
         if (feeding) {
             intake.setOuttakeFeed();
-            pusher.setPosition(Constants.pusherRestPos);
+            pusher.setPosition(Constants.pusherLaunchPos);
         }
     }
 
@@ -140,7 +140,7 @@ public class ArtifactLauncher {
     }
 
     private void restPusher() {
-        pusher.setPosition(Constants.pusherLaunchPos); // 0.07
+        pusher.setPosition(Constants.pusherRestPos); // 0.07
     }
 
     /* ===================== TELEMETRY ===================== */

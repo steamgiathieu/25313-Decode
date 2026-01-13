@@ -24,6 +24,7 @@ public final class Constants {
     public static final double ticksPerRev = pulsePerRev * quadrature * gearRatio;
     public static final double ticksToInches = (2 * Math.PI * wheelRads) / ticksPerRev;
     public static final double deadzone = 0.05;
+    public static final double maxPowOfMove = 0.7;
 
     // PIDF for Drive motors
     public static double drive_kP = 1.0;
@@ -49,14 +50,14 @@ public final class Constants {
     public static final double midShotVelocity  = 1500;
     public static final double farShotVelocity  = 1700;
     public static final double launcherP = 20;
-    public static final double launcherI = 0.0;
-    public static final double launcherD = 0.00001;
-    public static final double launcherF = 12.5;
+    public static final double launcherI = 0.000001;
+    public static final double launcherD = 0.0;
+    public static final double launcherF = 13;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
-    public static final double pusherRestPos = 0.17;
-    public static final double pusherLaunchPos = 0.07;
+    public static final double pusherRestPos = 0.07;
+    public static final double pusherLaunchPos = 0.17;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";
@@ -74,6 +75,7 @@ public final class Constants {
     public static final double maxAimYawDeg = 15.0;
     public static final double shotNearMaxDist = 1.2;
     public static final double shotMidMaxDist  = 2.0;
+    public static final double maxShootYawDeg = 5.0; // ví dụ ±5 độ
 
 
     // Miscellaneous

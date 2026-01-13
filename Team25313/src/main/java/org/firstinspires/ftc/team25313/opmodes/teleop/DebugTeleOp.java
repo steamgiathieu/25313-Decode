@@ -83,11 +83,24 @@ public class DebugTeleOp extends LinearOpMode {
             Utility.teleDrivePose(telemetry, forward, strafe, rotate);
             Utility.teleOuttake(telemetry, outtake);
 
-            telemetry.addData("Vision Target", vision.hasTarget());
-            telemetry.addData("Distance (m)", vision.getDistanceToGoal());
-            telemetry.addData("Yaw (deg)", vision.getYawToGoalDeg());
-            telemetry.addData("Suggested Shot", vision.getSuggestedShot());
-            telemetry.addData("Aim Accuracy %", "%.1f", vision.getAimAccuracyPercent());
+            telemetry.addData("Has Target", vision.hasTarget());
+
+            if (vision.hasTarget()) {
+                telemetry.addData("Distance (m)", "%.2f", vision.getDistanceToGoal());
+                telemetry.addData("Yaw (deg)", "%.1f", vision.getYawToGoalDeg());
+                telemetry.addData("Yaw Aligned", vision.isYawAligned() ? "YES" : "NO");
+                telemetry.addData("Aim Accuracy (%)", "%.1f", vision.getAimAccuracyPercent());
+                telemetry.addData("Suggested Shot", vision.getSuggestedShot());
+
+                if (!vision.isYawAligned()) {
+                    telemetry.addData(
+                            "Driver Hint",
+                            vision.getYawToGoalDeg() > 0 ? "Rotate RIGHT" : "Rotate LEFT"
+                    );
+                }
+            } else {
+                telemetry.addLine("No goal detected");
+            }
 
             telemetry.update();
         }

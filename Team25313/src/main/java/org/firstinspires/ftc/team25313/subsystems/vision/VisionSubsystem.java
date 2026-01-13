@@ -53,9 +53,7 @@ public class VisionSubsystem {
         distanceToGoal = -1;
         yawToGoalDeg = 0;
 
-        List<AprilTagDetection> detections = tagProcessor.getDetections();
-
-        for (AprilTagDetection det : detections) {
+        for (AprilTagDetection det : tagProcessor.getDetections()) {
             if (det.metadata == null) continue;
             if (det.id != goalTagId) continue;
 
@@ -66,10 +64,22 @@ public class VisionSubsystem {
         }
     }
 
-    /* ===================== LOGIC ===================== */
+    /* ===================== AIM LOGIC ===================== */
 
+    /** Có thấy goal */
+    public boolean hasTarget() {
+        return hasTarget;
+    }
+
+    /** Yaw có đủ nhỏ để bắn không */
+    public boolean isYawAligned() {
+        return hasTarget &&
+                Math.abs(yawToGoalDeg) <= Constants.maxShootYawDeg;
+    }
+
+    /** Gợi ý lực bắn – CHỈ khi yaw OK */
     public ShotLevel getSuggestedShot() {
-        if (!hasTarget) return ShotLevel.none;
+        if (!hasTarget || !isYawAligned()) return ShotLevel.none;
 
         if (distanceToGoal <= Constants.shotNearMaxDist) {
             return ShotLevel.near;
@@ -80,6 +90,7 @@ public class VisionSubsystem {
         }
     }
 
+    /** % chính xác cho driver */
     public double getAimAccuracyPercent() {
         if (!hasTarget) return 0;
 
@@ -88,16 +99,13 @@ public class VisionSubsystem {
         return Math.max(0, Math.min(accuracy, 1.0)) * 100.0;
     }
 
+    /** Gợi ý xoay cho driver / turret */
     public double getRotateHint() {
         if (!hasTarget) return 0;
         return yawToGoalDeg / Constants.maxAimYawDeg;
     }
 
     /* ===================== GETTERS ===================== */
-
-    public boolean hasTarget() {
-        return hasTarget;
-    }
 
     public double getDistanceToGoal() {
         return distanceToGoal;

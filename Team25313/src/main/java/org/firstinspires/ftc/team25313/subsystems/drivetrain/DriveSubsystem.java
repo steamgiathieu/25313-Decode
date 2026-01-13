@@ -37,7 +37,7 @@ public class DriveSubsystem {
         IMU.Parameters myIMUparameters;
         myIMUparameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                         RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
                 )
         );
@@ -49,7 +49,7 @@ public class DriveSubsystem {
     public double backLeftPower;
     public double backRightPower;
 
-    private double rotateRate = 0.5;
+//    private double rotateRate = 0.5;
     public void driveRobotRelated(double forward, double strafe, double rotate) {
         forward = Utility.applyDeadzone(forward);
         strafe = Utility.applyDeadzone(strafe);
@@ -61,8 +61,8 @@ public class DriveSubsystem {
         backLeftPower = forward - strafe + rotate;
         backRightPower = forward + strafe - rotate;
 
-        double maxPower = 1;
-        double maxSpeed = 1;  // make this slower for outreaches
+        double maxPower = Constants.maxPowOfMove;
+        double maxSpeed = Constants.maxPowOfMove;  // make this slower for outreaches
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(frontRightPower));
