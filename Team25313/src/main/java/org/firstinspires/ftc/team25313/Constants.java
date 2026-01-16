@@ -16,6 +16,7 @@ public final class Constants {
     public static final String backLeft   = "back_left_drive";
     public static final String backRight  = "back_right_drive";
 
+
     // Drivetrain constants
     public static final double pulsePerRev = 7.0;
     public static final double quadrature = 4.0;
@@ -25,6 +26,7 @@ public final class Constants {
     public static final double ticksToInches = (2 * Math.PI * wheelRads) / ticksPerRev;
     public static final double deadzone = 0.05;
     public static final double maxPowOfMove = 0.7;
+    public static final double rotateRate = 0.5;
 
     // PIDF for Drive motors
     public static double drive_kP = 1.0;
@@ -48,11 +50,11 @@ public final class Constants {
     public static final String pusher = "pusher";
     public static final double nearShotVelocity = 1300;
     public static final double midShotVelocity  = 1500;
-    public static final double farShotVelocity  = 1700;
-    public static final double launcherP = 20;
-    public static final double launcherI = 0.000001;
-    public static final double launcherD = 0.0;
-    public static final double launcherF = 13;
+    public static final double farShotVelocity  = 1650;
+    public static final double launcherP = 21;
+    public static final double launcherI = 0.0;
+    public static final double launcherD = 0.00001;
+    public static final double launcherF = 12.5;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
