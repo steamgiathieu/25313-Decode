@@ -8,8 +8,8 @@ import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
-@Autonomous(name = "3+3 sos far", group = "sosauto")
-public class sos1 extends LinearOpMode {
+@Autonomous(name = "far", group = "sosauto")
+public class far extends LinearOpMode {
 
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
@@ -28,7 +28,8 @@ public class sos1 extends LinearOpMode {
         outtake.enable();
         outtake.powerUp();
 
-        while (opModeIsActive()) {
+        ElapsedTime spinUpTimer = new ElapsedTime();
+        while (opModeIsActive() && spinUpTimer.milliseconds() > 2500) {
             outtake.update();
             idle();
         }
@@ -46,7 +47,7 @@ public class sos1 extends LinearOpMode {
         outtake.disable();
         intake.stop();
 
-        driveSubsystem.driveRobotRelated(0.5, 0, 0);
+        driveSubsystem.driveRobotRelated(-0.5, 0, 0);
         sleep(500);
         driveSubsystem.driveRobotRelated(0, 0, 0);
     }

@@ -37,8 +37,8 @@ public class MainTeleOp extends LinearOpMode {
             if (gamepad2.x) outtake.enable();
             if (gamepad2.b) outtake.disable();
 
-            if (gamepad2.dpad_up) outtake.powerUp();
-            if (gamepad2.dpad_down) outtake.powerDown();
+            if (gamepad2.dpadUpWasPressed()) outtake.powerUp();
+            if (gamepad2.dpadDownWasPressed()) outtake.powerDown();
 
             if (gamepad2.y) {
                 outtake.startFeeding();

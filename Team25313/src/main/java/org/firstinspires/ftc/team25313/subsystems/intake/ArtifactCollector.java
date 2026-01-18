@@ -4,9 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.team25313.Constants;
+import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
 public class ArtifactCollector {
     private final DcMotorEx collector;
+    private ArtifactLauncher outtake;
+
 
     public enum IntakeMode {
         idle,
@@ -54,7 +57,7 @@ public class ArtifactCollector {
                 break;
 
             case outtakeFeed:
-                collector.setPower(Constants.intakeMotorIn);
+                collector.setPower(Constants.intakeMotorShoot);
                 break;
 
             case idle:

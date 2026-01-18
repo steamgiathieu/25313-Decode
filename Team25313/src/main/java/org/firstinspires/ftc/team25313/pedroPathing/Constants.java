@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .forwardZeroPowerAcceleration(-46.9)
-            .mass(2.5);;
+            .mass(2.5);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
@@ -32,13 +32,13 @@ public class Constants {
             .rightRearMotorDirection(DcMotor.Direction.REVERSE);
 
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
-            .forwardEncoder_HardwareMapName("front_left_drive")
-            .strafeEncoder_HardwareMapName("front_right_drive")
-            .forwardPodY(-1.57480315)
-            .strafePodX(6.69291339)
+            .forwardEncoder_HardwareMapName("front_right_drive")
+            .strafeEncoder_HardwareMapName("front_left_drive")
+            .forwardPodY(-1.4173228346)
+            .strafePodX(4.5275590551)
             .strafeEncoderDirection(Encoder.REVERSE)
             .forwardEncoderDirection(Encoder.REVERSE)
-            .forwardTicksToInches(0.004)
+            .forwardTicksToInches(-0.0049353)
             .strafeTicksToInches(0.1)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(

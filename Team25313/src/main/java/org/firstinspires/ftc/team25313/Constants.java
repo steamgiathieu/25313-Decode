@@ -25,7 +25,7 @@ public final class Constants {
     public static final double ticksPerRev = pulsePerRev * quadrature * gearRatio;
     public static final double ticksToInches = (2 * Math.PI * wheelRads) / ticksPerRev;
     public static final double deadzone = 0.05;
-    public static final double maxPowOfMove = 0.7;
+    public static final double maxPowOfMove = 0.8;
     public static final double rotateRate = 0.5;
 
     // PIDF for Drive motors
@@ -42,23 +42,26 @@ public final class Constants {
 
     // Intake Subsystem
     public static final String collector = "collector";
-    public static final double intakeMotorIn = 0.6;
+    public static final double intakeMotorIn = 0.7;
+    public static final double intakeMotorShoot = 0.65;
 
     // Outtake Subsystem
     public static final String leftLauncher = "leftLauncher";
     public static final String rightLauncher = "rightLauncher";
     public static final String pusher = "pusher";
-    public static final double nearShotVelocity = 1300;
-    public static final double midShotVelocity  = 1500;
-    public static final double farShotVelocity  = 1650;
-    public static final double launcherP = 21;
+    public static final String pusherRight = "pusherRight";
+    public static final double nearShotVelocity = 1280;
+    public static final double midShotVelocity  = 1420;
+    public static final double farShotVelocity  = 1620;
+    public static final double launcherP = 23;
     public static final double launcherI = 0.0;
-    public static final double launcherD = 0.00001;
-    public static final double launcherF = 12.5;
+    public static final double launcherD = 0.001;
+    public static final double launcherF = 11.6;
+
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
-    public static final double pusherRestPos = 0.07;
+    public static final double pusherRestPos = 0.08;
     public static final double pusherLaunchPos = 0.17;
 
     // Lift Subsystem

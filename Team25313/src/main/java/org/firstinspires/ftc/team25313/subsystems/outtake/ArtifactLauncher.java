@@ -10,6 +10,7 @@ public class ArtifactLauncher {
     private final DcMotorEx leftLauncher;
     private final DcMotorEx rightLauncher;
     private final Servo pusher;
+    private final Servo pusherRight;
 
     private final ElapsedTime slewTimer = new ElapsedTime();
 
@@ -36,6 +37,9 @@ public class ArtifactLauncher {
         leftLauncher  = hw.get(DcMotorEx.class, Constants.leftLauncher);
         rightLauncher = hw.get(DcMotorEx.class, Constants.rightLauncher);
         pusher        = hw.get(Servo.class, Constants.pusher);
+        pusherRight   = hw.get(Servo.class, Constants.pusherRight);
+        pusherRight.setDirection(Servo.Direction.REVERSE);
+
 
         leftLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -78,6 +82,7 @@ public class ArtifactLauncher {
 
         intake.setOuttakeFeed();
         pusher.setPosition(Constants.pusherLaunchPos);
+        pusherRight.setPosition(Constants.pusherLaunchPos);
     }
 
     public void stopFeeding() {
@@ -85,14 +90,28 @@ public class ArtifactLauncher {
         restPusher();
     }
 
-    public void powerUp() {
-        if (powerLevel == PowerLevel.near) powerLevel = PowerLevel.mid;
-        else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.far;
+    public boolean powerUp() {
+        if (powerLevel == PowerLevel.near) {
+            powerLevel = PowerLevel.mid;
+            return true;
+        }
+        else if (powerLevel == PowerLevel.mid) {
+            powerLevel = PowerLevel.far;
+            return true;
+        }
+        return true;
     }
 
-    public void powerDown() {
-        if (powerLevel == PowerLevel.far) powerLevel = PowerLevel.mid;
-        else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.near;
+    public boolean powerDown() {
+        if (powerLevel == PowerLevel.far) {
+            powerLevel = PowerLevel.mid;
+            return true;
+        }
+        else if (powerLevel == PowerLevel.mid){
+            powerLevel = PowerLevel.near;
+            return true;
+        }
+        return true;
     }
 
     public void update() {
@@ -101,9 +120,9 @@ public class ArtifactLauncher {
         if (feeding) {
             intake.setOuttakeFeed();
             pusher.setPosition(Constants.pusherLaunchPos);
+            pusherRight.setPosition(Constants.pusherLaunchPos);
         }
     }
-
     /* ===================== INTERNAL ===================== */
 
     private void updateVelocity() {
@@ -141,6 +160,7 @@ public class ArtifactLauncher {
 
     private void restPusher() {
         pusher.setPosition(Constants.pusherRestPos); // 0.07
+        pusherRight.setPosition(Constants.pusherRestPos);
     }
 
     /* ===================== TELEMETRY ===================== */
@@ -153,4 +173,5 @@ public class ArtifactLauncher {
     public boolean isFeeding() {
         return feeding;
     }
+
 }

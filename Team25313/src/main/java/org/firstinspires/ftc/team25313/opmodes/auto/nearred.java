@@ -8,8 +8,8 @@ import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
-@Autonomous(name = "3+3 sos near", group = "sosauto")
-public class sos2 extends LinearOpMode {
+@Autonomous(name = "near red", group = "sosauto")
+public class nearred extends LinearOpMode {
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
     private ArtifactLauncher outtake;
@@ -24,15 +24,15 @@ public class sos2 extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
+
         driveSubsystem.driveRobotRelated(0.5, 0, 0);
         sleep(800);
         driveSubsystem.driveRobotRelated(0, 0, 0);
-
         outtake.enable();
-        outtake.powerDown(); // near shot
+        outtake.powerDown();
 
         ElapsedTime spinUpTimer = new ElapsedTime();
-        while (opModeIsActive() && spinUpTimer.milliseconds() < 800) {
+        while (opModeIsActive() && spinUpTimer.milliseconds() < 3000) {
             outtake.update();
             idle();
         }
@@ -50,7 +50,7 @@ public class sos2 extends LinearOpMode {
         outtake.disable();
         intake.stop();
 
-        driveSubsystem.driveRobotRelated(0.5, 0, 0);
+        driveSubsystem.driveRobotRelated(0, -0.5, 0);
         sleep(500);
         driveSubsystem.driveRobotRelated(0, 0, 0);
     }

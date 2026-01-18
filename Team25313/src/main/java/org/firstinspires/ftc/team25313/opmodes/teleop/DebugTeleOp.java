@@ -71,8 +71,8 @@ public class DebugTeleOp extends LinearOpMode {
             if (gamepad1.x) outtake.enable();
             if (gamepad1.b) outtake.disable();
 
-            if (gamepad1.dpad_up) outtake.powerUp();
-            if (gamepad1.dpad_down) outtake.powerDown();
+            if (gamepad1.dpadUpWasPressed()) outtake.powerUp();
+            if (gamepad1.dpadDownWasPressed()) outtake.powerDown();
 
             if (gamepad1.y) outtake.startFeeding();
             else outtake.stopFeeding();
