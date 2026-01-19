@@ -34,17 +34,17 @@ public class Constants {
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
             .forwardEncoder_HardwareMapName("front_right_drive")
             .strafeEncoder_HardwareMapName("front_left_drive")
-            .forwardPodY(-1.4173228346)
-            .strafePodX(4.5275590551)
-            .strafeEncoderDirection(Encoder.REVERSE)
+            .forwardPodY(-1.18110236)
+            .strafePodX(-4.92125984)
             .forwardEncoderDirection(Encoder.REVERSE)
-            .forwardTicksToInches(-0.0049353)
-            .strafeTicksToInches(0.1)
+            .strafeEncoderDirection(Encoder.REVERSE)
+            .forwardTicksToInches(0.001)
+            .strafeTicksToInches(0.001)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
-                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                     )
             );
 

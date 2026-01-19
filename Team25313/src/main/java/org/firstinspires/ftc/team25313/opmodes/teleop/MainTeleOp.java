@@ -29,9 +29,18 @@ public class MainTeleOp extends LinearOpMode {
             driveSubsystem.driveRobotRelated(forward, strafe, rotate);
 
             if (!outtake.isFeeding()) {
-                if (gamepad2.right_bumper) intake.setManualCollect();
-                else if (gamepad2.left_bumper) intake.setManualReverse();
-                else intake.stop();
+                if (gamepad2.right_bumper) {
+                    intake.setManualCollect();
+                    outtake.setPusherIntake();
+                }
+                else if (gamepad2.left_bumper) {
+                    intake.setManualReverse();
+                    outtake.setPusherPrep();
+                }
+                else {
+                    intake.stop();
+                    outtake.setPusherPrep();
+                }
             }
 
             if (gamepad2.x) outtake.enable();
@@ -42,7 +51,7 @@ public class MainTeleOp extends LinearOpMode {
 
             if (gamepad2.y) {
                 outtake.startFeeding();
-            } else {
+            } else if (outtake.isFeeding()) {
                 outtake.stopFeeding();
             }
 

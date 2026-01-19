@@ -63,9 +63,18 @@ public class DebugTeleOp extends LinearOpMode {
             vision.update();
 
             if (!outtake.isFeeding()) {
-                if (gamepad1.right_bumper) intake.setManualCollect();
-                else if (gamepad1.left_bumper) intake.setManualReverse();
-                else intake.stop();
+                if (gamepad1.right_bumper) {
+                    intake.setManualCollect();
+                    outtake.setPusherIntake();
+                }
+                else if (gamepad1.left_bumper) {
+                    intake.setManualReverse();
+                    outtake.setPusherPrep();
+                }
+                else {
+                    intake.stop();
+                    outtake.setPusherPrep();
+                }
             }
 
             if (gamepad1.x) outtake.enable();
@@ -74,8 +83,11 @@ public class DebugTeleOp extends LinearOpMode {
             if (gamepad1.dpadUpWasPressed()) outtake.powerUp();
             if (gamepad1.dpadDownWasPressed()) outtake.powerDown();
 
-            if (gamepad1.y) outtake.startFeeding();
-            else outtake.stopFeeding();
+            if (gamepad1.y) {
+                outtake.startFeeding();
+            } else if (outtake.isFeeding()) {
+                outtake.stopFeeding();
+            }
 
             outtake.update();
             intake.update();

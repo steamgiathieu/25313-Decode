@@ -23,6 +23,13 @@ public class ArtifactLauncher {
         PowerLevel(double v) { velocity = v; }
     }
 
+    public enum PusherState {
+        prep,
+        intake,
+        shoot
+    }
+    private PusherState pusherState = PusherState.prep;
+
     private PowerLevel powerLevel = PowerLevel.near;
 
     private boolean enabled = false;
@@ -34,10 +41,10 @@ public class ArtifactLauncher {
 
     public ArtifactLauncher(HardwareMap hw, ArtifactCollector intake) {
         this.intake = intake;
-        leftLauncher  = hw.get(DcMotorEx.class, Constants.leftLauncher);
+        leftLauncher = hw.get(DcMotorEx.class, Constants.leftLauncher);
         rightLauncher = hw.get(DcMotorEx.class, Constants.rightLauncher);
-        pusher        = hw.get(Servo.class, Constants.pusher);
-        pusherRight   = hw.get(Servo.class, Constants.pusherRight);
+        pusher = hw.get(Servo.class, Constants.pusher);
+        pusherRight = hw.get(Servo.class, Constants.pusherRight);
         pusherRight.setDirection(Servo.Direction.REVERSE);
 
 
@@ -46,7 +53,8 @@ public class ArtifactLauncher {
         setupMotor(leftLauncher);
         setupMotor(rightLauncher);
 
-        restPusher();
+        pusherState = PusherState.prep;
+        updatePusher();
     }
 
     private void setupMotor(DcMotorEx m) {
@@ -63,6 +71,8 @@ public class ArtifactLauncher {
     public void enable() {
         enabled = true;
         slewTimer.reset();
+        pusherState = PusherState.prep;
+        updatePusher();
     }
 
     public void disable() {
@@ -71,7 +81,8 @@ public class ArtifactLauncher {
         commandedVelocity = 0;
 
         setVelocity(0);
-        restPusher();
+        pusherState = PusherState.prep;
+        updatePusher();
         intake.stop();
     }
 
@@ -79,15 +90,12 @@ public class ArtifactLauncher {
         if (!enabled) return;
 
         feeding = true;
-
-        intake.setOuttakeFeed();
-        pusher.setPosition(Constants.pusherLaunchPos);
-        pusherRight.setPosition(Constants.pusherLaunchPos);
+        pusherState = PusherState.shoot;
     }
 
     public void stopFeeding() {
         feeding = false;
-        restPusher();
+//        pusherState = PusherState.prep;
     }
 
     public boolean powerUp() {
@@ -115,15 +123,16 @@ public class ArtifactLauncher {
     }
 
     public void update() {
+        updatePusher();
+
         if (!enabled) return;
+
         updateVelocity();
+
         if (feeding) {
             intake.setOuttakeFeed();
-            pusher.setPosition(Constants.pusherLaunchPos);
-            pusherRight.setPosition(Constants.pusherLaunchPos);
         }
     }
-    /* ===================== INTERNAL ===================== */
 
     private void updateVelocity() {
         double target = powerLevel.velocity;
@@ -158,12 +167,37 @@ public class ArtifactLauncher {
         return (leftLauncher.getVelocity() + rightLauncher.getVelocity()) / 2.0;
     }
 
-    private void restPusher() {
-        pusher.setPosition(Constants.pusherRestPos); // 0.07
-        pusherRight.setPosition(Constants.pusherRestPos);
+    private void updatePusher() {
+        double pos;
+
+        switch (pusherState) {
+            case intake:
+                pos = Constants.pusherIntakePos;
+                break;
+
+            case shoot:
+                pos = Constants.pusherLaunchPos;
+                break;
+
+            case prep:
+            default:
+                pos = Constants.pusherRestPos;
+                break;
+        }
+
+        pusher.setPosition(pos);
+        pusherRight.setPosition(pos);
     }
 
-    /* ===================== TELEMETRY ===================== */
+    public void setPusherIntake() {
+        if (feeding) return;
+        pusherState = PusherState.intake;
+    }
+
+    public void setPusherPrep() {
+        if (feeding) return;
+        pusherState = PusherState.prep;
+    }
 
     public boolean isEnabled() { return enabled; }
     public boolean isReadyToShoot() { return isReady(); }
