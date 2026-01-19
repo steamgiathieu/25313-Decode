@@ -63,6 +63,9 @@ public final class Constants {
     public static final double launcherVelocityTolerance = 35;
     public static final double pusherRestPos = 0.08;
     public static final double pusherLaunchPos = 0.17;
+    public static final double pusherRightRestPos = 0.05
+            ;
+    public static final double pusherRightLaunchPos = 0.2;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";
