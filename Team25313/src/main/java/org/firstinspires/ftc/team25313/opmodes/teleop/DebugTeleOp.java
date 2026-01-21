@@ -74,11 +74,11 @@ public class DebugTeleOp extends LinearOpMode {
             if (gamepad1.dpadUpWasPressed()) outtake.powerUp();
             if (gamepad1.dpadDownWasPressed()) outtake.powerDown();
 
-            if (gamepad1.y) outtake.startFeeding();
-            else outtake.stopFeeding();
-
-            outtake.update();
-            intake.update();
+            if (gamepad1.y) {
+                outtake.startFeeding();
+            } else {
+                outtake.stopFeeding();
+            }
 
             Utility.teleDrivePose(telemetry, forward, strafe, rotate);
             Utility.teleOuttake(telemetry, outtake);

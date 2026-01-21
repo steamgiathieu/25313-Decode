@@ -16,7 +16,6 @@ public final class Constants {
     public static final String backLeft   = "back_left_drive";
     public static final String backRight  = "back_right_drive";
 
-
     // Drivetrain constants
     public static final double pulsePerRev = 7.0;
     public static final double quadrature = 4.0;
@@ -25,8 +24,6 @@ public final class Constants {
     public static final double ticksPerRev = pulsePerRev * quadrature * gearRatio;
     public static final double ticksToInches = (2 * Math.PI * wheelRads) / ticksPerRev;
     public static final double deadzone = 0.05;
-    public static final double maxPowOfMove = 0.8;
-    public static final double rotateRate = 0.5;
 
     // PIDF for Drive motors
     public static double drive_kP = 1.0;
@@ -42,30 +39,24 @@ public final class Constants {
 
     // Intake Subsystem
     public static final String collector = "collector";
-    public static final double intakeMotorIn = 0.7;
-    public static final double intakeMotorShoot = 0.65;
+    public static final double intakeMotorIn = 0.6;
 
     // Outtake Subsystem
     public static final String leftLauncher = "leftLauncher";
     public static final String rightLauncher = "rightLauncher";
     public static final String pusher = "pusher";
-    public static final String pusherRight = "pusherRight";
-    public static final double nearShotVelocity = 1280;
-    public static final double midShotVelocity  = 1420;
-    public static final double farShotVelocity  = 1620;
-    public static final double launcherP = 23;
+    public static final double nearShotVelocity = 1300;
+    public static final double midShotVelocity  = 1500;
+    public static final double farShotVelocity  = 1700;
+    public static final double launcherP = 20;
     public static final double launcherI = 0.0;
-    public static final double launcherD = 0.001;
-    public static final double launcherF = 11.6;
-
+    public static final double launcherD = 0.00001;
+    public static final double launcherF = 12.5;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
-    public static final double pusherRestPos = 0.08;
-    public static final double pusherLaunchPos = 0.17;
-    public static final double pusherRightRestPos = 0.05
-            ;
-    public static final double pusherRightLaunchPos = 0.2;
+    public static final double pusherRestPos = 0.17;
+    public static final double pusherLaunchPos = 0.07;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";
@@ -83,7 +74,6 @@ public final class Constants {
     public static final double maxAimYawDeg = 15.0;
     public static final double shotNearMaxDist = 1.2;
     public static final double shotMidMaxDist  = 2.0;
-    public static final double maxShootYawDeg = 5.0; // ví dụ ±5 độ
 
 
     // Miscellaneous
