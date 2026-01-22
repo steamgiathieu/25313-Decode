@@ -49,20 +49,19 @@ public class DriveSubsystem {
     public double backLeftPower;
     public double backRightPower;
 
-    private double rotateRate = 0.5;
     public void driveRobotRelated(double forward, double strafe, double rotate) {
         forward = Utility.applyDeadzone(forward);
         strafe = Utility.applyDeadzone(strafe);
 //        rotate = fixedSpeed(Utility.applyDeadzone(rotate), rotateRate);
-        rotate = Utility.applyDeadzone(rotate);
+        rotate = Utility.applyDeadzone(rotate * Constants.rotateRate);
 
         frontLeftPower = forward + strafe + rotate;
         frontRightPower = forward - strafe - rotate;
         backLeftPower = forward - strafe + rotate;
         backRightPower = forward + strafe - rotate;
 
-        double maxPower = 1;
-        double maxSpeed = 1;  // make this slower for outreaches
+        double maxPower = Constants.maxVel;
+        double maxSpeed = Constants.maxVel;
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(frontRightPower));

@@ -5,15 +5,14 @@ public final class Constants {
     // General Robot Info
     public static final String botName = "25313 'Curry'";
 
-    // Alliances
-    public enum AllianceColor { blue, red }
-    public static AllianceColor currentAlliance = AllianceColor.blue;
 
     // Drivetrain motor name
     public static final String frontLeft  = "front_left_drive";
     public static final String frontRight = "front_right_drive";
     public static final String backLeft   = "back_left_drive";
     public static final String backRight  = "back_right_drive";
+    public static final double maxVel = 0.8;
+    public static final double rotateRate = 0.5;
     public static final double deadzone = 0.05;
 
 
@@ -21,8 +20,8 @@ public final class Constants {
     public static final String collector = "collector";
     public static final String leftCollector = "leftCollector";
     public static final String rightCollector = "rightCollector";
-    public static final double intakeMotorIn = 0.6;
-    public static final double intakeMotorShoot = 0.5;
+    public static final double intakeMotorIn = 0.8;
+    public static final double intakeMotorShoot = 0.7;
     public static final double intakeServoIn = 0.8;
 
     // Outtake Subsystem

@@ -107,8 +107,6 @@ public class ArtifactLauncher {
         }
     }
 
-    /* ===================== INTERNAL ===================== */
-
     private void updateVelocity() {
         double target = powerLevel.velocity;
 
@@ -146,8 +144,6 @@ public class ArtifactLauncher {
         pusher.setPosition(Constants.pusherLaunchPos); // 0.07
         window.setPosition(Constants.windowRest);
     }
-
-    /* ===================== TELEMETRY ===================== */
 
     public boolean isEnabled() { return enabled; }
     public boolean isReadyToShoot() { return isReady(); }

@@ -20,7 +20,7 @@ public class Constants {
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(1)
+            .maxPower(0.8)
             .xVelocity(80.52)
             .rightFrontMotorName("front_right_drive")
             .rightRearMotorName("back_right_drive")
