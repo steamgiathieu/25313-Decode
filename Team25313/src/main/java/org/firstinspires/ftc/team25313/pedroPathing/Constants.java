@@ -21,7 +21,7 @@ public class Constants {
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .xVelocity(192.12381280934207)
+            .xVelocity(80.52)
             .rightFrontMotorName("front_right_drive")
             .rightRearMotorName("back_right_drive")
             .leftRearMotorName("back_left_drive")
@@ -32,14 +32,14 @@ public class Constants {
             .rightRearMotorDirection(DcMotor.Direction.REVERSE);
 
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
-            .forwardEncoder_HardwareMapName("front_right_drive")
-            .strafeEncoder_HardwareMapName("front_left_drive")
+            .forwardEncoder_HardwareMapName("front_left_drive")
+            .strafeEncoder_HardwareMapName("front_right_drive")
             .forwardPodY(-1.4173228346)
             .strafePodX(4.5275590551)
-            .strafeEncoderDirection(Encoder.REVERSE)
             .forwardEncoderDirection(Encoder.REVERSE)
-            .forwardTicksToInches(-0.0049353)
-            .strafeTicksToInches(0.1)
+            .strafeEncoderDirection(Encoder.REVERSE)
+            .forwardTicksToInches(0.008)
+            .strafeTicksToInches(0.005)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
