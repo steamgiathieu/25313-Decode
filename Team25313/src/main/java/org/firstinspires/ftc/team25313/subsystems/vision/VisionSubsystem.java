@@ -42,7 +42,6 @@ public class VisionSubsystem {
 
             double dist = det.ftcPose.range;
 
-            // sanity check
             if (dist < Constants.minValidTagDistM ||
                     dist > Constants.maxValidTagDistM) {
                 continue;
@@ -54,7 +53,6 @@ public class VisionSubsystem {
             break;
         }
 
-        // exponential smoothing
         if (hasTarget) {
             if (filteredDistanceM < 0) {
                 filteredDistanceM = rawDistanceM;
@@ -65,8 +63,6 @@ public class VisionSubsystem {
             }
         }
     }
-
-    // ===== CORE DECISION LOGIC =====
 
     public ShotLevel getShotLevel() {
         if (!hasTarget) return ShotLevel.none;
@@ -94,8 +90,6 @@ public class VisionSubsystem {
         return Math.abs(yawDeg) <= getAllowedYawDeg();
     }
 
-    // ===== DRIVER / AUTO SUPPORT =====
-
     public double getRotateHint() {
         if (!hasTarget) return 0;
 
@@ -116,8 +110,6 @@ public class VisionSubsystem {
         double acc = 1.0 - (error / allowed);
         return Math.max(0, Math.min(acc, 1.0)) * 100.0;
     }
-
-    // ===== GETTERS =====
 
     public boolean hasTarget() {
         return hasTarget;
