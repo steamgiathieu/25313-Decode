@@ -10,6 +10,7 @@ public class ArtifactLauncher {
     private final DcMotorEx leftLauncher;
     private final DcMotorEx rightLauncher;
     private final Servo pusher;
+    private final Servo window;
 
     private final ElapsedTime slewTimer = new ElapsedTime();
 
@@ -36,6 +37,7 @@ public class ArtifactLauncher {
         leftLauncher  = hw.get(DcMotorEx.class, Constants.leftLauncher);
         rightLauncher = hw.get(DcMotorEx.class, Constants.rightLauncher);
         pusher        = hw.get(Servo.class, Constants.pusher);
+        window = hw.get(Servo.class, Constants.window);
 
         leftLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -77,7 +79,8 @@ public class ArtifactLauncher {
         feeding = true;
 
         intake.setOuttakeFeed();
-        pusher.setPosition(Constants.pusherRestPos); // 0.17
+        pusher.setPosition(Constants.pusherRestPos);
+        window.setPosition(Constants.windowAngle);
     }
 
     public void stopFeeding() {
@@ -141,6 +144,7 @@ public class ArtifactLauncher {
 
     private void restPusher() {
         pusher.setPosition(Constants.pusherLaunchPos); // 0.07
+        window.setPosition(Constants.windowRest);
     }
 
     /* ===================== TELEMETRY ===================== */

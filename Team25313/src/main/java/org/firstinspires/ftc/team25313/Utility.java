@@ -114,15 +114,10 @@ public final class Utility {
         telemetry.addData("Vision Target", vision.hasTarget());
 
         if (vision.hasTarget()) {
-            telemetry.addData("Distance (m)", "%.2f", vision.getDistanceToGoal());
-            telemetry.addData("Yaw (deg)", "%.1f", vision.getYawToGoalDeg());
+            telemetry.addData("Distance (m)", "%.2f", vision.getDistanceMeters());
+            telemetry.addData("Yaw (deg)", "%.1f", vision.getYawDeg());
             telemetry.addData("Accuracy (%)", "%.1f", vision.getAimAccuracyPercent());
-            telemetry.addData("Shot", vision.getSuggestedShot());
 
-            PanelsData.distance = vision.getDistanceToGoal();
-            PanelsData.yawDeg = vision.getYawToGoalDeg();
-            PanelsData.accuracy = vision.getAimAccuracyPercent();
-            PanelsData.suggestedShot = vision.getSuggestedShot().name();
         } else {
             telemetry.addLine("No goal detected");
 
@@ -148,19 +143,6 @@ public final class Utility {
         PanelsData.isReady = outtake.isReadyToShoot();
     }
 
-    /* =======================
-     * LOGCAT
-     * ======================= */
-
-    public static void logCat(String tag, String message) {
-        if (Constants.debugMode) {
-            RobotLog.dd(tag, message);
-        }
-    }
-
-    /* =======================
-     * MATH
-     * ======================= */
 
     public static double clamp(double value, double min, double max) {
         return Math.max(min, Math.min(max, value));
@@ -171,24 +153,6 @@ public final class Utility {
         while (angle < -Math.PI) angle += 2 * Math.PI;
         return angle;
     }
-
-    /* =======================
-     * ENCODER
-     * ======================= */
-
-    public static double inchesToTicks(double inches) {
-        return (inches / (2 * Math.PI * Constants.wheelRads))
-                * Constants.ticksPerRev * Constants.gearRatio;
-    }
-
-    public static double ticksToInches(double ticks) {
-        return (ticks / (Constants.ticksPerRev * Constants.gearRatio))
-                * (2 * Math.PI * Constants.wheelRads);
-    }
-
-    /* =======================
-     * TIME
-     * ======================= */
 
     public static void resetRuntime() {
         runtime.reset();
