@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team25313.opmodes.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -8,6 +9,8 @@ import org.firstinspires.ftc.team25313.pedroPathing.Constants;
 import org.firstinspires.ftc.team25313.opmodes.auto.paths.*;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
+
+@Disabled
 
 public abstract class MainAuto extends OpMode {
     protected ArtifactCollector intake;
