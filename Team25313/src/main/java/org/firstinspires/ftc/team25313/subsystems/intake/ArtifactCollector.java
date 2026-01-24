@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
+import java.util.stream.Collector;
+
 public class ArtifactCollector {
     private final DcMotorEx collector;
     private ArtifactLauncher outtake;
@@ -26,10 +28,11 @@ public class ArtifactCollector {
 
     public ArtifactCollector(HardwareMap hw) {
         collector = hw.get(DcMotorEx.class, Constants.collector);
+        collector.setDirection(DcMotor.Direction.REVERSE);
         collector.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftCollector = hw.get(CRServo.class, Constants.leftCollector);
         rightCollector = hw.get(CRServo.class, Constants.rightCollector);
-        leftCollector.setDirection(CRServo.Direction.REVERSE);
+        rightCollector.setDirection(CRServo.Direction.REVERSE);
     }
 
     public void setManualCollect() {
