@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveConstants;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.vision.VisionSubsystem;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -24,7 +25,7 @@ public class testauto extends LinearOpMode {
         visionSubsystem = new VisionSubsystem(webcam, telemetry);
         driveSubsystem = new DriveSubsystem(hardwareMap);
 
-        // 2. Khởi tạo Camera NGAY LẬP TỨC (để xem được camera stream trước khi bấm Start)
+        // 2. Khởi tạo Camera
         telemetry.addData("Status", "Initializing Vision...");
         telemetry.update();
         
@@ -37,7 +38,6 @@ public class testauto extends LinearOpMode {
 
         // 3. Chờ người dùng bấm Start
         while (!isStarted() && !isStopRequested()) {
-            // Hiển thị số lượng Tag ngay trong lúc chờ để test
             List<AprilTagDetection> detections = visionSubsystem.getAprilTagProcessor().getDetections();
             telemetry.addData("Tags in View", detections.size());
             telemetry.update();
@@ -51,18 +51,21 @@ public class testauto extends LinearOpMode {
         // 4. Vòng lặp chính
         while (opModeIsActive()) {
             double seconds = timer.seconds();
-            double cycleTime = seconds % 4.0; // Chu kỳ 4 giây (2 giây trái + 2 giây phải)
 
-            // Điều khiển robot đi ngang (Strafe)
-            if (cycleTime < 2.0) {
-                // Strafe sang trái trong 2 giây đầu
-                driveSubsystem.drive(0, -0.5, 0);
-                telemetry.addData("Movement", "Strafing Left");
-            } else {
-                // Strafe sang phải trong 2 giây sau
-                driveSubsystem.drive(0, 0.5, 0);
-                telemetry.addData("Movement", "Strafing Right");
-            }
+            // ĐIỀU KHIỂN ROBOT ĐI CHÉO (TIẾN - TRÁI)
+//            if (seconds < 3.0) {
+//                // Sử dụng diagonalWeight để tinh chỉnh độ lệch khi đi chéo
+//                // x = -0.5 * diagonalWeight để bù đắp lực cản môi trường
+//                double forward = 0.5;
+//                double strafe = -0.5 * DriveConstants.diagonalWeight;
+//
+//                driveSubsystem.drive(forward, strafe, 0);
+//                telemetry.addData("Movement", "Diagonal Forward-Left");
+//                telemetry.addData("Weight Used", DriveConstants.diagonalWeight);
+//            } else {
+//                driveSubsystem.drive(0, 0, 0);
+//                telemetry.addData("Movement", "Finished - Stopped");
+//            }
 
             // Xử lý hình ảnh AprilTag
             visionSubsystem.processFrame();
@@ -73,8 +76,15 @@ public class testauto extends LinearOpMode {
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.ftcPose != null) {
                     telemetry.addLine(String.format("\n> TAG ID %d", detection.id));
-                    telemetry.addData("  Bot X relative to Tag", "%.2f", -detection.ftcPose.x);
-                    telemetry.addData("  Bot Y relative to Tag", "%.2f", -detection.ftcPose.y);
+                    telemetry.addData("  Bot X relative to Tag", "%.2f inch", -detection.ftcPose.x);
+                    telemetry.addData("  Bot Y relative to Tag", "%.2f inch", -detection.ftcPose.y);
+                    
+                    // Tính khoảng cách 2D (trên mặt đất) và 3D từ Camera đến Tag
+                    double dist2D = Math.hypot(detection.ftcPose.x, detection.ftcPose.y);
+                    double dist3D = detection.ftcPose.range;
+
+                    telemetry.addData("  Distance 2D to Tag", "%.2f inch", dist2D);
+                    telemetry.addData("  Distance 3D to Tag", "%.2f inch", dist3D);
                 }
             }
 
@@ -82,7 +92,6 @@ public class testauto extends LinearOpMode {
             telemetry.update();
         }
 
-        // Dừng robot và đóng camera
         driveSubsystem.drive(0, 0, 0);
         visionSubsystem.close();
     }

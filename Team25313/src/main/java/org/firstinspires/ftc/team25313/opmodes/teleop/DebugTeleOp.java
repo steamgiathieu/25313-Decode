@@ -58,7 +58,7 @@ public class DebugTeleOp extends LinearOpMode {
             double strafe  = -gamepad1.left_stick_x;
             double rotate  = -gamepad1.right_stick_x;
 
-            driveSubsystem.driveRobotRelated(forward, strafe, rotate);
+            driveSubsystem.drive(forward, strafe, rotate);
 
             vision.update();
 
