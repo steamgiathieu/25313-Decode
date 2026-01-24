@@ -42,6 +42,7 @@ public class ArtifactLauncher {
 
 
         leftLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
+        //rightLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
 
         setupMotor(leftLauncher);
         setupMotor(rightLauncher);

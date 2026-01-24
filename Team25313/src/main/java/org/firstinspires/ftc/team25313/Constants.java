@@ -25,7 +25,7 @@ public final class Constants {
     public static final double ticksPerRev = pulsePerRev * quadrature * gearRatio;
     public static final double ticksToInches = (2 * Math.PI * wheelRads) / ticksPerRev;
     public static final double deadzone = 0.05;
-    public static final double maxPowOfMove = 0.8;
+    public static final double maxPowOfMove = 0.7;
     public static final double rotateRate = 0.5;
 
     // PIDF for Drive motors
@@ -55,7 +55,7 @@ public final class Constants {
     public static final double farShotVelocity  = 1620;
     public static final double launcherP = 23;
     public static final double launcherI = 0.0;
-    public static final double launcherD = 0.001;
+    public static final double launcherD = 0.0001;
     public static final double launcherF = 11.6;
 
     public static final double launcherMaxAccel = 500;
