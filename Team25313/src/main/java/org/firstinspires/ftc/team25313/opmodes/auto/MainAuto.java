@@ -17,13 +17,9 @@ public abstract class MainAuto extends OpMode {
     protected AutoPaths paths;
 
     protected enum AutoState {
-        startShoot,
-        path1, path2, path3, path4,
-        wait4,
-        path5, path6, path7, path8,
-        wait8,
-        path9,
-        end
+        start,
+        path1, path2, path3, wait3, path4, path5, path6, wait6, path7,
+        end;
     }
 
     protected enum Alliance { blue, red }
@@ -40,15 +36,15 @@ public abstract class MainAuto extends OpMode {
                 switch (alliance) {
                     case blue:
                         return new Pose(
-                                54.0,
-                                10.0,
-                                Math.toRadians(105)
+                                56.0,
+                                8.0,
+                                Math.toRadians(110)
                         );
                     case red:
                         return new Pose(
-                                90.0,
-                                10.0,
-                                Math.toRadians(75)
+                                88.0,
+                                8.0,
+                                Math.toRadians(70)
                         );
                 }
             }
@@ -56,7 +52,7 @@ public abstract class MainAuto extends OpMode {
         }
     }
 
-    protected AutoState autoState = AutoState.startShoot;
+    protected AutoState autoState = AutoState.start;
     protected long postShotStartTime = 0;
     protected long waitStartTime;
 
@@ -75,12 +71,12 @@ public abstract class MainAuto extends OpMode {
 
         buildPaths();
 
-        intake.setManualCollect();
+        intake.setOuttakeFeed();
         outtake.enable();
         outtake.stopFeeding();
 
         startWait();
-        autoState = AutoState.startShoot;
+        autoState = AutoState.start;
     }
 
     @Override
@@ -91,7 +87,7 @@ public abstract class MainAuto extends OpMode {
         outtake.update();
 
         switch (autoState) {
-            case startShoot:
+            case start:
                 if (outtake.isReadyToShoot()) {
                     outtake.startFeeding();
                     startPostShotWait();
@@ -114,22 +110,22 @@ public abstract class MainAuto extends OpMode {
                 break;
             case path3:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath4());
+                    autoState = AutoState.wait3;
+                }
+                break;
+            case wait3:
+                if (outtake.isReadyToShoot()) {
+                    outtake.startFeeding();
+                    startPostShotWait();
                     autoState = AutoState.path4;
+
+                    follower.followPath(paths.getPath4());
                 }
                 break;
             case path4:
                 if (!follower.isBusy()) {
-                    autoState = AutoState.wait4;
-                }
-                break;
-            case wait4:
-                if (outtake.isReadyToShoot()) {
-                    outtake.startFeeding();
-                    startPostShotWait();
-                    autoState = AutoState.path5;
-
                     follower.followPath(paths.getPath5());
+                    autoState = AutoState.path5;
                 }
                 break;
             case path5:
@@ -140,31 +136,19 @@ public abstract class MainAuto extends OpMode {
                 break;
             case path6:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath7());
-                    autoState = AutoState.path7;
+                    autoState = AutoState.wait6;
                 }
                 break;
-            case path7:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath8());
-                    autoState = AutoState.path8;
-                }
-                break;
-            case path8:
-                if (!follower.isBusy()) {
-                    autoState = AutoState.wait8;
-                }
-                break;
-            case wait8:
+            case wait6:
                 if (outtake.isReadyToShoot()) {
                     outtake.startFeeding();
                     startPostShotWait();
-                    autoState = AutoState.path9;
+                    autoState = AutoState.path7;
 
-                    follower.followPath(paths.getPath9());
+                    follower.followPath(paths.getPath7());
                 }
                 break;
-            case path9:
+            case path7:
                 if (!follower.isBusy()) {
                     autoState = AutoState.end;
                     stopAll();
@@ -175,32 +159,17 @@ public abstract class MainAuto extends OpMode {
         }
     }
 
-    protected Pose getStartingPose() {
-        return new Pose(72, 8, Math.toRadians(90));
-    }
-
     protected void startWait() {
         waitStartTime = System.currentTimeMillis();
-    }
-
-    protected boolean waitPassed() {
-        return System.currentTimeMillis() - waitStartTime >= 4500;
     }
 
     protected void startPostShotWait() {
         postShotStartTime = System.currentTimeMillis();
     }
 
-    protected boolean postShotWaitPassed() {
-        return System.currentTimeMillis() - postShotStartTime >= 2000;
-    }
-
-    protected void shoot() {
-        // đẩy servo bắn
-    }
-
     protected void stopAll() {
-        // stop motor/servo
+        intake.stop();
+        outtake.disable();
     }
 
     protected abstract Alliance getAlliance();

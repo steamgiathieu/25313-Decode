@@ -21,7 +21,7 @@ public final class Constants {
     public static final String leftCollector = "leftCollector";
     public static final String rightCollector = "rightCollector";
     public static final double intakeMotorIn = 0.8;
-    public static final double intakeMotorShoot = 0.7;
+    public static final double intakeMotorShoot = 0.6;
     public static final double intakeServoIn = 0.8;
 
     // Outtake Subsystem
@@ -35,7 +35,7 @@ public final class Constants {
     public static final double launcherP = 23;
     public static final double launcherI = 0.0;
     public static final double launcherD = 0.001;
-    public static final double launcherF = 11.6;
+    public static final double launcherF = 12.6;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;

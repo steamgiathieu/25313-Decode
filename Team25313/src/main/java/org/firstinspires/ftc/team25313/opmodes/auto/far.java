@@ -29,16 +29,18 @@ public class far extends LinearOpMode {
         outtake.powerUp();
 
         ElapsedTime spinUpTimer = new ElapsedTime();
-        while (opModeIsActive() && spinUpTimer.milliseconds() > 2500) {
+        while (opModeIsActive() && spinUpTimer.milliseconds() > 3500) {
             outtake.update();
             idle();
         }
 
-        intake.setOuttakeFeed();
-        outtake.startFeeding();
+        if (outtake.isReadyToShoot()) {
+            intake.setOuttakeFeed();
+            outtake.startFeeding();
+        }
 
         ElapsedTime shootTimer = new ElapsedTime();
-        while (opModeIsActive() && shootTimer.milliseconds() < 2000) {
+        while (opModeIsActive() && shootTimer.milliseconds() < 3000) {
             outtake.update();
             intake.update();
             idle();

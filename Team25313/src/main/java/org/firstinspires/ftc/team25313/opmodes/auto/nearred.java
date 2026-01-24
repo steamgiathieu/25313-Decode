@@ -37,8 +37,10 @@ public class nearred extends LinearOpMode {
             idle();
         }
 
-        intake.setOuttakeFeed();
-        outtake.startFeeding();
+        if (outtake.isReadyToShoot()) {
+            intake.setOuttakeFeed();
+            outtake.startFeeding();
+        }
 
         ElapsedTime shootTimer = new ElapsedTime();
         while (opModeIsActive() && shootTimer.milliseconds() < 2000) {
