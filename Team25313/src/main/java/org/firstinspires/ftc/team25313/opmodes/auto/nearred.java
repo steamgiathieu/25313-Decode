@@ -37,10 +37,8 @@ public class nearred extends LinearOpMode {
             idle();
         }
 
-        if (outtake.isReadyToShoot()) {
-            intake.setOuttakeFeed();
-            outtake.startFeeding();
-        }
+        intake.setOuttakeFeed();
+        outtake.startFeeding();
 
         ElapsedTime shootTimer = new ElapsedTime();
         while (opModeIsActive() && shootTimer.milliseconds() < 2000) {
@@ -53,7 +51,7 @@ public class nearred extends LinearOpMode {
         intake.stop();
 
         driveSubsystem.driveRobotRelated(0, -0.5, 0);
-        sleep(500);
+        sleep(800);
         driveSubsystem.driveRobotRelated(0, 0, 0);
     }
 }

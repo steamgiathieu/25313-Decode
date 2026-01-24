@@ -11,7 +11,7 @@ public final class Constants {
     public static final String frontRight = "front_right_drive";
     public static final String backLeft   = "back_left_drive";
     public static final String backRight  = "back_right_drive";
-    public static final double maxVel = 0.8;
+    public static final double maxVel = 1;
     public static final double rotateRate = 0.5;
     public static final double deadzone = 0.05;
 
@@ -29,13 +29,13 @@ public final class Constants {
     public static final String rightLauncher = "rightLauncher";
     public static final String pusher = "pusher";
     public static final String window = "window";
-    public static final double nearShotVelocity = 1280;
+    public static final double nearShotVelocity = 1300;
     public static final double midShotVelocity  = 1420;
-    public static final double farShotVelocity  = 1620;
+    public static final double farShotVelocity  = 1630;
     public static final double launcherP = 23;
     public static final double launcherI = 0.0;
-    public static final double launcherD = 0.001;
-    public static final double launcherF = 12.6;
+    public static final double launcherD = 0.0;
+    public static final double launcherF = 13.6;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
