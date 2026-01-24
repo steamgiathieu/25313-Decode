@@ -10,7 +10,7 @@ public class ArtifactLauncher {
     private final DcMotorEx leftLauncher;
     private final DcMotorEx rightLauncher;
     private final Servo pusher;
-    private final Servo pusherRight;
+    private final Servo window;
 
     private final ElapsedTime slewTimer = new ElapsedTime();
 
@@ -37,9 +37,7 @@ public class ArtifactLauncher {
         leftLauncher  = hw.get(DcMotorEx.class, Constants.leftLauncher);
         rightLauncher = hw.get(DcMotorEx.class, Constants.rightLauncher);
         pusher        = hw.get(Servo.class, Constants.pusher);
-        pusherRight   = hw.get(Servo.class, Constants.pusherRight);
-        //pusherRight.setDirection(Servo.Direction.REVERSE);
-
+        window = hw.get(Servo.class, Constants.window);
 
         leftLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
         //rightLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -82,8 +80,8 @@ public class ArtifactLauncher {
         feeding = true;
 
         intake.setOuttakeFeed();
-        pusher.setPosition(Constants.pusherLaunchPos);
-        pusherRight.setPosition(Constants.pusherRightLaunchPos);
+        pusher.setPosition(Constants.pusherRestPos);
+        window.setPosition(Constants.windowAngle);
     }
 
     public void stopFeeding() {
@@ -91,28 +89,14 @@ public class ArtifactLauncher {
         restPusher();
     }
 
-    public boolean powerUp() {
-        if (powerLevel == PowerLevel.near) {
-            powerLevel = PowerLevel.mid;
-            return true;
-        }
-        else if (powerLevel == PowerLevel.mid) {
-            powerLevel = PowerLevel.far;
-            return true;
-        }
-        return true;
+    public void powerUp() {
+        if (powerLevel == PowerLevel.near) powerLevel = PowerLevel.mid;
+        else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.far;
     }
 
-    public boolean powerDown() {
-        if (powerLevel == PowerLevel.far) {
-            powerLevel = PowerLevel.mid;
-            return true;
-        }
-        else if (powerLevel == PowerLevel.mid){
-            powerLevel = PowerLevel.near;
-            return true;
-        }
-        return true;
+    public void powerDown() {
+        if (powerLevel == PowerLevel.far) powerLevel = PowerLevel.mid;
+        else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.near;
     }
 
     public void update() {
@@ -120,11 +104,9 @@ public class ArtifactLauncher {
         updateVelocity();
         if (feeding) {
             intake.setOuttakeFeed();
-            pusher.setPosition(Constants.pusherLaunchPos);
-            pusherRight.setPosition(Constants.pusherRightLaunchPos);
+            pusher.setPosition(Constants.pusherRestPos);
         }
     }
-    /* ===================== INTERNAL ===================== */
 
     private void updateVelocity() {
         double target = powerLevel.velocity;
@@ -160,11 +142,9 @@ public class ArtifactLauncher {
     }
 
     private void restPusher() {
-        pusher.setPosition(Constants.pusherRestPos); // 0.07
-        pusherRight.setPosition(Constants.pusherRightRestPos);
+        pusher.setPosition(Constants.pusherLaunchPos); // 0.07
+        window.setPosition(Constants.windowRest);
     }
-
-    /* ===================== TELEMETRY ===================== */
 
     public boolean isEnabled() { return enabled; }
     public boolean isReadyToShoot() { return isReady(); }
@@ -174,5 +154,4 @@ public class ArtifactLauncher {
     public boolean isFeeding() {
         return feeding;
     }
-
 }

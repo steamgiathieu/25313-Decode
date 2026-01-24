@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.team25313.subsystems.intake;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
@@ -9,6 +11,8 @@ import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 public class ArtifactCollector {
     private final DcMotorEx collector;
     private ArtifactLauncher outtake;
+    private final CRServo leftCollector;
+    private final CRServo rightCollector;
 
 
     public enum IntakeMode {
@@ -23,6 +27,9 @@ public class ArtifactCollector {
     public ArtifactCollector(HardwareMap hw) {
         collector = hw.get(DcMotorEx.class, Constants.collector);
         collector.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftCollector = hw.get(CRServo.class, Constants.leftCollector);
+        rightCollector = hw.get(CRServo.class, Constants.rightCollector);
+        leftCollector.setDirection(CRServo.Direction.REVERSE);
     }
 
     public void setManualCollect() {
@@ -50,10 +57,14 @@ public class ArtifactCollector {
 
             case manualCollect:
                 collector.setPower(Constants.intakeMotorIn);
+                leftCollector.setPower(Constants.intakeServoIn);
+                rightCollector.setPower(Constants.intakeServoIn);
                 break;
 
             case manualReverse:
                 collector.setPower(-(Constants.intakeMotorIn));
+                leftCollector.setPower(-Constants.intakeServoIn);
+                rightCollector.setPower(-Constants.intakeServoIn);
                 break;
 
             case outtakeFeed:
@@ -63,6 +74,8 @@ public class ArtifactCollector {
             case idle:
             default:
                 collector.setPower(0);
+                leftCollector.setPower(0);
+                rightCollector.setPower(0);
                 break;
         }
     }

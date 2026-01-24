@@ -4,9 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.Utility;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
+import org.firstinspires.ftc.team25313.subsystems.lift.HalfLift;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 import org.firstinspires.ftc.team25313.subsystems.vision.VisionSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -19,21 +21,25 @@ public class DebugTeleOp extends LinearOpMode {
     private ArtifactCollector intake;
     private ArtifactLauncher outtake;
     private VisionSubsystem vision;
+    private HalfLift lift;
 
     private VisionPortal visionPortal;
     private AprilTagProcessor tagProcessor;
 
     @Override
     public void runOpMode() {
+        telemetry.addLine(Constants.botName);
 
         driveSubsystem = new DriveSubsystem(hardwareMap);
         intake = new ArtifactCollector(hardwareMap);
         outtake = new ArtifactLauncher(hardwareMap, intake);
+        lift = new HalfLift(hardwareMap);
+
 
         tagProcessor = new AprilTagProcessor.Builder().build();
 
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCamera(hardwareMap.get(WebcamName.class, Constants.webcamName))
                 .addProcessor(tagProcessor)
                 .setAutoStopLiveView(false)
                 .build();
@@ -60,6 +66,10 @@ public class DebugTeleOp extends LinearOpMode {
 
             driveSubsystem.driveRobotRelated(forward, strafe, rotate);
 
+            if (gamepad1.dpad_left) lift.lift();
+            else if (gamepad1.dpad_left) lift.pull();
+            else lift.stop();
+
             vision.update();
 
             if (!outtake.isFeeding()) {
@@ -68,40 +78,23 @@ public class DebugTeleOp extends LinearOpMode {
                 else intake.stop();
             }
 
-            if (gamepad1.x) outtake.enable();
-            if (gamepad1.b) outtake.disable();
-
             if (gamepad1.dpadUpWasPressed()) outtake.powerUp();
             if (gamepad1.dpadDownWasPressed()) outtake.powerDown();
 
-            if (gamepad1.y) outtake.startFeeding();
-            else outtake.stopFeeding();
+            if (gamepad1.y) {
+                outtake.startFeeding();
+            } else {
+                outtake.stopFeeding();
+            }
+
+            if (gamepad1.x) outtake.enable();
+            if (gamepad1.b) outtake.disable();
 
             outtake.update();
             intake.update();
-
             Utility.teleDrivePose(telemetry, forward, strafe, rotate);
             Utility.teleOuttake(telemetry, outtake);
-
-            telemetry.addData("Has Target", vision.hasTarget());
-
-            if (vision.hasTarget()) {
-                telemetry.addData("Distance (m)", "%.2f", vision.getDistanceToGoal());
-                telemetry.addData("Yaw (deg)", "%.1f", vision.getYawToGoalDeg());
-                telemetry.addData("Yaw Aligned", vision.isYawAligned() ? "YES" : "NO");
-                telemetry.addData("Aim Accuracy (%)", "%.1f", vision.getAimAccuracyPercent());
-                telemetry.addData("Suggested Shot", vision.getSuggestedShot());
-
-                if (!vision.isYawAligned()) {
-                    telemetry.addData(
-                            "Driver Hint",
-                            vision.getYawToGoalDeg() > 0 ? "Rotate RIGHT" : "Rotate LEFT"
-                    );
-                }
-            } else {
-                telemetry.addLine("No goal detected");
-            }
-
+            Utility.teleVision(telemetry, vision);
             telemetry.update();
         }
 

@@ -11,8 +11,8 @@
   - You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the Releases page for this repository.
   - Once you have downloaded and uncompressed (if needed) your folder, you can use Android Studio to import the folder ("Import project (Eclipse ADT, Gradle, etc.)"), build and run it on your FTC Driver Hub.
 ## Additional libraries are used in this project:
-- [Pedro Pathing](https://github.com/Pedro-Pathing/PedroPathing) by Team #10158 "Bay-Mechs"
-- [Panels](https://github.com/ftcontrol/ftcontrol-panels), by Team #19234 "ByteForce"
+- [Pedro Pathing](https://github.com/Pedro-Pathing/PedroPathing)
+- [Panels](https://github.com/ftcontrol/ftcontrol-panels)
 ## For more informations, contact to contributor(s) of this project:
 - Captain: Quang Minh Dinh [@minhhdinh192](https://github.com/minhhdinh192)
 - Programmer, Electrician: Khoi Nguyen Pham [@thisIsAnVariableOfACoder](https://github.com/thisIsAnVariableOfACoder)

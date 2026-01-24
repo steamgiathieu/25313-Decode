@@ -4,134 +4,175 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
-import org.firstinspires.ftc.team25313.Constants;
+import org.firstinspires.ftc.team25313.pedroPathing.Constants;
 import org.firstinspires.ftc.team25313.opmodes.auto.paths.*;
+import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
+import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
 public abstract class MainAuto extends OpMode {
+    protected ArtifactCollector intake;
+    protected ArtifactLauncher outtake;
 
     protected Follower follower;
     protected AutoPaths paths;
 
     protected enum AutoState {
-        START,
-        PATH_1,
-        WAIT_1,
-        PATH_2,
-        PATH_3,
-        WAIT_3,
-        PATH_4,
-        PATH_5,
-        WAIT_5,
-        PATH_6,
-        DONE
+        startShoot,
+        path1, path2, path3, path4,
+        wait4,
+        path5, path6, path7, path8,
+        wait8,
+        path9,
+        end
     }
 
-    protected AutoState autoState = AutoState.START;
-    protected long waitStartTime;
+    protected enum Alliance { blue, red }
 
-    // ---- abstract ----
-    protected abstract void initStartingCondition();
+    protected enum StartPosition { far, near }
+    protected Alliance alliance;
+    protected StartPosition startPosition;
+
+    protected static class StartPose {
+
+        public static Pose get(Alliance alliance, StartPosition pos) {
+
+            if (pos == StartPosition.far) {
+                switch (alliance) {
+                    case blue:
+                        return new Pose(
+                                54.0,
+                                10.0,
+                                Math.toRadians(105)
+                        );
+                    case red:
+                        return new Pose(
+                                90.0,
+                                10.0,
+                                Math.toRadians(75)
+                        );
+                }
+            }
+            return new Pose(0, 0, 0);
+        }
+    }
+
+    protected AutoState autoState = AutoState.startShoot;
+    protected long postShotStartTime = 0;
+    protected long waitStartTime;
 
     @Override
     public void init() {
-        initStartingCondition();
+        alliance = getAlliance();
+        startPosition = getStartPosition();
 
-        follower = org.firstinspires.ftc.team25313.pedroPathing.Constants.createFollower(hardwareMap);
+        intake = new ArtifactCollector(hardwareMap);
+        outtake = new ArtifactLauncher(hardwareMap, intake);
 
-        follower.setStartingPose(getStartingPose());
+        follower = Constants.createFollower(hardwareMap);
+
+        Pose startPose = StartPose.get(alliance, startPosition);
+        follower.setStartingPose(startPose);
 
         buildPaths();
+
+        intake.setManualCollect();
+        outtake.enable();
+        outtake.stopFeeding();
+
+        startWait();
+        autoState = AutoState.startShoot;
     }
 
     @Override
     public void loop() {
         follower.update();
 
-        runIntake();
-        runOuttake();
+        intake.update();
+        outtake.update();
 
         switch (autoState) {
+            case startShoot:
+                if (outtake.isReadyToShoot()) {
+                    outtake.startFeeding();
+                    startPostShotWait();
+                    autoState = AutoState.path1;
 
-            case START:
-                follower.followPath(paths.getPath1());
-                autoState = AutoState.PATH_1;
+                    follower.followPath(paths.getPath1());
+                }
                 break;
-
-            case PATH_1:
+            case path1:
                 if (!follower.isBusy()) {
-                    startWait();
-                    autoState = AutoState.WAIT_1;
-                }
-                break;
-
-            case WAIT_1:
-                if (waitPassed()) {
-                    shoot();
                     follower.followPath(paths.getPath2());
-                    autoState = AutoState.PATH_2;
+                    autoState = AutoState.path2;
                 }
                 break;
-
-            case PATH_2:
+            case path2:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.getPath3());
-                    autoState = AutoState.PATH_3;
+                    autoState = AutoState.path3;
                 }
                 break;
-
-            case PATH_3:
+            case path3:
                 if (!follower.isBusy()) {
-                    startWait();
-                    autoState = AutoState.WAIT_3;
-                }
-                break;
-
-            case WAIT_3:
-                if (waitPassed()) {
-                    shoot();
                     follower.followPath(paths.getPath4());
-                    autoState = AutoState.PATH_4;
+                    autoState = AutoState.path4;
                 }
                 break;
-
-            case PATH_4:
+            case path4:
                 if (!follower.isBusy()) {
+                    autoState = AutoState.wait4;
+                }
+                break;
+            case wait4:
+                if (outtake.isReadyToShoot()) {
+                    outtake.startFeeding();
+                    startPostShotWait();
+                    autoState = AutoState.path5;
+
                     follower.followPath(paths.getPath5());
-                    autoState = AutoState.PATH_5;
                 }
                 break;
-
-            case PATH_5:
+            case path5:
                 if (!follower.isBusy()) {
-                    startWait();
-                    autoState = AutoState.WAIT_5;
-                }
-                break;
-
-            case WAIT_5:
-                if (waitPassed()) {
-                    shoot();
                     follower.followPath(paths.getPath6());
-                    autoState = AutoState.PATH_6;
+                    autoState = AutoState.path6;
                 }
                 break;
-
-            case PATH_6:
+            case path6:
                 if (!follower.isBusy()) {
-                    autoState = AutoState.DONE;
+                    follower.followPath(paths.getPath7());
+                    autoState = AutoState.path7;
                 }
                 break;
+            case path7:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.getPath8());
+                    autoState = AutoState.path8;
+                }
+                break;
+            case path8:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.wait8;
+                }
+                break;
+            case wait8:
+                if (outtake.isReadyToShoot()) {
+                    outtake.startFeeding();
+                    startPostShotWait();
+                    autoState = AutoState.path9;
 
-            case DONE:
-                stopAll();
+                    follower.followPath(paths.getPath9());
+                }
+                break;
+            case path9:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.end;
+                    stopAll();
+                }
+                break;
+            case end:
                 break;
         }
-    }
-
-    // ---------- helpers ----------
-
-    protected void buildPaths() {
-        paths = new SmallTriangleBluePaths(follower);
     }
 
     protected Pose getStartingPose() {
@@ -146,12 +187,12 @@ public abstract class MainAuto extends OpMode {
         return System.currentTimeMillis() - waitStartTime >= 4500;
     }
 
-    protected void runIntake() {
-        // intake chạy liên tục
+    protected void startPostShotWait() {
+        postShotStartTime = System.currentTimeMillis();
     }
 
-    protected void runOuttake() {
-        // outtake giữ sẵn
+    protected boolean postShotWaitPassed() {
+        return System.currentTimeMillis() - postShotStartTime >= 2000;
     }
 
     protected void shoot() {
@@ -160,5 +201,16 @@ public abstract class MainAuto extends OpMode {
 
     protected void stopAll() {
         // stop motor/servo
+    }
+
+    protected abstract Alliance getAlliance();
+    protected abstract StartPosition getStartPosition();
+
+    protected void buildPaths() {
+        if (alliance == Alliance.blue) {
+            paths = new FarBluePaths(follower);
+        } else {
+            paths = new FarRedPaths(follower);
+        }
     }
 }
