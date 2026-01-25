@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team25313.Utility;
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
@@ -25,20 +26,20 @@ public class far extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        outtake.enable();
         outtake.powerUp();
+        outtake.powerUp();
+        outtake.enable();
 
         ElapsedTime spinUpTimer = new ElapsedTime();
-        while (opModeIsActive() && spinUpTimer.milliseconds() > 2500) {
+        while (opModeIsActive() && spinUpTimer.milliseconds() < 5000) {
             outtake.update();
             idle();
         }
 
         intake.setOuttakeFeed();
         outtake.startFeeding();
-
-        ElapsedTime shootTimer = new ElapsedTime();
-        while (opModeIsActive() && shootTimer.milliseconds() < 2000) {
+        ElapsedTime launchTimer = new ElapsedTime();
+        while (opModeIsActive() && launchTimer.milliseconds() < 3000) {
             outtake.update();
             intake.update();
             idle();
