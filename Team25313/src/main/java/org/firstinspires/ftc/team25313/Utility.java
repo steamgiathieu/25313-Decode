@@ -146,6 +146,7 @@ public final class Utility {
                 Constants.launcherD,
                 Constants.adaptive_launcherF
         );
+        telemetry.addData("Intake Power: ", "%.4f", Constants.intakeMotorShoot);
 
         PanelsData.launchPower = outtake.getTargetVelocity();
         PanelsData.isReady = outtake.isReadyToShoot();

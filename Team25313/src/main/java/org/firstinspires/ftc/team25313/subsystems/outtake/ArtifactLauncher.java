@@ -91,7 +91,9 @@ public class ArtifactLauncher {
     }
 
     public void powerUp() {
-        if (powerLevel == PowerLevel.near) powerLevel = PowerLevel.mid;
+        if (powerLevel == PowerLevel.near) {
+            powerLevel = PowerLevel.mid;
+        }
         else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.far;
     }
 
