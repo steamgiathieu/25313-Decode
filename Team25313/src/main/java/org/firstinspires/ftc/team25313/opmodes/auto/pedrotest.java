@@ -27,7 +27,7 @@ public class pedrotest extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(72, 8, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(56, 8, Math.toRadians(90)));
 
         paths = new Paths(follower); // Build paths
 
@@ -58,7 +58,7 @@ public class pedrotest extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(56.000, 8.000), new Pose(42.028, 94.772))
+                            new BezierLine(new Pose(56.000, 8.000), new Pose(56, 32))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                     .build();
@@ -68,6 +68,7 @@ public class pedrotest extends OpMode {
     public int autonomousPathUpdate() {
         switch (pathState) {
             case start:
+                follower.setMaxPower(0.5);
                 follower.followPath(paths.Path1, true);
                 pathState = followPath;
                 break;

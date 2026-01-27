@@ -56,7 +56,7 @@ public abstract class MainAuto extends OpMode {
     }
 
     protected AutoState autoState = AutoState.start;
-    protected int shootingTime = 2000, waitingTimeForStable = 500;
+    protected int shootingTime = 1800, waitingTimeForStable = 200;
     protected int shootingCounter = 0;
     protected long waitStartTime;
 
@@ -94,21 +94,34 @@ public abstract class MainAuto extends OpMode {
                 outtake.setPowerLevel(ArtifactLauncher.PowerLevel.far);
                 outtake.enable();
                 autoState = AutoState.waitToSpinUp;
+                intake.stop();
                 break;
             case waitToSpinUp:
-                if (outtake.isReadyToShoot()){
+                //if (outtake.isReadyToShoot()){
                     autoState = AutoState.path1;
+                    follower.setMaxPower(0.4);
                     follower.followPath(paths.getPath1());
-                }
+                //}
                 break;
             case path1:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath2());
                     autoState = AutoState.path2;
+                    follower.setMaxPower(0.4);
+                    follower.followPath(paths.getPath2());
                 }
                 break;
             case path2:
+                if (!follower.isBusy()){
+                    autoState = AutoState.waitToStable;
+                    startWait(); //start wait for stable
+                }
+                break;
             case path5:
+                if (!follower.isBusy()){
+                    autoState = AutoState.waitToStable;
+                    startWait(); //start wait for stable
+                }
+                break;
             case path8:
                 if (!follower.isBusy()){
                     autoState = AutoState.waitToStable;
@@ -116,25 +129,31 @@ public abstract class MainAuto extends OpMode {
                 }
                 break;
             case waitToStable:
-                if(waitMillis(waitingTimeForStable)){
+                if(waitMillis(waitingTimeForStable) && outtake.isReadyToShoot()){
                     autoState = AutoState.waitToShoot;
                     outtake.startFeeding();
                     startWait(); //start wait for shooting
                 }
                 break;
             case waitToShoot:
+                outtake.startFeeding();
                 if(waitMillis(shootingTime)){
                     outtake.stopFeeding();
                     if(shootingCounter == 0) {
+//                        autoState = AutoState.end;
+                        follower.setMaxPower(0.8);
                         follower.followPath(paths.getPath3());
                         autoState = AutoState.path3;
                     } else if (shootingCounter == 1) {
-                        follower.followPath(paths.getPath6());
+//                         autoState = AutoState.end;
+                        follower.setMaxPower(0.8);
                         autoState = AutoState.path6;
+                        follower.followPath(paths.getPath6());
                     }
                     else if (shootingCounter == 2) {
-                        follower.followPath(paths.getPath9());
                         autoState = AutoState.path9;
+                        follower.setMaxPower(0.8);
+                        follower.followPath(paths.getPath9());
                     }
                     //shootingCounter ++;
                     shootingCounter = Math.min(shootingCounter + 1, 4);
@@ -142,29 +161,36 @@ public abstract class MainAuto extends OpMode {
                 break;
             case path3:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath4());
                     autoState = AutoState.path4;
+                    follower.setMaxPower(0.8);
+                    follower.followPath(paths.getPath4());
                     intake.setManualCollect();
+                    startWait();
                 }
                 break;
             case path4:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath5());
+                if (!follower.isBusy() && waitMillis(1000)) {
                     autoState = AutoState.path5;
+                    follower.setMaxPower(0.6);
+                    follower.followPath(paths.getPath5());
                     intake.stop();
                 }
                 break;
             case path6:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath7());
                     autoState = AutoState.path7;
+                    follower.setMaxPower(0.8);
+                    follower.followPath(paths.getPath7());
                     intake.setManualCollect();
+                    startWait();
                 }
                 break;
             case path7:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath8());
+                if (!follower.isBusy() && waitMillis(1000)) {
                     autoState = AutoState.path8;
+                    follower.setMaxPower(0.6);
+                    follower.followPath(paths.getPath8());
+                    intake.stop();
                 }
                 break;
             case path9:

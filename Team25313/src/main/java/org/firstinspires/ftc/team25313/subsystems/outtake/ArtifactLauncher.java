@@ -40,6 +40,7 @@ public class ArtifactLauncher {
         rightLauncher = hw.get(DcMotorEx.class, Constants.rightLauncher);
         pusher        = hw.get(Servo.class, Constants.pusher);
         window = hw.get(Servo.class, Constants.window);
+        this.voltageSensor = hw.voltageSensor.iterator().next();
 
         leftLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
 
