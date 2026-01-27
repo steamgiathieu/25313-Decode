@@ -21,7 +21,7 @@ public class Constants {
             .headingPIDFCoefficients(new PIDFCoefficients(0.5, 0.0, 0.0,0.03))
             .mass(12);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1.5, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 2.0, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(0.6)
