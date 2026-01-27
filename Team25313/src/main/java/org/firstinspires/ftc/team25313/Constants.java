@@ -31,16 +31,16 @@ public final class Constants {
     public static final String window = "window";
     public static final double nearShotVelocity = 1300;
     public static final double midShotVelocity  = 1420;
-    public static final double farShotVelocity  = 1630;
+    public static final double farShotVelocity  = 1640;
     public static final double launcherP = 23;
     public static final double launcherI = 0.0;
-    public static final double launcherD = 0.0;
-    public static final double launcherF = 13.6;
+    public static final double launcherD = 0.0001;
+    public static final double launcherF = 11.6;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
-    public static final double pusherRestPos = 0.17;
-    public static final double pusherLaunchPos = 0.07;
+    public static final double pusherRestPos = 0.15;
+    public static final double pusherLaunchPos = 0.08;
     public static final double windowAngle = 0.2;
     public static final double windowRest = 0.05;
 
