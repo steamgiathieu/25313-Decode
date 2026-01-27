@@ -163,6 +163,7 @@ public class ArtifactLauncher {
     public boolean isEnabled() { return enabled; }
     public boolean isReadyToShoot() { return isReady(); }
     public PowerLevel getPowerLevel() { return powerLevel; }
+    public void setPowerLevel(PowerLevel _set_power){ powerLevel = _set_power;};
     public double getTargetVelocity() { return powerLevel.velocity; }
     public double getActualVelocity() { return getCurrentVelocity(); }
     public boolean isFeeding() {

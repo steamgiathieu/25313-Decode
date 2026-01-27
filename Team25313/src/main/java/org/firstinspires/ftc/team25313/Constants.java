@@ -26,6 +26,7 @@ public final class Constants {
     public static final double closeZoneIntakeMotorShoot = 0.7;
     public static final double autoIntakeMotorShoot = 0.5;
     public static final double intakeServoIn = 0.8;
+    public static final double shootingTime = 2000; //ms
 
     // Outtake Subsystem
     public static final String leftLauncher = "leftLauncher";

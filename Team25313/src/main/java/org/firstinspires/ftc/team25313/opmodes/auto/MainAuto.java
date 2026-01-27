@@ -16,9 +16,12 @@ public abstract class MainAuto extends OpMode {
     protected Follower follower;
     protected AutoPaths paths;
 
+
     protected enum AutoState {
         start,
-        path1, path2, path3, wait3, path4, path5, path6, wait6, path7,
+        waitToSpinUp, waitToShoot,
+        path1, path2, path3, path4, path5, path6, path7, path8, path9,
+        intake1, intake2, intake3, intake4,
         end;
     }
 
@@ -38,13 +41,13 @@ public abstract class MainAuto extends OpMode {
                         return new Pose(
                                 56.0,
                                 8.0,
-                                Math.toRadians(110)
+                                Math.toRadians(90)
                         );
                     case red:
                         return new Pose(
                                 88.0,
                                 8.0,
-                                Math.toRadians(70)
+                                Math.toRadians(90)
                         );
                 }
             }
@@ -53,7 +56,8 @@ public abstract class MainAuto extends OpMode {
     }
 
     protected AutoState autoState = AutoState.start;
-    protected long postShotStartTime = 0;
+    protected int shootingTime = 2000;
+    protected int shootingCounter = 0;
     protected long waitStartTime;
 
     @Override
@@ -82,17 +86,18 @@ public abstract class MainAuto extends OpMode {
     @Override
     public void loop() {
         follower.update();
-
         intake.update();
         outtake.update();
 
         switch (autoState) {
             case start:
-                if (outtake.isReadyToShoot()) {
-                    outtake.startFeeding();
-                    startPostShotWait();
+                outtake.setPowerLevel(ArtifactLauncher.PowerLevel.far);
+                outtake.enable();
+                autoState = AutoState.waitToSpinUp;
+                break;
+            case waitToSpinUp:
+                if (outtake.isReadyToShoot()){
                     autoState = AutoState.path1;
-
                     follower.followPath(paths.getPath1());
                 }
                 break;
@@ -103,69 +108,81 @@ public abstract class MainAuto extends OpMode {
                 }
                 break;
             case path2:
+            case path5:
+            case path8:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath3());
-                    autoState = AutoState.path3;
+                    autoState = AutoState.waitToShoot;
+                    startWait();
+                }
+                break;
+            case waitToShoot:
+                if(!waitMillis(shootingTime)) outtake.startFeeding();
+                else {
+                    if(shootingCounter == 0) {
+                        follower.followPath(paths.getPath3());
+                        autoState = AutoState.path3;
+                    } else if (shootingCounter == 1) {
+                        follower.followPath(paths.getPath6());
+                        autoState = AutoState.path6;
+                    }
+                    else if (shootingCounter == 2) {
+                        follower.followPath(paths.getPath9());
+                        autoState = AutoState.path9;
+                    }
+                    shootingCounter ++;
                 }
                 break;
             case path3:
                 if (!follower.isBusy()) {
-                    autoState = AutoState.wait3;
-                }
-                break;
-            case wait3:
-                if (outtake.isReadyToShoot()) {
-                    outtake.startFeeding();
-                    startPostShotWait();
-                    autoState = AutoState.path4;
-
                     follower.followPath(paths.getPath4());
+                    autoState = AutoState.path4;
+                    intake.setManualCollect();
                 }
                 break;
             case path4:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.getPath5());
                     autoState = AutoState.path5;
-                }
-                break;
-            case path5:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.getPath6());
-                    autoState = AutoState.path6;
+                    intake.stop();
                 }
                 break;
             case path6:
                 if (!follower.isBusy()) {
-                    autoState = AutoState.wait6;
-                }
-                break;
-            case wait6:
-                if (outtake.isReadyToShoot()) {
-                    outtake.startFeeding();
-                    startPostShotWait();
-                    autoState = AutoState.path7;
-
                     follower.followPath(paths.getPath7());
+                    autoState = AutoState.path7;
+                    intake.setManualCollect();
                 }
                 break;
             case path7:
                 if (!follower.isBusy()) {
+                    follower.followPath(paths.getPath8());
+                    autoState = AutoState.path8;
+                }
+                break;
+            case path9:
+                if (!follower.isBusy()) {
                     autoState = AutoState.end;
-                    stopAll();
                 }
                 break;
             case end:
+                outtake.stopFeeding();
+                intake.stop();
                 break;
         }
+        telemetry.addData("Autonomous STATE: ", "%d", autoState);
+        telemetry.addData("Shooting counter: ", "%d", shootingCounter);
+        telemetry.update();
+
     }
 
     protected void startWait() {
         waitStartTime = System.currentTimeMillis();
     }
 
-    protected void startPostShotWait() {
-        postShotStartTime = System.currentTimeMillis();
+    protected boolean waitMillis(long durationMs) {
+        return System.currentTimeMillis() - waitStartTime >= durationMs;
     }
+
 
     protected void stopAll() {
         intake.stop();
