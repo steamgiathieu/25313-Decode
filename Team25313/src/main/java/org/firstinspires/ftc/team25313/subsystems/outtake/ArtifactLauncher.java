@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class ArtifactLauncher {
 
@@ -13,6 +14,7 @@ public class ArtifactLauncher {
     private final Servo window;
 
     private final ElapsedTime slewTimer = new ElapsedTime();
+    VoltageSensor voltageSensor;
 
     public enum PowerLevel {
         near(Constants.nearShotVelocity),
@@ -98,7 +100,18 @@ public class ArtifactLauncher {
         else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.near;
     }
 
+    private static boolean reconfig_flag = false;
     public void update() {
+        //check voltage level and reconfigure Motor
+        if(voltageSensor.getVoltage() >= Constants.nominalVoltage){
+            Constants.adaptive_launcherF = Constants.launcherF;
+        }
+        else if(voltageSensor.getVoltage() <= 11){
+            Constants.adaptive_launcherF = Constants.low_power_launcherF;
+        }
+        setupMotor(leftLauncher);
+        setupMotor(rightLauncher);
+
         if (!enabled) return;
         updateVelocity();
         if (feeding) {

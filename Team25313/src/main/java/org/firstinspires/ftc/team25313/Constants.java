@@ -36,6 +36,8 @@ public final class Constants {
     public static final double launcherI = 0.0;
     public static final double launcherD = 0.0001;
     public static final double launcherF = 11.6;
+    public static final double low_power_launcherF = 12.3;
+    public static double adaptive_launcherF = 11.6;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
@@ -43,6 +45,8 @@ public final class Constants {
     public static final double pusherLaunchPos = 0.08;
     public static final double windowAngle = 0.2;
     public static final double windowRest = 0.05;
+
+    public static final double nominalVoltage = 12.0;
 
     // Lift Subsystem
     public static final String lifter = "lifter";
