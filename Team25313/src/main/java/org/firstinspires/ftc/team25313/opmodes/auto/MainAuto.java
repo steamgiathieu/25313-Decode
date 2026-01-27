@@ -19,7 +19,7 @@ public abstract class MainAuto extends OpMode {
 
     protected enum AutoState {
         start,
-        waitToSpinUp, waitToShoot,
+        waitToSpinUp, waitToStable, waitToShoot,
         path1, path2, path3, path4, path5, path6, path7, path8, path9,
         intake1, intake2, intake3, intake4,
         end;
@@ -56,7 +56,7 @@ public abstract class MainAuto extends OpMode {
     }
 
     protected AutoState autoState = AutoState.start;
-    protected int shootingTime = 2000;
+    protected int shootingTime = 2000, waitingTimeForStable = 500;
     protected int shootingCounter = 0;
     protected long waitStartTime;
 
@@ -110,14 +110,21 @@ public abstract class MainAuto extends OpMode {
             case path2:
             case path5:
             case path8:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy()){
+                    autoState = AutoState.waitToStable;
+                    startWait(); //start wait for stable
+                }
+                break;
+            case waitToStable:
+                if(waitMillis(waitingTimeForStable)){
                     autoState = AutoState.waitToShoot;
-                    startWait();
+                    outtake.startFeeding();
+                    startWait(); //start wait for shooting
                 }
                 break;
             case waitToShoot:
-                if(!waitMillis(shootingTime)) outtake.startFeeding();
-                else {
+                if(waitMillis(shootingTime)){
+                    outtake.stopFeeding();
                     if(shootingCounter == 0) {
                         follower.followPath(paths.getPath3());
                         autoState = AutoState.path3;
@@ -129,7 +136,8 @@ public abstract class MainAuto extends OpMode {
                         follower.followPath(paths.getPath9());
                         autoState = AutoState.path9;
                     }
-                    shootingCounter ++;
+                    //shootingCounter ++;
+                    shootingCounter = Math.min(shootingCounter + 1, 4);
                 }
                 break;
             case path3:
@@ -165,11 +173,11 @@ public abstract class MainAuto extends OpMode {
                 }
                 break;
             case end:
-                outtake.stopFeeding();
+                outtake.disable();
                 intake.stop();
                 break;
         }
-        telemetry.addData("Autonomous STATE: ", "%d", autoState);
+        telemetry.addData("Autonomous STATE: ", autoState);
         telemetry.addData("Shooting counter: ", "%d", shootingCounter);
         telemetry.update();
 
