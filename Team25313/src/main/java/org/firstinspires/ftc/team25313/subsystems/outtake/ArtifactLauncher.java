@@ -165,6 +165,14 @@ public class ArtifactLauncher {
         powerLevel = PowerLevel.far;
     }
 
+    public void setMinPow() {
+        powerLevel = PowerLevel.near;
+    }
+
+    public void setMidPow() {
+        powerLevel = PowerLevel.mid;
+    }
+
     public boolean isEnabled() { return enabled; }
     public boolean isReadyToShoot() { return isReady(); }
     public PowerLevel getPowerLevel() { return powerLevel; }

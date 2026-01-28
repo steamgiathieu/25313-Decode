@@ -17,12 +17,12 @@ public abstract class MainAuto extends OpMode {
     protected AutoPaths paths;
 
 
+    @SuppressWarnings("unused")
     protected enum AutoState {
-        start,
-        waitToSpinUp, waitToStable, waitToShoot,
-        path1, path2, path3, path4, path5, path6, path7, path8, path9,
-        intake1, intake2, intake3, intake4,
-        end;
+        start, waitToSpinUp,
+        path1, wait1, waitToShoot, path2, path3, wait3,
+        path4, path5, wait5, path6, path7, wait7,
+        path8, end
     }
 
     protected enum Alliance { blue, red }
@@ -51,14 +51,35 @@ public abstract class MainAuto extends OpMode {
                         );
                 }
             }
+            else if (pos == StartPosition.near) {
+                switch (alliance) {
+                    case blue:
+                        return new Pose(
+                                21.0,
+                                123.0,
+                                Math.toRadians(145)
+                        );
+                    case red:
+                        return new Pose(
+                                123.0,
+                                123.0,
+                                Math.toRadians(35)
+                        );
+                }
+            }
             return new Pose(0, 0, 0);
         }
     }
 
     protected AutoState autoState = AutoState.start;
-    protected int shootingTime = 1800, waitingTimeForStable = 200;
+    protected int shootingTime = 1800;
     protected int shootingCounter = 0;
     protected long waitStartTime;
+    // When we perform a timed shooting window we set this so the generic waitToShoot
+    // state knows which AutoState to go to after the window completes.
+    protected AutoState postShootState = null;
+    // true while a shooting window has been started and we are waiting inside waitToShoot
+    protected boolean shootingWindowActive = false;
 
     @Override
     public void init() {
@@ -80,7 +101,7 @@ public abstract class MainAuto extends OpMode {
         outtake.stopFeeding();
 
         startWait();
-        autoState = AutoState.start;
+        autoState = AutoState.path1;
     }
 
     @Override
@@ -91,116 +112,114 @@ public abstract class MainAuto extends OpMode {
 
         switch (autoState) {
             case start:
-                outtake.setPowerLevel(ArtifactLauncher.PowerLevel.far);
+                if (startPosition == StartPosition.far) outtake.setMaxPow();
+                else if (startPosition == StartPosition.near) outtake.setMinPow();
                 outtake.enable();
                 autoState = AutoState.waitToSpinUp;
                 intake.stop();
                 break;
             case waitToSpinUp:
-                //if (outtake.isReadyToShoot()){
-                    autoState = AutoState.path1;
-                    follower.setMaxPower(0.4);
-                    follower.followPath(paths.getPath1());
-                //}
+                // start the first path once spin-up waiting is done
+                autoState = AutoState.path1;
+                follower.setMaxPower(0.6);
+                follower.followPath(paths.getPath1());
                 break;
             case path1:
                 if (!follower.isBusy()) {
-                    autoState = AutoState.path2;
-                    follower.setMaxPower(0.4);
-                    follower.followPath(paths.getPath2());
+                    // finished path1 -> prepare for shooting window (wait1)
+                    autoState = AutoState.wait1;
                 }
                 break;
-            case path2:
-                if (!follower.isBusy()){
-                    autoState = AutoState.waitToStable;
-                    startWait(); //start wait for stable
-                }
-                break;
-            case path5:
-                if (!follower.isBusy()){
-                    autoState = AutoState.waitToStable;
-                    startWait(); //start wait for stable
-                }
-                break;
-            case path8:
-                if (!follower.isBusy()){
-                    autoState = AutoState.waitToStable;
-                    startWait(); //start wait for stable
-                }
-                break;
-            case waitToStable:
-                if(waitMillis(waitingTimeForStable) && outtake.isReadyToShoot()){
-                    autoState = AutoState.waitToShoot;
-                    outtake.startFeeding();
-                    startWait(); //start wait for shooting
+            case wait1:
+                // When the shooter is spun up and ready, start the feeder and a timer
+                if (outtake.isReadyToShoot() && !shootingWindowActive) {
+                    startShootingWindow(AutoState.path2, 2);
                 }
                 break;
             case waitToShoot:
-                outtake.startFeeding();
-                if(waitMillis(shootingTime)){
+                // remain in this state for `shootingTime` ms while shooting occurs
+                if (waitMillis(shootingTime)) {
+                    // stop feeding and proceed to the next path/state
                     outtake.stopFeeding();
-                    if(shootingCounter == 0) {
-//                        autoState = AutoState.end;
-                        follower.setMaxPower(0.8);
-                        follower.followPath(paths.getPath3());
-                        autoState = AutoState.path3;
-                    } else if (shootingCounter == 1) {
-//                         autoState = AutoState.end;
-                        follower.setMaxPower(0.8);
-                        autoState = AutoState.path6;
-                        follower.followPath(paths.getPath6());
+                    shootingCounter++;
+                    // transition to the planned state after shooting
+                    if (postShootState != null) {
+                        autoState = postShootState;
+                    } else {
+                        // If postShootState wasn't set for some reason, go to `end` to stop safely
+                        telemetry.addData("AutoError", "postShootState was null - switching to END");
+                        autoState = AutoState.end;
                     }
-                    else if (shootingCounter == 2) {
-                        autoState = AutoState.path9;
-                        follower.setMaxPower(0.8);
-                        follower.followPath(paths.getPath9());
-                    }
-                    //shootingCounter ++;
-                    shootingCounter = Math.min(shootingCounter + 1, 4);
+                    postShootState = null;
+                    // shooting window finished
+                    shootingWindowActive = false;
+                }
+                break;
+            case path2:
+                if (!follower.isBusy()) {
+                    // finished path2 -> immediately start path3
+                    autoState = AutoState.path3;
+                    follower.setMaxPower(0.6);
+                    follower.followPath(paths.getPath3());
                 }
                 break;
             case path3:
                 if (!follower.isBusy()) {
-                    autoState = AutoState.path4;
-                    follower.setMaxPower(0.8);
-                    follower.followPath(paths.getPath4());
-                    intake.setManualCollect();
-                    startWait();
+                    // finished path3 -> prepare for shooting window (wait3)
+                    autoState = AutoState.wait3;
+                }
+                break;
+            case wait3:
+                if (outtake.isReadyToShoot() && !shootingWindowActive) {
+                    startShootingWindow(AutoState.path4, 4);
                 }
                 break;
             case path4:
-                if (!follower.isBusy() && waitMillis(1000)) {
+                if (!follower.isBusy()) {
+                    // finished path4 -> start path5
                     autoState = AutoState.path5;
                     follower.setMaxPower(0.6);
                     follower.followPath(paths.getPath5());
-                    intake.stop();
+                }
+                break;
+            case path5:
+                if (!follower.isBusy()) {
+                    // finished path5 -> prepare for shooting window (wait5)
+                    autoState = AutoState.wait5;
+                }
+                break;
+            case wait5:
+                if (outtake.isReadyToShoot() && !shootingWindowActive) {
+                    startShootingWindow(AutoState.path6, 6);
                 }
                 break;
             case path6:
                 if (!follower.isBusy()) {
+                    // finished path6 -> start path7
                     autoState = AutoState.path7;
-                    follower.setMaxPower(0.8);
+                    follower.setMaxPower(0.6);
                     follower.followPath(paths.getPath7());
-                    intake.setManualCollect();
-                    startWait();
                 }
                 break;
             case path7:
-                if (!follower.isBusy() && waitMillis(1000)) {
-                    autoState = AutoState.path8;
-                    follower.setMaxPower(0.6);
-                    follower.followPath(paths.getPath8());
-                    intake.stop();
+                if (!follower.isBusy()) {
+                    // finished path7 -> prepare for shooting window (wait7)
+                    autoState = AutoState.wait7;
                 }
                 break;
-            case path9:
+            case wait7:
+                if (outtake.isReadyToShoot() && !shootingWindowActive) {
+                    startShootingWindow(AutoState.path8, 8);
+                }
+                break;
+            case path8:
                 if (!follower.isBusy()) {
+                    // final path finished -> end
                     autoState = AutoState.end;
                 }
                 break;
             case end:
-                outtake.disable();
-                intake.stop();
+                stopAll();
                 break;
         }
         telemetry.addData("Autonomous STATE: ", autoState);
@@ -217,7 +236,6 @@ public abstract class MainAuto extends OpMode {
         return System.currentTimeMillis() - waitStartTime >= durationMs;
     }
 
-
     protected void stopAll() {
         intake.stop();
         outtake.disable();
@@ -227,10 +245,35 @@ public abstract class MainAuto extends OpMode {
     protected abstract StartPosition getStartPosition();
 
     protected void buildPaths() {
-        if (alliance == Alliance.blue) {
+        if (alliance == Alliance.blue && startPosition == StartPosition.far) {
             paths = new FarBluePaths(follower);
-        } else {
+        } else if (alliance == Alliance.red && startPosition == StartPosition.far) {
             paths = new FarRedPaths(follower);
+        } else if (alliance == Alliance.blue && startPosition == StartPosition.near) {
+            paths = new NearBluePaths(follower);
+        } else if (alliance == Alliance.red && startPosition == StartPosition.near) {
+            paths = new NearRedPaths(follower);
         }
+    }
+
+    protected void startShootingWindow(AutoState next, int nextPathIndex) {
+        startWait();
+        outtake.startFeeding();
+        postShootState = next;
+        shootingWindowActive = true;
+        follower.setMaxPower(0.6);
+        switch (nextPathIndex) {
+            case 1: follower.followPath(paths.getPath1()); break;
+            case 2: follower.followPath(paths.getPath2()); break;
+            case 3: follower.followPath(paths.getPath3()); break;
+            case 4: follower.followPath(paths.getPath4()); break;
+            case 5: follower.followPath(paths.getPath5()); break;
+            case 6: follower.followPath(paths.getPath6()); break;
+            case 7: follower.followPath(paths.getPath7()); break;
+            case 8: follower.followPath(paths.getPath8()); break;
+            default: break;
+        }
+        autoState = AutoState.waitToShoot;
+        telemetry.addData("Auto", "Started shooting window -> next=" + next.name() + " pathIndex=" + nextPathIndex);
     }
 }
