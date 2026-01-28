@@ -41,15 +41,14 @@ public class Constants {
             .strafeEncoder_HardwareMapName("front_right_drive")
             .forwardPodY(-3.5/2.54)
             .strafePodX(13/2.54)
-            .forwardEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.REVERSE)
-            .forwardTicksToInches(0.0037)
+            .forwardTicksToInches(-0.0037)
             .strafeTicksToInches(0.0036)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
-                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                     )
             );
 

@@ -145,6 +145,10 @@ public class ArtifactLauncher {
         window.setPosition(Constants.windowRest);
     }
 
+    public void setMaxPow() {
+        powerLevel = PowerLevel.far;
+    }
+
     public boolean isEnabled() { return enabled; }
     public boolean isReadyToShoot() { return isReady(); }
     public PowerLevel getPowerLevel() { return powerLevel; }

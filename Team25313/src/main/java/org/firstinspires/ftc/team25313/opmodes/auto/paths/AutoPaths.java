@@ -10,4 +10,5 @@ public interface AutoPaths {
     PathChain getPath5();
     PathChain getPath6();
     PathChain getPath7();
+    PathChain getPath8();
 }

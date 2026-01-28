@@ -26,8 +26,7 @@ public class far extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        outtake.powerUp();
-        outtake.powerUp();
+        outtake.setMaxPow();
         outtake.enable();
 
         ElapsedTime spinUpTimer = new ElapsedTime();

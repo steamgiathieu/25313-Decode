@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team25313.opmodes.auto.paths;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
 public class FarRedPaths implements AutoPaths {
@@ -14,6 +15,7 @@ public class FarRedPaths implements AutoPaths {
     private final PathChain Path5;
     private final PathChain Path6;
     private final PathChain Path7;
+    private final PathChain Path8;
 
     public FarRedPaths(Follower follower) {
 
@@ -78,6 +80,13 @@ public class FarRedPaths implements AutoPaths {
                         )
                 ).setTangentHeadingInterpolation()
                 .build();
+        Path8 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(72.084, 15.112),
+                                new Pose(72.047, 31.460)
+                        )
+                ).setTangentHeadingInterpolation()
+                .build();
     }
 
     @Override public PathChain getPath1() { return Path1; }
@@ -87,4 +96,5 @@ public class FarRedPaths implements AutoPaths {
     @Override public PathChain getPath5() { return Path5; }
     @Override public PathChain getPath6() { return Path6; }
     @Override public PathChain getPath7() { return Path7; }
+    @Override public PathChain getPath8() { return Path8; }
 }
