@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team25313.Constants;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class ArtifactLauncher {
 
@@ -13,6 +14,7 @@ public class ArtifactLauncher {
     private final Servo window;
 
     private final ElapsedTime slewTimer = new ElapsedTime();
+    VoltageSensor voltageSensor;
 
     public enum PowerLevel {
         near(Constants.nearShotVelocity),
@@ -38,6 +40,7 @@ public class ArtifactLauncher {
         rightLauncher = hw.get(DcMotorEx.class, Constants.rightLauncher);
         pusher        = hw.get(Servo.class, Constants.pusher);
         window = hw.get(Servo.class, Constants.window);
+        this.voltageSensor = hw.voltageSensor.iterator().next();
 
         leftLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -89,7 +92,9 @@ public class ArtifactLauncher {
     }
 
     public void powerUp() {
-        if (powerLevel == PowerLevel.near) powerLevel = PowerLevel.mid;
+        if (powerLevel == PowerLevel.near) {
+            powerLevel = PowerLevel.mid;
+        }
         else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.far;
     }
 
@@ -98,7 +103,18 @@ public class ArtifactLauncher {
         else if (powerLevel == PowerLevel.mid) powerLevel = PowerLevel.near;
     }
 
+    private static boolean reconfig_flag = false;
     public void update() {
+        //check voltage level and reconfigure Motor
+        if(voltageSensor.getVoltage() >= Constants.nominalVoltage){
+            Constants.adaptive_launcherF = Constants.launcherF;
+        }
+        else if(voltageSensor.getVoltage() <= 11){
+            Constants.adaptive_launcherF = Constants.low_power_launcherF;
+        }
+        setupMotor(leftLauncher);
+        setupMotor(rightLauncher);
+
         if (!enabled) return;
         updateVelocity();
         if (feeding) {
@@ -152,6 +168,7 @@ public class ArtifactLauncher {
     public boolean isEnabled() { return enabled; }
     public boolean isReadyToShoot() { return isReady(); }
     public PowerLevel getPowerLevel() { return powerLevel; }
+    public void setPowerLevel(PowerLevel _set_power){ powerLevel = _set_power;};
     public double getTargetVelocity() { return powerLevel.velocity; }
     public double getActualVelocity() { return getCurrentVelocity(); }
     public boolean isFeeding() {

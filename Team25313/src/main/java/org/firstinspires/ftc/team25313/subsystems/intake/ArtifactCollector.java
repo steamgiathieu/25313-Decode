@@ -68,6 +68,12 @@ public class ArtifactCollector {
                 break;
 
             case outtakeFeed:
+//                if(outtake.getPowerLevel() == ArtifactLauncher.PowerLevel.near || outtake.getPowerLevel() == ArtifactLauncher.PowerLevel.mid){
+//                    Constants.intakeMotorShoot = Constants.closeZoneIntakeMotorShoot;
+//                }
+//                else{
+//                    Constants.intakeMotorShoot = Constants.farZoneIntakeMotorShoot;
+//                } //error, check
                 collector.setPower(Constants.intakeMotorShoot);
                 break;
 

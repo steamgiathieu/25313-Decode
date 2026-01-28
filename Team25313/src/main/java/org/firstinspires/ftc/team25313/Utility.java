@@ -138,6 +138,15 @@ public final class Utility {
         );
         telemetry.addData("Ready", outtake.isReadyToShoot());
         telemetry.addData("Power", outtake.getPowerLevel());
+        telemetry.addData(
+                "PIDF",
+                "P: %.4f | I: %.4f | D: %.4f | F: %.4f",
+                Constants.launcherP,
+                Constants.launcherI,
+                Constants.launcherD,
+                Constants.adaptive_launcherF
+        );
+        telemetry.addData("Intake Power: ", "%.4f", Constants.intakeMotorShoot);
 
         PanelsData.launchPower = outtake.getTargetVelocity();
         PanelsData.isReady = outtake.isReadyToShoot();

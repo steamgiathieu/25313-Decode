@@ -21,28 +21,36 @@ public final class Constants {
     public static final String leftCollector = "leftCollector";
     public static final String rightCollector = "rightCollector";
     public static final double intakeMotorIn = 0.8;
-    public static final double intakeMotorShoot = 0.6;
+    public static double intakeMotorShoot = 0.7;
+    public static final double farZoneIntakeMotorShoot = 0.5;
+    public static final double closeZoneIntakeMotorShoot = 0.7;
+    public static final double autoIntakeMotorShoot = 0.5;
     public static final double intakeServoIn = 0.8;
+    public static final double shootingTime = 2000; //ms
 
     // Outtake Subsystem
     public static final String leftLauncher = "leftLauncher";
     public static final String rightLauncher = "rightLauncher";
     public static final String pusher = "pusher";
     public static final String window = "window";
-    public static final double nearShotVelocity = 1280;
+    public static final double nearShotVelocity = 1300;
     public static final double midShotVelocity  = 1420;
-    public static final double farShotVelocity  = 1630;
-    public static final double launcherP = 23;
+    public static final double farShotVelocity  = 1620;
+    public static final double launcherP = 22;
     public static final double launcherI = 0.0;
-    public static final double launcherD = 0.0;
-    public static final double launcherF = 11.6;
+    public static final double launcherD = 0.0001;
+    public static final double launcherF = 11.9;
+    public static final double low_power_launcherF = 12.3;
+    public static double adaptive_launcherF = 11.6;
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
-    public static final double pusherRestPos = 0.15;
-    public static final double pusherLaunchPos = 0.07;
+    public static final double pusherRestPos = 0.16;
+    public static final double pusherLaunchPos = 0.08;
     public static final double windowAngle = 0.2;
     public static final double windowRest = 0.05;
+
+    public static final double nominalVoltage = 12.0;
 
     // Lift Subsystem
     public static final String lifter = "lifter";
