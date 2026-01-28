@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.team25313;
-
-//import com.bylazar.telemetry.PanelsTelemetry;
-//import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 import org.firstinspires.ftc.team25313.subsystems.vision.VisionSubsystem;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 /**
  * Utility class
@@ -107,24 +105,6 @@ public final class Utility {
         PanelsData.rotate = rotate;
     }
 
-    public static void teleVision(
-            Telemetry telemetry,
-            VisionSubsystem vision
-    ) {
-        telemetry.addData("Vision Target", vision.hasTarget());
-
-        if (vision.hasTarget()) {
-            telemetry.addData("Distance (m)", "%.2f", vision.getDistanceMeters());
-            telemetry.addData("Yaw (deg)", "%.1f", vision.getYawDeg());
-            telemetry.addData("Accuracy (%)", "%.1f", vision.getAimAccuracyPercent());
-
-        } else {
-            telemetry.addLine("No goal detected");
-
-            PanelsData.suggestedShot = "NONE";
-            PanelsData.accuracy = 0;
-        }
-    }
 
     public static void teleOuttake(
             Telemetry telemetry,

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team25313.opmodes.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -13,6 +14,8 @@ import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 import org.firstinspires.ftc.team25313.subsystems.vision.VisionSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+@Disabled
 
 @TeleOp(name = "Debug TeleOp", group = "TeleOp")
 public class DebugTeleOp extends LinearOpMode {
@@ -43,18 +46,6 @@ public class DebugTeleOp extends LinearOpMode {
                 .addProcessor(tagProcessor)
                 .setAutoStopLiveView(false)
                 .build();
-
-        vision = new VisionSubsystem(tagProcessor, VisionSubsystem.Alliance.blue);
-
-        while (!isStarted() && !isStopRequested()) {
-            if (gamepad1.x) vision.setAlliance(VisionSubsystem.Alliance.blue);
-            if (gamepad1.b) vision.setAlliance(VisionSubsystem.Alliance.red);
-
-            telemetry.addLine("Alliance Select:");
-            telemetry.addLine("X = Blue | B = Red");
-            telemetry.addData("Current", vision.getAlliance());
-            telemetry.update();
-        }
 
         if (isStopRequested()) return;
 

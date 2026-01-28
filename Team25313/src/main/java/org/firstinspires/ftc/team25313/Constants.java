@@ -58,16 +58,21 @@ public final class Constants {
 
     // Camera & Vision
     public static final String webcamName = "Webcam 1";
+    public static final double cameraFx = 1971.74;
+    public static final double cameraFy = 1971.74;
+    public static final double cameraCx = 987.672;
+    public static final double cameraCy = 651.892;
+    public static final double aprilTagSize = 6.5;
     public static final int blueGoalTagId = 20;
     public static final int redGoalTagId  = 24;
-    public static final double shotNearMaxDist = 1.2;
-    public static final double shotMidMaxDist  = 2.0;
-    public static final double minValidTagDistM = 0.3;
-    public static final double maxValidTagDistM = 4.0;
-    public static final double yawNearDeg = 30.0;
-    public static final double yawMidDeg  = 25.0;
-    public static final double yawFarDeg  = 20.0;
-    public static final double distanceAlpha = 0.3;
+    public static final double shotNearMaxDist = 120.0;
+    public static final double shotMidMaxDist  = 200.0;
+    public static double visionAimGain = 0.015;
+    public static double visionAimD = 0.005;
+    public static double visionAimMinPower = 0.06;
+    public static double visionAimMaxPower = 0.4;
+    public static double visionAimTolerance = 0.8;
+    public static double visionAimOffset = 10;
 
 
     // Utility Methods
