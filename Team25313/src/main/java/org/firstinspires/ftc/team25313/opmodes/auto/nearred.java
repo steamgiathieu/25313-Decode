@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.team25313.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team25313.subsystems.drivetrain.DriveSubsystem;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
-
-@Disabled
 
 @Autonomous(name = "near red", group = "sosauto")
 public class nearred extends LinearOpMode {
@@ -54,7 +51,7 @@ public class nearred extends LinearOpMode {
         intake.stop();
 
         driveSubsystem.driveRobotRelated(0, -0.5, 0);
-        sleep(500);
+        sleep(800);
         driveSubsystem.driveRobotRelated(0, 0, 0);
     }
 }

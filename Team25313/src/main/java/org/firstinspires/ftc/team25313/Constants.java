@@ -24,6 +24,7 @@ public final class Constants {
     public static final double ticksPerRev = pulsePerRev * quadrature * gearRatio;
     public static final double ticksToInches = (2 * Math.PI * wheelRads) / ticksPerRev;
     public static final double deadzone = 0.05;
+    public static final double rotateRate = 0.5;
 
     // PIDF for Drive motors
     public static double drive_kP = 1.0;
@@ -39,12 +40,17 @@ public final class Constants {
 
     // Intake Subsystem
     public static final String collector = "collector";
+    public static final String leftCollector = "leftCollector";
+    public static final String rightCollector = "rightCollector";
     public static final double intakeMotorIn = 0.6;
+    public static final double intakeMotorShoot = 0.8;
+    public static final double intakeServoIn = 1.0;
 
     // Outtake Subsystem
     public static final String leftLauncher = "leftLauncher";
     public static final String rightLauncher = "rightLauncher";
     public static final String pusher = "pusher";
+    public static final String window = "window";
     public static final double nearShotVelocity = 1300;
     public static final double midShotVelocity  = 1500;
     public static final double farShotVelocity  = 1700;
@@ -57,10 +63,13 @@ public final class Constants {
     public static final double launcherVelocityTolerance = 35;
     public static final double pusherRestPos = 0.17;
     public static final double pusherLaunchPos = 0.07;
+    public static final double windowAngle = 0.5;
+    public static final double windowRest = 0.0;
 
     // Lift Subsystem
     public static final String leftLift = "leftLift";
     public static final String rightLift = "rightLift";
+    public static final String lifter = "lifter"; // Added lifter for HalfLift
     public static final int liftLow = 200;
     public static final int liftMid = 400;
     public static final int liftHigh = 600;
