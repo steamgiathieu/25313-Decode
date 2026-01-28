@@ -73,7 +73,7 @@ public class FarRedPaths implements AutoPaths {
                         new BezierLine(
                                 new Pose(88.000, 16.5),
 
-                                new Pose(98.000, 60)
+                                new Pose(93.000, 60)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(68), Math.toRadians(0))
 
@@ -81,7 +81,7 @@ public class FarRedPaths implements AutoPaths {
 
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(98.000, 60),
+                                new Pose(93.000, 60),
 
                                 new Pose(113, 60)
                         )

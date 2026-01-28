@@ -123,7 +123,7 @@ public abstract class MainAuto extends OpMode {
                 }
                 break;
             case path8:
-                if (!follower.isBusy()){
+                if (!follower.isBusy() && waitMillis(1000)){
                     autoState = AutoState.waitToStable;
                     startWait(); //start wait for stable
                 }
@@ -188,9 +188,10 @@ public abstract class MainAuto extends OpMode {
             case path7:
                 if (!follower.isBusy() && waitMillis(1000)) {
                     autoState = AutoState.path8;
-                    follower.setMaxPower(0.6);
+                    follower.setMaxPower(0.8);
                     follower.followPath(paths.getPath8());
                     intake.stop();
+                    startWait();
                 }
                 break;
             case path9:

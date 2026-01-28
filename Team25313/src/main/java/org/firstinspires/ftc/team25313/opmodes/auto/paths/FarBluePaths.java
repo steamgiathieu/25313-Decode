@@ -82,7 +82,7 @@ public class FarBluePaths implements AutoPaths {
         Path8 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(26, 69),
-                                new Pose(56.000, 16.000)
+                                new Pose(56.000, 16.5)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
 

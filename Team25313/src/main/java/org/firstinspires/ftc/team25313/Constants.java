@@ -36,7 +36,7 @@ public final class Constants {
     public static final double nearShotVelocity = 1300;
     public static final double midShotVelocity  = 1420;
     public static final double farShotVelocity  = 1600;
-    public static final double launcherP = 23;
+    public static final double launcherP = 23.5;
     public static final double launcherI = 0.0;
     public static final double launcherD = 0.0001;
     public static final double launcherF = 11.6;
