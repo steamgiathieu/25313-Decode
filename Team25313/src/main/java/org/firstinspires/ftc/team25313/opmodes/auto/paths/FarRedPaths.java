@@ -33,27 +33,27 @@ public class FarRedPaths implements AutoPaths {
                         new BezierLine(
                                 new Pose(88.000, 16.000),
 
-                                new Pose(88.000, 16.000)
+                                new Pose(88.000, 16.5)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(70))
+                ).setConstantHeadingInterpolation(Math.toRadians(68))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(88.000, 16.000),
+                                new Pose(88.000, 16.5),
 
-                                new Pose(100.000, 35.000)
+                                new Pose(95, 38)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(70), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(68), Math.toRadians(0))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(100.000, 35.000),
+                                new Pose(95, 38),
 
-                                new Pose(133.000, 35.000)
+                                new Pose(114, 38)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -61,47 +61,47 @@ public class FarRedPaths implements AutoPaths {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(133.000, 35.000),
+                                new Pose(114, 38),
 
-                                new Pose(88.000, 16.000)
+                                new Pose(88.000, 16.5)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(70))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(68))
 
                 .build();
 
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(88.000, 16.000),
+                                new Pose(88.000, 16.5),
 
-                                new Pose(98.000, 59.000)
+                                new Pose(98.000, 60)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(70), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(68), Math.toRadians(0))
 
                 .build();
 
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(98.000, 59.000),
+                                new Pose(98.000, 60),
 
-                                new Pose(132.000, 59.000)
+                                new Pose(113, 60)
                         )
                 ).setTangentHeadingInterpolation()
                 .build();
         Path8 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(132.000, 59.000),
+                                new Pose(113, 60),
 
-                                new Pose(88.000, 16.000)
+                                new Pose(88.000, 16.5)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(70))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(68))
                 .build();
         Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(88.000, 16.000),
+                                new Pose(88.000, 16.5),
 
-                                new Pose(130, 57)
+                                new Pose(100, 60)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(70), Math.toRadians(60))
+                ).setLinearHeadingInterpolation(Math.toRadians(68), Math.toRadians(90))
                 .build();
     }
 
