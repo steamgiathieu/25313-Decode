@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<calibrations>
+    <camera cameraMaker="NA" cameraModel="NA" lense="NA" fx="1971.74297045" fy="1971.74297045" cx="987.672165128" cy="651.891544173" k1="-0.046686934942" k2="-1.16128582374" p1="0.00257680795221" p2="-0.00890008694605" k3="2.09244375364" skew="0" name="F: 1 - S: 0x0"/>
+</calibrations>

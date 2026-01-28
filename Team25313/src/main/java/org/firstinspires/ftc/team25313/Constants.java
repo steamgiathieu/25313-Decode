@@ -32,11 +32,18 @@ public final class Constants {
     public static double drive_kD = 0.1;
     public static double drive_kF = 0.0;
 
-    // Motion Constraints (for PedroPathing)
-    public static double maxVel = 50.0; // inches/s
-    public static double maxAccel = 45.0; // inches/s^2
-    public static double maxAngVel = Math.toRadians(180);
-    public static double maxAngAccel = Math.toRadians(180);
+    // === AUTO AIM TUNING (STABLE PD) ===
+    public static double visionAimGain = 0.015;      // P-Gain
+    public static double visionAimD = 0.005;         // D-Gain (Giảm chấn)
+    public static double visionAimMinPower = 0.06;  
+    public static double visionAimMaxPower = 0.4;   
+    public static double visionAimTolerance = 0.8;  
+    public static double visionAimOffset = 10;     // Global camera offset
+    // =============================================
+
+    // Motion Constraints
+    public static double maxVel = 50.0;
+    public static double maxAccel = 45.0;
 
     // Intake Subsystem
     public static final String collector = "collector";
@@ -69,32 +76,27 @@ public final class Constants {
     // Lift Subsystem
     public static final String leftLift = "leftLift";
     public static final String rightLift = "rightLift";
-    public static final String lifter = "lifter"; // Added lifter for HalfLift
+    public static final String lifter = "lifter";
     public static final int liftLow = 200;
     public static final int liftMid = 400;
     public static final int liftHigh = 600;
     public static final double liftPower = 0.8;
 
-    // Camera & Vision
+    // Camera & Calibration
     public static final String webcamName = "Webcam 1";
-    public static final String aprilTagProcessor = "aprilTagProcessor";
+    public static final double cameraFx = 1971.74;
+    public static final double cameraFy = 1971.74;
+    public static final double cameraCx = 987.672;
+    public static final double cameraCy = 651.892;
+    public static final double aprilTagSize = 6.5; 
     public static final int blueGoalTagId = 20;
     public static final int redGoalTagId  = 24;
-    public static final double maxAimYawDeg = 15.0;
-    public static final double shotNearMaxDist = 1.2;
-    public static final double shotMidMaxDist  = 2.0;
+    public static final double shotNearMaxDist = 120.0; 
+    public static final double shotMidMaxDist  = 200.0; 
 
-
-    // Miscellaneous
-    public static final boolean isFieldCentric = true;
-    public static final boolean useOdometry = true;
     public static final boolean debugMode = true;
-    public static final boolean isPanelsAvailable = false;
 
-    // Utility Methods
-    private Constants() {
-        // Prevent instantiation
-    }
+    private Constants() { }
 
     public static double encoderTicksToInches(double ticks) {
         return wheelRads * 2 * Math.PI * gearRatio * ticks / ticksPerRev;
@@ -103,9 +105,4 @@ public final class Constants {
     public static double rpmToVelocity(double rpm) {
         return rpm * gearRatio * 2 * Math.PI * wheelRads / 60.0;
     }
-
-    // Stats from ARENA
-    public static double goalHeight = 1.3655; //meters
-    public static double deltaHeight = goalHeight - botHeight;
-    public static double fallAccelerate = 9.8;
 }

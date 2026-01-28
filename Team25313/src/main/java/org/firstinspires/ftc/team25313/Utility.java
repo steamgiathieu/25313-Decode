@@ -1,26 +1,21 @@
 package org.firstinspires.ftc.team25313;
 
-import com.bylazar.panels.Panels;
-import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 import org.firstinspires.ftc.team25313.subsystems.vision.VisionSubsystem;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 /**
  * Utility class
  * - Math helpers
  * - Encoder helpers
  * - Unified telemetry (Driver Hub + Panels)
- * - Panels-safe
+ * - Units: Centimeters (cm) and Degrees (deg)
  */
 public final class Utility {
-
-    /* =======================
-     * TIME
-     * ======================= */
 
     private static final ElapsedTime runtime = new ElapsedTime();
 
@@ -28,7 +23,7 @@ public final class Utility {
 
     /* =======================
      * PANELS DATA (STATIC)
-     * Panels đọc trực tiếp
+     * Updated for detailed Vision info
      * ======================= */
 
     public static final class PanelsData {
@@ -37,11 +32,13 @@ public final class Utility {
         public static double y;
         public static double rotate;
 
-        // Vision
+        // Vision (Updated to CM and Degrees)
         public static int tagId = -1;
-        public static double tx, ty, tz;
-        public static double yawDeg;
-        public static String motif = "N/A";
+        public static double tx, ty, tz;     // Coordinates in CM
+        public static double range;          // Direct distance in CM
+        public static double bearing;        // Horizontal angle in Deg
+        public static double yawDeg;         // Target rotation in Deg
+        public static String suggestedShot = "N/A";
 
         // Intake
         public static boolean isIntake;
@@ -55,17 +52,10 @@ public final class Utility {
      * TELEMETRY HELPERS
      * ======================= */
 
-    /**
-     * Add data to Driver Hub telemetry
-     * Panels tự đọc PanelsData (không cần gọi)
-     */
     public static void teleAdd(Telemetry telemetry, String caption, Object value) {
         telemetry.addData(caption, value);
     }
 
-    /**
-     * Update telemetry (CHỈ gọi 1 lần / loop)
-     */
     public static void teleUpdate(Telemetry telemetry) {
         telemetry.update();
     }
@@ -78,56 +68,43 @@ public final class Utility {
             Telemetry telemetry,
             double x, double y, double rotate
     ) {
-        // Driver Hub
         telemetry.addData("X", x);
         telemetry.addData("Y", y);
         telemetry.addData("Rotate", rotate);
 
-        // Panels
         PanelsData.x = x;
         PanelsData.y = y;
         PanelsData.rotate = rotate;
     }
 
-//    public static void teleIntake(Telemetry telemetry, boolean isIntake) {
-//        // Driver Hub
-//        telemetry.addData("Intake", isIntake);
-//
-//        // Panels
-//        PanelsData.isIntake = isIntake;
-//    }
-
     public static void teleVision(
             Telemetry telemetry,
             VisionSubsystem vision
     ) {
-        telemetry.addData("Has Target", vision.hasTarget());
+        boolean hasTarget = vision.hasTarget();
+        telemetry.addData("Vision Target", hasTarget ? "LOCKED" : "SEARCHING");
 
-        if (vision.hasTarget()) {
-            telemetry.addData(
-                    "Distance (m)",
-                    "%.2f",
-                    vision.getDistanceToGoal()
-            );
+        if (hasTarget) {
+            AprilTagDetection det = vision.getTargetDetection();
+            
+            // Driver Hub Telemetry (All in CM/Deg)
+            telemetry.addData("  ID", det.id);
+            telemetry.addData("  Dist (cm)", "%.1f", vision.getDistanceToGoal());
+            telemetry.addData("  X / Y (cm)", "%.1f / %.1f", vision.getXToGoal(), vision.getYToGoal());
+            telemetry.addData("  Final Bearing (deg)", "%.1f", vision.getBearingToGoalDeg());
+            telemetry.addData("  Shot", vision.getSuggestedShot());
 
-            telemetry.addData(
-                    "Yaw to Goal (deg)",
-                    "%.1f",
-                    vision.getYawToGoalDeg()
-            );
-
-            telemetry.addData(
-                    "Aim Accuracy (%)",
-                    "%.1f",
-                    vision.getAimAccuracyPercent()
-            );
-
-            telemetry.addData(
-                    "Suggested Shot",
-                    vision.getSuggestedShot()
-            );
+            // Sync with PanelsData
+            PanelsData.tagId = det.id;
+            PanelsData.tx = vision.getXToGoal();
+            PanelsData.ty = vision.getYToGoal();
+            PanelsData.range = vision.getDistanceToGoal();
+            PanelsData.bearing = vision.getBearingToGoalDeg();
+            PanelsData.yawDeg = vision.getYawToGoalDeg();
+            PanelsData.suggestedShot = vision.getSuggestedShot();
         } else {
             telemetry.addLine("No goal detected");
+            PanelsData.tagId = -1;
         }
     }
 
@@ -150,11 +127,6 @@ public final class Utility {
         PanelsData.isReady = outtake.isReadyToShoot();
     }
 
-
-//    public static void teleVision(Telemetry telemetry, VisionS) {
-//        telemetry.addData("Is enabled", vi)
-//    }
-
     /* =======================
      * LOGCAT
      * ======================= */
@@ -173,68 +145,9 @@ public final class Utility {
         return Math.max(min, Math.min(max, value));
     }
 
-    public static double degToRad(double degrees) {
-        return Math.toRadians(degrees);
-    }
-
-    public static double radToDeg(double radians) {
-        return Math.toDegrees(radians);
-    }
-
-    public static double normalizeAngle(double angle) {
-        while (angle > Math.PI)  angle -= 2 * Math.PI;
-        while (angle < -Math.PI) angle += 2 * Math.PI;
-        return angle;
-    }
-
-    /* =======================
-     * ENCODER UTILITIES
-     * ======================= */
-
-    public static double inchesToTicks(double inches) {
-        return (inches / (2 * Math.PI * Constants.wheelRads)) *
-                Constants.ticksPerRev * Constants.gearRatio;
-    }
-
-    public static double ticksToInches(double ticks) {
-        return (ticks / (Constants.ticksPerRev * Constants.gearRatio)) *
-                (2 * Math.PI * Constants.wheelRads);
-    }
-
-    /* =======================
-     * JOYSTICK HELPERS
-     * ======================= */
-
     public static double applyDeadzone(double value) {
         return Math.abs(value) < Constants.deadzone ? 0.0 : value;
     }
-
-    /* =======================
-     * MISC
-     * ======================= */
-
-    public static String formatDrivePower(
-            double fl, double fr, double bl, double br
-    ) {
-        return String.format(
-                "FL: %.2f | FR: %.2f | BL: %.2f | BR: %.2f",
-                fl, fr, bl, br
-        );
-    }
-
-    public static String boolToStr(boolean val) {
-        return val ? "ON" : "OFF";
-    }
-
-    public static double average(double... values) {
-        double sum = 0;
-        for (double v : values) sum += v;
-        return values.length > 0 ? sum / values.length : 0;
-    }
-
-    /* =======================
-     * TIME
-     * ======================= */
 
     public static void resetRuntime() {
         runtime.reset();
