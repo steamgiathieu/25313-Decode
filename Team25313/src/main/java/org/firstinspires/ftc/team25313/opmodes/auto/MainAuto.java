@@ -8,6 +8,8 @@ import org.firstinspires.ftc.team25313.pedroPathing.Constants;
 import org.firstinspires.ftc.team25313.opmodes.auto.paths.*;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
+import org.firstinspires.ftc.team25313.Utility;
+
 
 public abstract class MainAuto extends OpMode {
     protected ArtifactCollector intake;
@@ -206,6 +208,7 @@ public abstract class MainAuto extends OpMode {
         }
         telemetry.addData("Autonomous STATE: ", autoState);
         telemetry.addData("Shooting counter: ", "%d", shootingCounter);
+        Utility.teleOuttake(telemetry, outtake);
         telemetry.update();
 
     }

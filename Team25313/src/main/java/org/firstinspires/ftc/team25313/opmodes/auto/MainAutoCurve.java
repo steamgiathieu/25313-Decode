@@ -4,6 +4,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.team25313.Utility;
 import org.firstinspires.ftc.team25313.opmodes.auto.paths.AutoPaths;
 import org.firstinspires.ftc.team25313.opmodes.auto.paths.FarBluePaths;
 import org.firstinspires.ftc.team25313.opmodes.auto.paths.FarRedPaths;
@@ -183,6 +184,7 @@ public abstract class MainAutoCurve extends OpMode {
         }
         telemetry.addData("Autonomous STATE: ", autoState);
         telemetry.addData("Shooting counter: ", "%d", shootingCounter);
+        Utility.teleOuttake(telemetry, outtake);
         telemetry.update();
 
     }
