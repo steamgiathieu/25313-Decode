@@ -56,7 +56,7 @@ public abstract class MainAuto extends OpMode {
     }
 
     protected AutoState autoState = AutoState.start;
-    protected int shootingTime = 1800, waitingTimeForStable = 200;
+    protected int shootingTime = 1800, waitingTimeForStable = 800;
     protected int shootingCounter = 0;
     protected long waitStartTime;
 
@@ -123,7 +123,7 @@ public abstract class MainAuto extends OpMode {
                 }
                 break;
             case path8:
-                if (!follower.isBusy() && waitMillis(1000)){
+                if (!follower.isBusy() && waitMillis(waitingTimeForStable)){
                     autoState = AutoState.waitToStable;
                     startWait(); //start wait for stable
                 }
@@ -169,7 +169,7 @@ public abstract class MainAuto extends OpMode {
                 }
                 break;
             case path4:
-                if (!follower.isBusy() && waitMillis(1000)) {
+                if (!follower.isBusy() && waitMillis(waitingTimeForStable)) {
                     autoState = AutoState.path5;
                     follower.setMaxPower(0.6);
                     follower.followPath(paths.getPath5());
@@ -186,7 +186,7 @@ public abstract class MainAuto extends OpMode {
                 }
                 break;
             case path7:
-                if (!follower.isBusy() && waitMillis(1000)) {
+                if (!follower.isBusy() && waitMillis(waitingTimeForStable)) {
                     autoState = AutoState.path8;
                     follower.setMaxPower(0.8);
                     follower.followPath(paths.getPath8());
@@ -235,3 +235,4 @@ public abstract class MainAuto extends OpMode {
         }
     }
 }
+
