@@ -85,7 +85,6 @@ public class DebugTeleOp extends LinearOpMode {
             intake.update();
             Utility.teleDrivePose(telemetry, forward, strafe, rotate);
             Utility.teleOuttake(telemetry, outtake);
-            Utility.teleVision(telemetry, vision);
             telemetry.update();
         }
 

@@ -133,26 +133,24 @@ public abstract class MainAuto extends OpMode {
             case wait1:
                 // When the shooter is spun up and ready, start the feeder and a timer
                 if (outtake.isReadyToShoot() && !shootingWindowActive) {
-                    startShootingWindow(AutoState.path2, 2);
+                    startShootingWindow(AutoState.path2);
                 }
                 break;
             case waitToShoot:
-                // remain in this state for `shootingTime` ms while shooting occurs
                 if (waitMillis(shootingTime)) {
-                    // stop feeding and proceed to the next path/state
                     outtake.stopFeeding();
-                    shootingCounter++;
-                    // transition to the planned state after shooting
-                    if (postShootState != null) {
-                        autoState = postShootState;
-                    } else {
-                        // If postShootState wasn't set for some reason, go to `end` to stop safely
-                        telemetry.addData("AutoError", "postShootState was null - switching to END");
-                        autoState = AutoState.end;
-                    }
-                    postShootState = null;
-                    // shooting window finished
                     shootingWindowActive = false;
+
+                    autoState = postShootState;
+                    postShootState = null;
+
+                    follower.setMaxPower(0.6);
+                    switch (autoState) {
+                        case path2: follower.followPath(paths.getPath2()); break;
+                        case path4: follower.followPath(paths.getPath4()); break;
+                        case path6: follower.followPath(paths.getPath6()); break;
+                        case path8: follower.followPath(paths.getPath8()); break;
+                    }
                 }
                 break;
             case path2:
@@ -171,7 +169,7 @@ public abstract class MainAuto extends OpMode {
                 break;
             case wait3:
                 if (outtake.isReadyToShoot() && !shootingWindowActive) {
-                    startShootingWindow(AutoState.path4, 4);
+                    startShootingWindow(AutoState.path4);
                 }
                 break;
             case path4:
@@ -190,7 +188,7 @@ public abstract class MainAuto extends OpMode {
                 break;
             case wait5:
                 if (outtake.isReadyToShoot() && !shootingWindowActive) {
-                    startShootingWindow(AutoState.path6, 6);
+                    startShootingWindow(AutoState.path6);
                 }
                 break;
             case path6:
@@ -209,7 +207,7 @@ public abstract class MainAuto extends OpMode {
                 break;
             case wait7:
                 if (outtake.isReadyToShoot() && !shootingWindowActive) {
-                    startShootingWindow(AutoState.path8, 8);
+                    startShootingWindow(AutoState.path8);
                 }
                 break;
             case path8:
@@ -256,24 +254,11 @@ public abstract class MainAuto extends OpMode {
         }
     }
 
-    protected void startShootingWindow(AutoState next, int nextPathIndex) {
+    protected void startShootingWindow(AutoState next) {
         startWait();
         outtake.startFeeding();
         postShootState = next;
         shootingWindowActive = true;
-        follower.setMaxPower(0.6);
-        switch (nextPathIndex) {
-            case 1: follower.followPath(paths.getPath1()); break;
-            case 2: follower.followPath(paths.getPath2()); break;
-            case 3: follower.followPath(paths.getPath3()); break;
-            case 4: follower.followPath(paths.getPath4()); break;
-            case 5: follower.followPath(paths.getPath5()); break;
-            case 6: follower.followPath(paths.getPath6()); break;
-            case 7: follower.followPath(paths.getPath7()); break;
-            case 8: follower.followPath(paths.getPath8()); break;
-            default: break;
-        }
         autoState = AutoState.waitToShoot;
-        telemetry.addData("Auto", "Started shooting window -> next=" + next.name() + " pathIndex=" + nextPathIndex);
     }
 }

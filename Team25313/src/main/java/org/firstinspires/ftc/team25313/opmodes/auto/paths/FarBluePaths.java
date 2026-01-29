@@ -33,7 +33,7 @@ public class FarBluePaths implements AutoPaths {
                         new BezierCurve(
                                 new Pose(65.712, 15.237),
                                 new Pose(62.653, 34.616),
-                                new Pose(17.437, 31.753)
+                                new Pose(18.107, 37.279)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -41,7 +41,7 @@ public class FarBluePaths implements AutoPaths {
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(17.437, 31.753),
+                                new Pose(18.107, 37.279),
 
                                 new Pose(63.953, 11.530)
                         )
@@ -52,8 +52,8 @@ public class FarBluePaths implements AutoPaths {
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(63.953, 11.530),
-                                new Pose(50.447, 60.984),
-                                new Pose(17.321, 56.651)
+                                new Pose(56.307, 64.500),
+                                new Pose(17.488, 60.837)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -61,7 +61,7 @@ public class FarBluePaths implements AutoPaths {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(17.321, 56.651),
+                                new Pose(17.488, 60.837),
 
                                 new Pose(65.400, 11.870)
                         )
@@ -72,8 +72,8 @@ public class FarBluePaths implements AutoPaths {
         Path6 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(65.400, 11.870),
-                                new Pose(58.065, 83.677),
-                                new Pose(15.921, 81.828)
+                                new Pose(67.609, 87.695),
+                                new Pose(17.763, 85.177)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -81,7 +81,7 @@ public class FarBluePaths implements AutoPaths {
 
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.921, 81.828),
+                                new Pose(17.763, 85.177),
 
                                 new Pose(71.833, 72.000)
                         )
