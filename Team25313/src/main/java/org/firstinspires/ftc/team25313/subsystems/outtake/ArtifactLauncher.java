@@ -56,7 +56,7 @@ public class ArtifactLauncher {
                 Constants.launcherP,
                 Constants.launcherI,
                 Constants.launcherD,
-                Constants.launcherF
+                Constants.adaptive_launcherF
         );
         m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
@@ -106,11 +106,14 @@ public class ArtifactLauncher {
     private static boolean reconfig_flag = false;
     public void update() {
         //check voltage level and reconfigure Motor
-        if(voltageSensor.getVoltage() >= Constants.nominalVoltage){
-            Constants.adaptive_launcherF = Constants.launcherF;
+        if(voltageSensor.getVoltage() >= Constants.highVoltage){
+            Constants.adaptive_launcherF = Constants.launcherF_high;
         }
-        else if(voltageSensor.getVoltage() <= 11){
-            Constants.adaptive_launcherF = Constants.low_power_launcherF;
+        else if(voltageSensor.getVoltage() <= Constants.lowVoltage){
+            Constants.adaptive_launcherF = Constants.launcherF_low;
+        }
+        else{
+            Constants.adaptive_launcherF = Constants.launcherF;
         }
         setupMotor(leftLauncher);
         setupMotor(rightLauncher);

@@ -39,9 +39,10 @@ public final class Constants {
     public static final double launcherP = 23.5;
     public static final double launcherI = 0.0;
     public static final double launcherD = 0.0001;
-    public static final double launcherF = 11.6;
-    public static final double low_power_launcherF = 12.3;
+    public static final double launcherF = 11.6;// 12V-13V
     public static double adaptive_launcherF = 11.6;
+    public static final double launcherF_high = 11.0; //at 14V
+    public static final double launcherF_low = 12.2; //at 11V
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
@@ -51,6 +52,8 @@ public final class Constants {
     public static final double windowRest = 0.05;
 
     public static final double nominalVoltage = 12.0;
+    public static final double highVoltage = 13.2;
+    public static final double lowVoltage = 11.0;
 
     // Lift Subsystem
     public static final String lifter = "lifter";
