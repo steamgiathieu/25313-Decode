@@ -143,7 +143,7 @@ public abstract class MainAuto extends OpMode {
                     outtake.stopFeeding();
                     if(shootingCounter == 0) {
 //                        autoState = AutoState.end;
-                        follower.setMaxPower(0.8);
+                        follower.setMaxPower(0.7);
                         follower.followPath(paths.getPath3());
                         autoState = AutoState.path3;
                     } else if (shootingCounter == 1) {

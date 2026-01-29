@@ -43,7 +43,7 @@ public class FarBlueCurvePaths implements AutoPaths {
                                 new Pose(26, 45),
                                 new Pose(56, 16)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
+                ).setLinearHeadingInterpolation(Math.toRadians(110), Math.toRadians(110))
 
                 .build();
 

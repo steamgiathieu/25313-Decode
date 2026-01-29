@@ -33,33 +33,33 @@ public class FarBluePaths implements AutoPaths {
                                 new Pose(56, 16),
                                 new Pose(56, 16.5)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(110))
+                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(112))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(56, 16.5),
-                                new Pose(45, 45)
+                                new Pose(48, 48)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(110), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(112), Math.toRadians(180))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(45, 45),
-                                new Pose(26, 45)
+                                new Pose(48, 48),
+                                new Pose(24, 48)
                         )
                 ).setTangentHeadingInterpolation()
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(26, 45),
+                                new Pose(24, 48),
                                 new Pose(56.000, 16.5)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(112))
 
                 .build();
 
@@ -68,32 +68,32 @@ public class FarBluePaths implements AutoPaths {
                                 new Pose(56.000, 16.5),
                                 new Pose(48.000, 68)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(110), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(112), Math.toRadians(180))
 
                 .build();
 
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(48.000, 69),
-                                new Pose(26, 69)
+                                new Pose(24, 69)
                         )
                 ).setTangentHeadingInterpolation()
                 .build();
         Path8 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(26, 69),
+                                new Pose(24, 69),
                                 new Pose(56.000, 16.5)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(112))
 
                 .build();
 
         Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56.000, 16.000),
+                                new Pose(56.000, 16.5),
                                 new Pose(56, 56)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(110), Math.toRadians(90))
+                ).setLinearHeadingInterpolation(Math.toRadians(112), Math.toRadians(90))
 
                 .build();
     }
