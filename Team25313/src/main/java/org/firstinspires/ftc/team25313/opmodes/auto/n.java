@@ -10,7 +10,7 @@ import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 @Disabled
 @Autonomous(name = "near blue", group = "sosauto")
-public class nearblue extends LinearOpMode {
+public class n extends LinearOpMode {
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
     private ArtifactLauncher outtake;

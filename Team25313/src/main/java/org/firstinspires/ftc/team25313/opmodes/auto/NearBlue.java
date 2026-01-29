@@ -2,11 +2,11 @@ package org.firstinspires.ftc.team25313.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Near Red", group = "Auto")
-public class nr extends MainAuto {
+@Autonomous(name = "Near Blue", group = "Auto")
+public class NearBlue extends MainAuto {
     @Override
     protected Alliance getAlliance() {
-        return Alliance.red;
+        return Alliance.blue;
     }
     @Override
     protected StartPosition getStartPosition() {

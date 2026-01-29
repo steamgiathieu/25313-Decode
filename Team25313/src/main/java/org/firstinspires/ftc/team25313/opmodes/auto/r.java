@@ -11,7 +11,7 @@ import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
 @Disabled
 @Autonomous(name = "near red", group = "sosauto")
-public class nearred extends LinearOpMode {
+public class r extends LinearOpMode {
     private DriveSubsystem driveSubsystem;
     private ArtifactCollector intake;
     private ArtifactLauncher outtake;
