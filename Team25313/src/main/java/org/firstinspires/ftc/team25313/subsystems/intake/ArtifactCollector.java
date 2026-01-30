@@ -10,7 +10,6 @@ import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
 
 public class ArtifactCollector {
     private final DcMotorEx collector;
-    private ArtifactLauncher outtake;
     private final CRServo leftCollector;
     private final CRServo rightCollector;
 
@@ -68,12 +67,6 @@ public class ArtifactCollector {
                 break;
 
             case outtakeFeed:
-//                if(outtake.getPowerLevel() == ArtifactLauncher.PowerLevel.near || outtake.getPowerLevel() == ArtifactLauncher.PowerLevel.mid){
-//                    Constants.intakeMotorShoot = Constants.closeZoneIntakeMotorShoot;
-//                }
-//                else{
-//                    Constants.intakeMotorShoot = Constants.farZoneIntakeMotorShoot;
-//                } //error, check
                 collector.setPower(Constants.intakeMotorShoot);
                 break;
 
