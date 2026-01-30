@@ -20,10 +20,10 @@ public final class Constants {
     public static final String collector = "collector";
     public static final String leftCollector = "leftCollector";
     public static final String rightCollector = "rightCollector";
-    public static final double intakeMotorIn = 0.4;
+    public static final double intakeMotorIn = 0.55;
     public static double intakeMotorShoot = 0.32;
-    public static final double farZoneIntakeMotorShoot = 0.25;
-    public static final double closeZoneIntakeMotorShoot = 0.32;
+    public static final double farZoneIntakeMotorShoot = 0.32;
+    public static final double closeZoneIntakeMotorShoot = 0.4;
     public static final double autoIntakeMotorShoot = 0.5;
     public static final double intakeServoIn = 0.8;
     public static final double shootingTime = 2000; //ms
