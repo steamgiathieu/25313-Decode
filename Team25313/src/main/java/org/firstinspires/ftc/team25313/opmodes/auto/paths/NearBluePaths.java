@@ -22,7 +22,7 @@ public class NearBluePaths implements AutoPaths {
 
                                 new Pose(37.916, 108.670)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(145))
 
                 .build();
 
@@ -32,7 +32,7 @@ public class NearBluePaths implements AutoPaths {
                                 new Pose(59.835, 83.198),
                                 new Pose(18.098, 84.209)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
 
                 .build();
 
@@ -42,7 +42,7 @@ public class NearBluePaths implements AutoPaths {
 
                                 new Pose(37.619, 109.033)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(145))
 
                 .build();
 
@@ -52,7 +52,7 @@ public class NearBluePaths implements AutoPaths {
                                 new Pose(88.879, 55.172),
                                 new Pose(17.581, 60.279)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
 
                 .build();
 
@@ -62,7 +62,7 @@ public class NearBluePaths implements AutoPaths {
 
                                 new Pose(37.707, 109.093)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(145))
 
                 .build();
 
@@ -72,7 +72,7 @@ public class NearBluePaths implements AutoPaths {
 
                                 new Pose(24.312, 89.940)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(145))
 
                 .build();
     }

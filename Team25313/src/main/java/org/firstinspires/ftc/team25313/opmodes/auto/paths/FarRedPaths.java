@@ -29,8 +29,8 @@ public class FarRedPaths implements AutoPaths {
         Path2 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(72.428, 22.940),
-                                new Pose(74.586, 41.553),
-                                new Pose(126.800, 38.716)
+                                new Pose(75.423, 38.037),
+                                new Pose(124.456, 37.209)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(60), Math.toRadians(0))
 
@@ -38,7 +38,7 @@ public class FarRedPaths implements AutoPaths {
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(126.800, 38.716),
+                                new Pose(124.456, 37.209),
 
                                 new Pose(72.135, 23.060)
                         )
@@ -49,8 +49,8 @@ public class FarRedPaths implements AutoPaths {
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(72.135, 23.060),
-                                new Pose(82.763, 64.502),
-                                new Pose(126.358, 62.902)
+                                new Pose(77.070, 62.995),
+                                new Pose(124.516, 61.060)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(60), Math.toRadians(0))
 
@@ -58,7 +58,7 @@ public class FarRedPaths implements AutoPaths {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(126.358, 62.902),
+                                new Pose(124.516, 61.060),
 
                                 new Pose(72.205, 23.102)
                         )
