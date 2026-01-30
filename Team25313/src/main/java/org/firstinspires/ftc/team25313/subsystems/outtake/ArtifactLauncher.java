@@ -115,6 +115,12 @@ public class ArtifactLauncher {
         else{
             Constants.adaptive_launcherF = Constants.launcherF;
         }
+
+        if(powerLevel == PowerLevel.far){
+            Constants.intakeMotorShoot = Constants.farZoneIntakeMotorShoot;
+        } else {
+            Constants.intakeMotorShoot = Constants.closeZoneIntakeMotorShoot;
+        }
         setupMotor(leftLauncher);
         setupMotor(rightLauncher);
 

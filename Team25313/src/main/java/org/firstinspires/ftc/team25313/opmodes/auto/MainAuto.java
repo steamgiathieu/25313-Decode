@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
-import org.firstinspires.ftc.team25313.Utility;
 import org.firstinspires.ftc.team25313.pedroPathing.Constants;
 import org.firstinspires.ftc.team25313.opmodes.auto.paths.*;
 import org.firstinspires.ftc.team25313.subsystems.intake.ArtifactCollector;
 import org.firstinspires.ftc.team25313.subsystems.outtake.ArtifactLauncher;
+import org.firstinspires.ftc.team25313.Utility;
 
-import java.util.Set;
 
 public abstract class MainAuto extends OpMode {
     protected ArtifactCollector intake;
@@ -20,14 +19,12 @@ public abstract class MainAuto extends OpMode {
     protected AutoPaths paths;
 
 
-    @SuppressWarnings("unused")
     protected enum AutoState {
         start,
-        waitToSpinUp,
-        runPath,
-        waitAfterPath,
-        waitToShoot,
-        end
+        waitToSpinUp, waitToStable, waitToShoot,
+        path1, path2, path3, path4, path5, path6, path7, path8, path9,
+        intake1, intake2, intake3, intake4,
+        end;
     }
 
     protected enum Alliance { blue, red }
@@ -56,34 +53,14 @@ public abstract class MainAuto extends OpMode {
                         );
                 }
             }
-            else if (pos == StartPosition.near) {
-                switch (alliance) {
-                    case blue:
-                        return new Pose(
-                                21.0,
-                                123.0,
-                                Math.toRadians(145)
-                        );
-                    case red:
-                        return new Pose(
-                                123.0,
-                                123.0,
-                                Math.toRadians(35)
-                        );
-                }
-            }
             return new Pose(0, 0, 0);
         }
     }
 
     protected AutoState autoState = AutoState.start;
-
-    protected int currentPathIndex = 1;
-    protected static final int maxPath = 6;
-    protected static final Set<Integer> shootPaths = Set.of(1, 3, 5);
-
+    protected int shootingTime = 1800, waitingTimeForStable = 800;
+    protected int shootingCounter = 0;
     protected long waitStartTime;
-    protected int shootingTimeMs = 1800;
 
     @Override
     public void init() {
@@ -97,7 +74,15 @@ public abstract class MainAuto extends OpMode {
 
         Pose startPose = StartPose.get(alliance, startPosition);
         follower.setStartingPose(startPose);
+
         buildPaths();
+
+        intake.setOuttakeFeed();
+        outtake.enable();
+        outtake.stopFeeding();
+
+        startWait();
+        autoState = AutoState.start;
     }
 
     @Override
@@ -107,53 +92,122 @@ public abstract class MainAuto extends OpMode {
         outtake.update();
 
         switch (autoState) {
-
             case start:
-                if (startPosition == StartPosition.far) {
-                    outtake.setMaxPow();
-                } else {
-                    outtake.setMinPow();
-                }
-
+                outtake.setPowerLevel(ArtifactLauncher.PowerLevel.far);
                 outtake.enable();
                 autoState = AutoState.waitToSpinUp;
+                intake.stop();
                 break;
-
             case waitToSpinUp:
-                follower.setMaxPower(0.6);
-                followCurrentPath();
-                autoState = AutoState.runPath;
+                //if (outtake.isReadyToShoot()){
+                    autoState = AutoState.path1;
+                    follower.setMaxPower(0.4);
+                    follower.followPath(paths.getPath1());
+                //}
                 break;
-
-            case runPath:
+            case path1:
                 if (!follower.isBusy()) {
-                    if (shootPaths.contains(currentPathIndex)) {
-                        startWait();
-                        autoState = AutoState.waitAfterPath;
-                    } else {
-                        goToNextPath();
-                    }
+                    autoState = AutoState.path2;
+                    follower.setMaxPower(0.4);
+                    follower.followPath(paths.getPath2());
                 }
                 break;
-
-            case waitAfterPath:
-                outtake.startFeeding();
-                startWait();
-                autoState = AutoState.waitToShoot;
+            case path2:
+                if (!follower.isBusy()){
+                    autoState = AutoState.waitToStable;
+                    startWait(); //start wait for stable
+                }
                 break;
-
+            case path5:
+                if (!follower.isBusy()){
+                    autoState = AutoState.waitToStable;
+                    startWait(); //start wait for stable
+                }
+                break;
+            case path8:
+                if (!follower.isBusy() && waitMillis(waitingTimeForStable)){
+                    autoState = AutoState.waitToStable;
+                    startWait(); //start wait for stable
+                }
+                break;
+            case waitToStable:
+                if(waitMillis(waitingTimeForStable) && outtake.isReadyToShoot()){
+                    autoState = AutoState.waitToShoot;
+                    outtake.startFeeding();
+                    startWait(); //start wait for shooting
+                }
+                break;
             case waitToShoot:
-                if (waitMillis(shootingTimeMs)) {
+                outtake.startFeeding();
+                if(waitMillis(shootingTime)){
                     outtake.stopFeeding();
-                    goToNextPath();
+                    if(shootingCounter == 0) {
+//                        autoState = AutoState.end;
+                        follower.setMaxPower(0.7);
+                        follower.followPath(paths.getPath3());
+                        autoState = AutoState.path3;
+                    } else if (shootingCounter == 1) {
+//                         autoState = AutoState.end;
+                        follower.setMaxPower(0.8);
+                        autoState = AutoState.path6;
+                        follower.followPath(paths.getPath6());
+                    }
+                    else if (shootingCounter == 2) {
+                        autoState = AutoState.path9;
+                        follower.setMaxPower(0.8);
+                        follower.followPath(paths.getPath9());
+                    }
+                    //shootingCounter ++;
+                    shootingCounter = Math.min(shootingCounter + 1, 4);
                 }
                 break;
-
+            case path3:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.path4;
+                    follower.setMaxPower(0.8);
+                    follower.followPath(paths.getPath4());
+                    intake.setManualCollect();
+                    startWait();
+                }
+                break;
+            case path4:
+                if (!follower.isBusy() && waitMillis(waitingTimeForStable)) {
+                    autoState = AutoState.path5;
+                    follower.setMaxPower(0.6);
+                    follower.followPath(paths.getPath5());
+                    intake.stop();
+                }
+                break;
+            case path6:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.path7;
+                    follower.setMaxPower(0.8);
+                    follower.followPath(paths.getPath7());
+                    intake.setManualCollect();
+                    startWait();
+                }
+                break;
+            case path7:
+                if (!follower.isBusy() && waitMillis(waitingTimeForStable)) {
+                    autoState = AutoState.path8;
+                    follower.setMaxPower(0.8);
+                    follower.followPath(paths.getPath8());
+                    intake.stop();
+                    startWait();
+                }
+                break;
+            case path9:
+                if (!follower.isBusy()) {
+                    autoState = AutoState.end;
+                }
+                break;
             case end:
                 outtake.disable();
+                intake.stop();
                 break;
         }
         telemetry.addData("Autonomous STATE: ", autoState);
+        telemetry.addData("Shooting counter: ", "%d", shootingCounter);
         Utility.teleOuttake(telemetry, outtake);
         telemetry.update();
 
@@ -167,6 +221,7 @@ public abstract class MainAuto extends OpMode {
         return System.currentTimeMillis() - waitStartTime >= durationMs;
     }
 
+
     protected void stopAll() {
         intake.stop();
         outtake.disable();
@@ -176,53 +231,11 @@ public abstract class MainAuto extends OpMode {
     protected abstract StartPosition getStartPosition();
 
     protected void buildPaths() {
-        if (alliance == Alliance.blue && startPosition == StartPosition.far) {
+        if (alliance == Alliance.blue) {
             paths = new FarBluePaths(follower);
-        } else if (alliance == Alliance.red && startPosition == StartPosition.far) {
+        } else {
             paths = new FarRedPaths(follower);
-        } else if (alliance == Alliance.blue && startPosition == StartPosition.near) {
-            paths = new NearBluePaths(follower);
-        } else if (alliance == Alliance.red && startPosition == StartPosition.near) {
-            paths = new NearRedPaths(follower);
         }
-    }
-
-    protected void followCurrentPath() {
-        switch (currentPathIndex) {
-            case 1:
-                follower.followPath(paths.getPath1());
-                break;
-            case 2:
-                follower.followPath(paths.getPath2());
-                break;
-            case 3:
-                follower.followPath(paths.getPath3());
-                break;
-            case 4:
-                follower.followPath(paths.getPath4());
-                break;
-            case 5:
-                follower.followPath(paths.getPath5());
-                break;
-            case 6:
-                follower.followPath(paths.getPath6());
-                break;
-            default:
-                autoState = AutoState.end;
-                break;
-        }
-    }
-
-    protected void goToNextPath() {
-        currentPathIndex++;
-
-        if (currentPathIndex > maxPath) {
-            autoState = AutoState.end;
-            return;
-        }
-
-        follower.setMaxPower(0.8);
-        followCurrentPath();
-        autoState = AutoState.runPath;
     }
 }
+

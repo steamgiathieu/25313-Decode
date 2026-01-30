@@ -21,9 +21,9 @@ public final class Constants {
     public static final String leftCollector = "leftCollector";
     public static final String rightCollector = "rightCollector";
     public static final double intakeMotorIn = 0.8;
-    public static double intakeMotorShoot = 0.55;
-    public static final double farZoneIntakeMotorShoot = 0.5;
-    public static final double closeZoneIntakeMotorShoot = 0.7;
+    public static double intakeMotorShoot = 0.6;
+    public static final double farZoneIntakeMotorShoot = 0.4;
+    public static final double closeZoneIntakeMotorShoot = 0.6;
     public static final double autoIntakeMotorShoot = 0.5;
     public static final double intakeServoIn = 0.8;
     public static final double shootingTime = 2000; //ms
@@ -35,14 +35,14 @@ public final class Constants {
     public static final String window = "window";
     public static final double nearShotVelocity = 1300;
     public static final double midShotVelocity  = 1420;
-    public static final double farShotVelocity  = 1620;
-    public static final double launcherP = 25.5;
+    public static final double farShotVelocity  = 1600;
+    public static final double launcherP = 25.0;
     public static final double launcherI = 0.0;
     public static final double launcherD = 0.0001;
-    public static final double launcherF = 12.8;
-    public static double adaptive_launcherF = 12.8;
-    public static final double launcherF_high = 12.2;
-    public static final double launcherF_low = 13.2;
+    public static final double launcherF = 11.8;// 12V-13V
+    public static double adaptive_launcherF = 11.8;
+    public static final double launcherF_high = 11.2; //at 14V
+    public static final double launcherF_low = 12.5; //at 11V
     public static final double launcherMaxAccel = 500;
     public static final double launcherOverdriveLimit = 40;
     public static final double launcherVelocityTolerance = 35;
@@ -61,21 +61,16 @@ public final class Constants {
 
     // Camera & Vision
     public static final String webcamName = "Webcam 1";
-    public static final double cameraFx = 1971.74;
-    public static final double cameraFy = 1971.74;
-    public static final double cameraCx = 987.672;
-    public static final double cameraCy = 651.892;
-    public static final double aprilTagSize = 6.5;
     public static final int blueGoalTagId = 20;
     public static final int redGoalTagId  = 24;
-    public static final double shotNearMaxDist = 120.0;
-    public static final double shotMidMaxDist  = 200.0;
-    public static double visionAimGain = 0.015;
-    public static double visionAimD = 0.005;
-    public static double visionAimMinPower = 0.06;
-    public static double visionAimMaxPower = 0.4;
-    public static double visionAimTolerance = 0.8;
-    public static double visionAimOffset = 10;
+    public static final double shotNearMaxDist = 1.2;
+    public static final double shotMidMaxDist  = 2.0;
+    public static final double minValidTagDistM = 0.3;
+    public static final double maxValidTagDistM = 4.0;
+    public static final double yawNearDeg = 30.0;
+    public static final double yawMidDeg  = 25.0;
+    public static final double yawFarDeg  = 20.0;
+    public static final double distanceAlpha = 0.3;
 
 
     // Utility Methods
