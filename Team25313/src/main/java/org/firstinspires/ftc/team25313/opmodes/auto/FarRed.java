@@ -3,7 +3,7 @@ package org.firstinspires.ftc.team25313.opmodes.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "Far Red", group = "Auto")
-public class FarRed extends MainAuto {
+public class FarRed extends MainAutoFar {
     protected Alliance getAlliance() {
         return Alliance.red;
     }

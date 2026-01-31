@@ -20,10 +20,10 @@ public final class Constants {
     public static final String collector = "collector";
     public static final String leftCollector = "leftCollector";
     public static final String rightCollector = "rightCollector";
-    public static final double intakeMotorIn = 0.8;
-    public static double intakeMotorShoot = 0.6;
-    public static final double farZoneIntakeMotorShoot = 0.4;
-    public static final double closeZoneIntakeMotorShoot = 0.6;
+    public static final double intakeMotorIn = 0.4;
+    public static double intakeMotorShoot = 0.32;
+    public static final double farZoneIntakeMotorShoot = 0.25;
+    public static final double closeZoneIntakeMotorShoot = 0.32;
     public static final double autoIntakeMotorShoot = 0.5;
     public static final double intakeServoIn = 0.8;
     public static final double shootingTime = 2000; //ms
@@ -36,7 +36,7 @@ public final class Constants {
     public static final double nearShotVelocity = 1300;
     public static final double midShotVelocity  = 1420;
     public static final double farShotVelocity  = 1600;
-    public static final double launcherP = 25.0;
+    public static final double launcherP = 25;
     public static final double launcherI = 0.0;
     public static final double launcherD = 0.0001;
     public static final double launcherF = 11.8;// 12V-13V

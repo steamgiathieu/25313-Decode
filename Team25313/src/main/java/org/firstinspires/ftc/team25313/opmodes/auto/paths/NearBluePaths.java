@@ -14,6 +14,9 @@ public class NearBluePaths implements AutoPaths {
     private final PathChain Path4;
     private final PathChain Path5;
     private final PathChain Path6;
+    private final PathChain Path7;
+    private final PathChain Path8;
+    private final PathChain Path9;
 
     public NearBluePaths(Follower follower) {
         Path1 = follower.pathBuilder().addPath(
@@ -70,7 +73,34 @@ public class NearBluePaths implements AutoPaths {
                         new BezierLine(
                                 new Pose(37.707, 109.093),
 
-                                new Pose(24.312, 89.940)
+                                new Pose(23.312, 88.940)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(145))
+
+                .build();
+        Path7 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(37.707, 109.093),
+
+                                new Pose(23.312, 88.940)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(145))
+
+                .build();
+        Path8 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(37.707, 109.093),
+
+                                new Pose(23.312, 88.940)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(145))
+
+                .build();
+        Path9 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(37.707, 109.093),
+
+                                new Pose(23.312, 88.940)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(145))
 
@@ -82,4 +112,7 @@ public class NearBluePaths implements AutoPaths {
     @Override public PathChain getPath4() { return Path4; }
     @Override public PathChain getPath5() { return Path5; }
     @Override public PathChain getPath6() { return Path6; }
+    @Override public PathChain getPath7() { return Path7; }
+    @Override public PathChain getPath8() { return Path8; }
+    @Override public PathChain getPath9() { return Path9; }
 }
