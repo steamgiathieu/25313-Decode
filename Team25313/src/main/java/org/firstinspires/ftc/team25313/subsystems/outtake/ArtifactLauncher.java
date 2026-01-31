@@ -170,16 +170,12 @@ public class ArtifactLauncher {
         window.setPosition(Constants.windowRest);
     }
 
-    public void setMaxPow() {
-        powerLevel = PowerLevel.far;
-    }
-
     public void setMinPow() {
         powerLevel = PowerLevel.near;
     }
 
-    public void setMidPow() {
-        powerLevel = PowerLevel.mid;
+    public void setMaxPow() {
+        powerLevel = PowerLevel.far;
     }
 
     public boolean isEnabled() { return enabled; }

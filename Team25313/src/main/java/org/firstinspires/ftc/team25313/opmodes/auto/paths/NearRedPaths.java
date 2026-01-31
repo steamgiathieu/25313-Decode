@@ -21,61 +21,61 @@ public class NearRedPaths implements AutoPaths {
     public NearRedPaths(Follower follower) {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(123.000, 123.000),
+                                new Pose(117.000, 131.000),
 
-                                new Pose(106.084, 108.670)
+                                new Pose(93.526, 101.637)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(35))
+                ).setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(40))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(106.084, 108.670),
-                                new Pose(84.165, 83.198),
-                                new Pose(125.902, 84.209)
+                                new Pose(93.526, 101.637),
+                                new Pose(84.165, 82.528),
+                                new Pose(125.902, 83.037)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(40), Math.toRadians(0))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(125.902, 84.209),
+                                new Pose(125.902, 83.037),
 
-                                new Pose(106.381, 109.033)
+                                new Pose(93.488, 101.498)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(35))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(40))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(106.381, 109.033),
-                                new Pose(55.121, 55.172),
-                                new Pose(126.419, 60.279)
+                                new Pose(93.488, 101.498),
+                                new Pose(47.753, 55.005),
+                                new Pose(127.256, 58.605)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(40), Math.toRadians(0))
 
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(126.419, 60.279),
+                                new Pose(127.256, 58.605),
 
-                                new Pose(106.293, 109.093)
+                                new Pose(93.400, 101.223)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(35))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(40))
 
                 .build();
 
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(106.293, 109.093),
+                                new Pose(93.400, 101.223),
 
-                                new Pose(120.688, 88.940)
+                                new Pose(119.688, 89.940)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(35))
+                ).setLinearHeadingInterpolation(Math.toRadians(40), Math.toRadians(40))
 
                 .build();
 

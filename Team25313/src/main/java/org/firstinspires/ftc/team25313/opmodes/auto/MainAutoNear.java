@@ -118,13 +118,7 @@ public abstract class MainAutoNear extends OpMode {
         switch (autoState) {
 
             case start:
-//                if (startPosition == StartPosition.far) {
-//                    outtake.setMaxPow();
-//                } else {
-                if (startPosition == StartPosition.near) {
-                    outtake.setMinPow();
-                }
-
+                outtake.setMinPow();
                 outtake.enable();
                 startWait();
                 autoState = AutoState.waitToSpinUp;
@@ -140,6 +134,7 @@ public abstract class MainAutoNear extends OpMode {
 
             case runPath:
                 if (!follower.isBusy()) {
+                    intake.setManualCollect();
                     if (shootPaths.contains(currentPathIndex)) {
                         startWait();
                         autoState = AutoState.waitAfterPath;
