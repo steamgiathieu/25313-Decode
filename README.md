@@ -1,6 +1,7 @@
 # SOURCE CODE FOR FTC#25313 STEAM GIA THIEU IN FIRST TECH CHALLENGE 2025/2026 DECODE
 
-## Welcome! This repository, which is based on [FTCSDK](https://github.com/FIRST-Tech-Challenge/FtcRobotController) , contains the source code that is (maybe) used to build an Android app to operate FTC#25313 STEAM GIA THIEU's robot in FIRST Tech Challenge 2025/2026 DECODE season.  
+#### | 3rd Place Alliance Partner, Design Award Winner of Vietnam Championship 2025/2026 "Decode"|
+## Welcome! This repository, which is based on [FTCSDK](https://github.com/FIRST-Tech-Challenge/FtcRobotController) , contains the source code that is used to build an Android app to operate FTC#25313 STEAM GIA THIEU's robot in FIRST Tech Challenge 2025/2026 DECODE season.  
 
 ## To clone and use this repository, follow these steps:
 - Install Android Studio Ladybug (2024.2) or later.
